@@ -2,14 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Alexandria.EF.Context;
+using Alexandria.Infrastructure.Filters;
+using Alexandria.Interfaces.Services;
+using Alexandria.Orchestration.Mapper;
+using Alexandria.Orchestration.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Svalbard;
 
 namespace Alexandria
 {
@@ -25,7 +32,29 @@ namespace Alexandria
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-      services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+      AutoMapperConfig.Initialize();
+      services.AddMvc(options =>
+      {
+        options.Filters.Add<SaveChangesFilter>();
+      })
+      .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+      services.AddSvalbard();
+      services.AddScoped<AlexandriaContext>();
+      services.AddScoped<SaveChangesFilter>();
+      services.AddScoped<IUserProfileService, UserProfileService>();
+
+      var connectionString = Configuration.GetConnectionString("Alexandria");
+      services.AddDbContext<AlexandriaContext>(options =>
+      {
+        options.UseSqlServer(connectionString, (builder) =>
+        {
+          builder.MigrationsAssembly(typeof(AlexandriaContext).Assembly.FullName);
+        });
+      });
+
+      services.AddSwaggerDocument();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,6 +72,9 @@ namespace Alexandria
 
       app.UseHttpsRedirection();
       app.UseMvc();
+
+      app.UseSwagger();
+      app.UseSwaggerUi3();
     }
   }
 }

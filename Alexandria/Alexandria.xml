@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Alexandria</name>
+    </assembly>
+    <members>
+        <member name="M:Alexandria.Controllers.UserProfileController.CreateProfile(Alexandria.DTO.UserProfile.Create)">
+            <summary>
+            This will create a UserProfile after an Account has been established in Passport
+            </summary>
+            <param name="payload">The User Account Information</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

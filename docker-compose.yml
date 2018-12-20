@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  alexandria:
+    image: ${DOCKER_REGISTRY-}alexandria
+    build:
+      context: .
+      dockerfile: Alexandria/Dockerfile
