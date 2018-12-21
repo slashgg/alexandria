@@ -62,6 +62,8 @@ namespace Alexandria
     {
       if (env.IsDevelopment())
       {
+        app.UseSwagger();
+        app.UseSwaggerUi3();
         app.UseDeveloperExceptionPage();
       }
       else
@@ -73,8 +75,7 @@ namespace Alexandria
       app.UseHttpsRedirection();
       app.UseMvc();
 
-      app.UseSwagger();
-      app.UseSwaggerUi3();
+
     }
   }
 }

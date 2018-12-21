@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using Svalbard.Extensions;
 
 namespace Alexandria
 {
@@ -19,6 +16,24 @@ namespace Alexandria
 
     public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
         WebHost.CreateDefaultBuilder(args)
+            .ConfigureAppConfiguration((hosting, config) =>
+            {
+              var prod = hosting.HostingEnvironment.IsProduction();
+              var secrets = new List<string>();
+              if (hosting.HostingEnvironment.IsProduction())
+              {
+                secrets.Add("ConnectionStrings");
+              }
+
+              config.SetBasePath(Directory.GetCurrentDirectory());
+              config.AddJsonFile("appsettings.json");
+              config.AddJsonFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: false);
+              config.AddAWSSecrets(options =>
+              {
+                options.Region = "us-east-1";
+                options.Secrets = secrets.ToArray();
+              });
+            })
             .UseStartup<Startup>();
   }
 }

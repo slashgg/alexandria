@@ -11,7 +11,8 @@ namespace Alexandria.EF.Models
     public string AvatarURL { get; set; }
 
     /* Relations */
-    public ICollection<ExternalAccount> ExternalAccounts { get; set; } = new List<ExternalAccount>();
+    public virtual ICollection<ExternalAccount> ExternalAccounts { get; set; } = new List<ExternalAccount>();
+    public virtual ICollection<TeamMembership> TeamMemberships { get; set; } = new List<TeamMembership>();
 
     public UserProfile(Guid id, string displayName, string email)
     {

@@ -8,6 +8,9 @@
     <Compile Remove="Migrations\20181220060012_InitialMigration.cs" />
     <Compile Remove="Migrations\20181220182140_InitialMigration.cs" />
     <Compile Remove="Migrations\20181220212626_InitialMigration.cs" />
+    <Compile Remove="Migrations\20181221052556_AddGameAndTournamentStructure.cs" />
+    <Compile Remove="Migrations\20181221052827_AddGameAndTournamentStructure.cs" />
+    <Compile Remove="Migrations\20181221055642_AddGameAndTournamentStructure.cs" />
   </ItemGroup>
 
   <ItemGroup>

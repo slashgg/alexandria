@@ -5,6 +5,7 @@ EXPOSE 443
 
 FROM microsoft/dotnet:2.2-sdk AS build
 WORKDIR /src
+COPY ["nuget.config", "./"]
 COPY Alexandria/Alexandria.csproj Alexandria/
 COPY Alexandria.Shared/Alexandria.Shared.csproj Alexandria.Shared/
 COPY Alexandria.DTO/Alexandria.DTO.csproj Alexandria.DTO/
