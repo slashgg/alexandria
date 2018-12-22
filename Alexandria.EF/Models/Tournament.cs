@@ -11,6 +11,7 @@ namespace Alexandria.EF.Models
     public string Name { get; set; }
     public DateTimeOffset? StartDate { get; set; }
     public DateTimeOffset? EndDate { get; set; }
+    public bool ApplicationRequired { get; set; } = true;
     public bool CanSignup { get; set; } = false;
     public DateTimeOffset? SignupOpenDate { get; set; }
     public DateTimeOffset? SignupCloseDate { get; set; }

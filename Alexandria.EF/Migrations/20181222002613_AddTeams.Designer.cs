@@ -4,14 +4,16 @@ using Alexandria.EF.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Alexandria.EF.Migrations
 {
     [DbContext(typeof(AlexandriaContext))]
-    partial class AlexandriaContextModelSnapshot : ModelSnapshot
+    [Migration("20181222002613_AddTeams")]
+    partial class AddTeams
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -103,30 +105,6 @@ namespace Alexandria.EF.Migrations
                     b.ToTable("Teams");
                 });
 
-            modelBuilder.Entity("Alexandria.EF.Models.TeamInvite", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("CreatedAt");
-
-                    b.Property<string>("Email");
-
-                    b.Property<int>("State");
-
-                    b.Property<Guid>("TeamId");
-
-                    b.Property<Guid?>("UserProfileId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TeamId");
-
-                    b.HasIndex("UserProfileId");
-
-                    b.ToTable("TeamInvites");
-                });
-
             modelBuilder.Entity("Alexandria.EF.Models.TeamMembership", b =>
                 {
                     b.Property<Guid>("Id")
@@ -149,28 +127,6 @@ namespace Alexandria.EF.Migrations
                     b.HasIndex("UserProfileId");
 
                     b.ToTable("TeamMemberships");
-                });
-
-            modelBuilder.Entity("Alexandria.EF.Models.TeamMembershipHistory", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("CreatedAt");
-
-                    b.Property<string>("NOtes");
-
-                    b.Property<Guid>("TeamId");
-
-                    b.Property<Guid>("UserProfileId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TeamId");
-
-                    b.HasIndex("UserProfileId");
-
-                    b.ToTable("TeamMembershipHistory");
                 });
 
             modelBuilder.Entity("Alexandria.EF.Models.TeamRole", b =>
@@ -197,8 +153,6 @@ namespace Alexandria.EF.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<bool>("ApplicationRequired");
-
                     b.Property<bool>("CanSignup");
 
                     b.Property<Guid>("CompetitionId");
@@ -221,26 +175,6 @@ namespace Alexandria.EF.Migrations
                     b.HasIndex("CompetitionId");
 
                     b.ToTable("Tournaments");
-                });
-
-            modelBuilder.Entity("Alexandria.EF.Models.TournamentApplicationHistory", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("CreatedAt");
-
-                    b.Property<string>("Notes");
-
-                    b.Property<int>("State");
-
-                    b.Property<Guid>("TeamId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TeamId");
-
-                    b.ToTable("TournamentApplicationHistory");
                 });
 
             modelBuilder.Entity("Alexandria.EF.Models.TournamentHistory", b =>
@@ -316,19 +250,6 @@ namespace Alexandria.EF.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
-            modelBuilder.Entity("Alexandria.EF.Models.TeamInvite", b =>
-                {
-                    b.HasOne("Alexandria.EF.Models.Team", "Team")
-                        .WithMany()
-                        .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Alexandria.EF.Models.UserProfile", "UserProfile")
-                        .WithMany()
-                        .HasForeignKey("UserProfileId")
-                        .OnDelete(DeleteBehavior.Restrict);
-                });
-
             modelBuilder.Entity("Alexandria.EF.Models.TeamMembership", b =>
                 {
                     b.HasOne("Alexandria.EF.Models.Team", "Team")
@@ -347,19 +268,6 @@ namespace Alexandria.EF.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
-            modelBuilder.Entity("Alexandria.EF.Models.TeamMembershipHistory", b =>
-                {
-                    b.HasOne("Alexandria.EF.Models.Team", "Team")
-                        .WithMany("TeamMembershipHistories")
-                        .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Alexandria.EF.Models.UserProfile", "UserProfile")
-                        .WithMany()
-                        .HasForeignKey("UserProfileId")
-                        .OnDelete(DeleteBehavior.Restrict);
-                });
-
             modelBuilder.Entity("Alexandria.EF.Models.TeamRole", b =>
                 {
                     b.HasOne("Alexandria.EF.Models.Competition", "Competition")
@@ -373,14 +281,6 @@ namespace Alexandria.EF.Migrations
                     b.HasOne("Alexandria.EF.Models.Competition", "Competition")
                         .WithMany("Tournaments")
                         .HasForeignKey("CompetitionId")
-                        .OnDelete(DeleteBehavior.Restrict);
-                });
-
-            modelBuilder.Entity("Alexandria.EF.Models.TournamentApplicationHistory", b =>
-                {
-                    b.HasOne("Alexandria.EF.Models.Team", "Team")
-                        .WithMany("TournamentApplicationHistories")
-                        .HasForeignKey("TeamId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
