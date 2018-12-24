@@ -4,6 +4,12 @@
         <name>Alexandria</name>
     </assembly>
     <members>
+        <member name="M:Alexandria.Controllers.Competition.CompetitionTeamsController.CreateTeam(Alexandria.DTO.Team.Create)">
+            <summary>
+            Create a Team for a Competition
+            </summary>
+            <param name="payload">Team Payload</param>
+        </member>
         <member name="M:Alexandria.Controllers.UserProfileController.CreateProfile(Alexandria.DTO.UserProfile.Create)">
             <summary>
             This will create a UserProfile after an Account has been established in Passport

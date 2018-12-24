@@ -1,26 +1,29 @@
-﻿using Alexandria.EF.Context;
+﻿using System.Threading.Tasks;
+using Alexandria.EF.Context;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Alexandria.Infrastructure.Filters
 {
-  public class SaveChangesFilter : IActionFilter
+  public class SaveChangesFilter : IAsyncActionFilter
   {
     private readonly AlexandriaContext context;
     public SaveChangesFilter(AlexandriaContext context)
     {
       this.context = context;
     }
-    public void OnActionExecuted(ActionExecutedContext context)
+
+    public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
+      var result = await next();
+      if (result.Exception != null)
+      {
+        return;
+      }
+
       if (this.context.ChangeTracker.HasChanges())
       {
-        this.context.SaveChanges();
+        await this.context.SaveChangesAsync();
       }
-    }
-
-    public void OnActionExecuting(ActionExecutingContext context)
-    {
-      
     }
   }
 }

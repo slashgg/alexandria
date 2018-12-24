@@ -16,18 +16,21 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Logging;
 using Svalbard;
 
 namespace Alexandria
 {
   public class Startup
   {
-    public Startup(IConfiguration configuration)
+    public Startup(IHostingEnvironment env, IConfiguration configuration)
     {
       Configuration = configuration;
+      Production = env.IsProduction();
     }
 
     public IConfiguration Configuration { get; }
+    public bool Production { get; set; }
 
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
@@ -40,10 +43,13 @@ namespace Alexandria
       })
       .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+      services.AddHttpContextAccessor();
+
       services.AddSvalbard();
       services.AddScoped<AlexandriaContext>();
       services.AddScoped<SaveChangesFilter>();
       services.AddScoped<IUserProfileService, UserProfileService>();
+      services.AddScoped<ITeamService, TeamService>();
 
       var connectionString = Configuration.GetConnectionString("Alexandria");
       services.AddDbContext<AlexandriaContext>(options =>
@@ -53,6 +59,15 @@ namespace Alexandria
           builder.MigrationsAssembly(typeof(AlexandriaContext).Assembly.FullName);
         });
       });
+      IdentityModelEventSource.ShowPII = true;
+      services.AddAuthentication("Bearer")
+              .AddIdentityServerAuthentication(options =>
+              {
+                options.Authority = "https://passport.slash.gg";
+                //options.Authority = Production ? "https//passport.slash.gg" : "http://localhost:5000";
+                options.RequireHttpsMetadata = Production;
+                options.ApiName = "Alexandria";
+              });
 
       services.AddSwaggerDocument();
     }
@@ -73,9 +88,9 @@ namespace Alexandria
       }
 
       app.UseHttpsRedirection();
+      app.UseAuthentication();
       app.UseMvc();
-
-
+      
     }
   }
 }

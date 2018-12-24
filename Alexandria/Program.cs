@@ -24,8 +24,7 @@ namespace Alexandria
               {
                 secrets.Add("ConnectionStrings");
               }
-
-              config.SetBasePath(Directory.GetCurrentDirectory());
+              config.SetBasePath(hosting.HostingEnvironment.ContentRootPath);
               config.AddJsonFile("appsettings.json");
               config.AddJsonFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: false);
               config.AddAWSSecrets(options =>

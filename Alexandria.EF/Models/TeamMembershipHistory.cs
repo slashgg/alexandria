@@ -7,7 +7,7 @@ namespace Alexandria.EF.Models
 {
   public class TeamMembershipHistory : BaseEntity
   {
-    public string NOtes { get; set; }
+    public string Notes { get; set; }
 
     /* Foreign Keys */
     public Guid UserProfileId { get; set; }

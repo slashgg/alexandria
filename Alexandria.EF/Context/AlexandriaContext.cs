@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Alexandria.EF.Converters;
 using Alexandria.EF.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,6 +26,9 @@ namespace Alexandria.EF.Context
 
       builder.Entity<UserProfile>().HasIndex(p => p.DisplayName).IsUnique();
       builder.Entity<UserProfile>().HasIndex(p => p.Email).IsUnique();
+
+      builder.Entity<TeamRole>().Property(b => b.Permissions)
+                                .HasConversion(AlexandriaValueConverter.SplitStringConverter);
 
       var foreignKeys = builder.Model.GetEntityTypes().SelectMany(t => t.GetForeignKeys());
 

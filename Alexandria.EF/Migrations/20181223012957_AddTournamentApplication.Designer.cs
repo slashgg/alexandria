@@ -4,14 +4,16 @@ using Alexandria.EF.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Alexandria.EF.Migrations
 {
     [DbContext(typeof(AlexandriaContext))]
-    partial class AlexandriaContextModelSnapshot : ModelSnapshot
+    [Migration("20181223012957_AddTournamentApplication")]
+    partial class AddTournamentApplication
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -77,25 +79,6 @@ namespace Alexandria.EF.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Games");
-                });
-
-            modelBuilder.Entity("Alexandria.EF.Models.Permission", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("ARN")
-                        .IsRequired();
-
-                    b.Property<DateTime>("CreatedAt");
-
-                    b.Property<Guid>("UserProfileId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserProfileId");
-
-                    b.ToTable("Permission");
                 });
 
             modelBuilder.Entity("Alexandria.EF.Models.Team", b =>
@@ -203,8 +186,6 @@ namespace Alexandria.EF.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired();
-
-                    b.Property<string>("Permissions");
 
                     b.HasKey("Id");
 
@@ -351,14 +332,6 @@ namespace Alexandria.EF.Migrations
                 {
                     b.HasOne("Alexandria.EF.Models.UserProfile", "UserProfile")
                         .WithMany("ExternalAccounts")
-                        .HasForeignKey("UserProfileId")
-                        .OnDelete(DeleteBehavior.Restrict);
-                });
-
-            modelBuilder.Entity("Alexandria.EF.Models.Permission", b =>
-                {
-                    b.HasOne("Alexandria.EF.Models.UserProfile", "UserProfile")
-                        .WithMany("Permissions")
                         .HasForeignKey("UserProfileId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });

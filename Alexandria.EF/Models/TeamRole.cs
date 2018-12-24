@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace Alexandria.EF.Models
@@ -9,6 +10,7 @@ namespace Alexandria.EF.Models
   {
     [Required]
     public string Name { get; set; }
+    public IList<string> Permissions { get; set; } = new List<string>();
 
     /* Foreign Key */
     public Guid CompetitionId { get; set; }

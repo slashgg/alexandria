@@ -24,5 +24,6 @@ namespace Alexandria.EF.Models
     [ForeignKey("CompetitionId")]
     public virtual Competition Competition { get; set; }
     public virtual ICollection<TournamentHistory> TournamentHistories { get; set; } = new List<TournamentHistory>();
+    public virtual ICollection<TournamentApplication> TournamentApplications { get; set; } = new List<TournamentApplication>();
   }
 }
