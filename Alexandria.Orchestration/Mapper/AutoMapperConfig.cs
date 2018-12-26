@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Alexandria.Orchestration.Mapper.UserProfile;
 using AutoMapper;
 
 namespace Alexandria.Orchestration.Mapper
@@ -11,6 +12,7 @@ namespace Alexandria.Orchestration.Mapper
     {
       AutoMapper.Mapper.Initialize(cfg =>
       {
+        cfg.AddProfile<UserProfileProfile>();
       });
     }
   }

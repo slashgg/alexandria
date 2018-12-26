@@ -17,5 +17,11 @@
             <param name="payload">The User Account Information</param>
             <returns></returns>
         </member>
+        <member name="M:Alexandria.Controllers.UserProfileController.GetUserProfile">
+            <summary>
+            Get the UserProfile of the logged in User
+            </summary>
+            <returns></returns>
+        </member>
     </members>
 </doc>

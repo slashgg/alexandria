@@ -1,10 +1,12 @@
 ﻿using Svalbard.Services;
+using System;
 using System.Threading.Tasks;
 
 namespace Alexandria.Interfaces.Services
 {
   public interface IUserProfileService
   {
-    Task<ServiceResult> CreateAccount(Alexandria.DTO.UserProfile.Create account);
+    Task<ServiceResult<DTO.UserProfile.Detail>> GetUserProfileDetail(Guid userId);
+    Task<ServiceResult> CreateAccount(DTO.UserProfile.Create account);
   }
 }

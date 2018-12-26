@@ -6,6 +6,8 @@ using Alexandria.EF.Context;
 using Alexandria.Infrastructure.Filters;
 using Alexandria.Interfaces.Services;
 using Alexandria.Shared.ErrorKey;
+using Alexandria.Shared.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Svalbard;
@@ -36,6 +38,32 @@ namespace Alexandria.Controllers
       if (result.Success)
       {
         return new OperationResult(201);
+      }
+
+      return new OperationResult(result.ErrorKey);
+    }
+
+    /// <summary>
+    /// Get the UserProfile of the logged in User
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    [Authorize]
+    [ProducesResponseType(typeof(DTO.UserProfile.Detail), 200)]
+    [ProducesResponseType(typeof(BaseError), 400)]
+    [ProducesResponseType(typeof(void), 404)]
+    public async Task<OperationResult> GetUserProfile()
+    {
+      var userId = HttpContext.GetUserId();
+      if (userId == null)
+      {
+        return new OperationResult(404);
+      }
+
+      var result = await this.userProfileService.GetUserProfileDetail(userId.Value);
+      if (result.Success)
+      {
+        return new OperationResult<DTO.UserProfile.Detail>(result.Data);
       }
 
       return new OperationResult(result.ErrorKey);
