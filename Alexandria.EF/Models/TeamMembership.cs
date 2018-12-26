@@ -23,5 +23,15 @@ namespace Alexandria.EF.Models
     public virtual UserProfile UserProfile { get; set; }
     [ForeignKey("TeamRoleId")]
     public virtual TeamRole TeamRole { get; set; }
+
+    public TeamMembership() { }
+
+    public TeamMembership(Guid teamId, Guid userId, Guid roleId)
+    {
+      this.TeamId = teamId;
+      this.UserProfileId = userId;
+      this.TeamRoleId = roleId;
+
+    }
   }
 }

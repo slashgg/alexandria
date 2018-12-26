@@ -9,7 +9,10 @@ namespace Alexandria.EF.Models
   {
     [MaxLength(100)]
     public string Name { get; set; }
-    
+    [MaxLength(500)]
+    public string Title { get; set; }
+    public string Description { get; set; }
+    public string TitleCardImageURL { get; set; }
 
     /* Foreign Keys */
     public Guid GameId { get; set; }

@@ -18,13 +18,14 @@ namespace Alexandria.EF.Context
     public DbSet<Team> Teams { get; set; }
     public DbSet<TeamMembership> TeamMemberships { get; set; }
     public DbSet<TeamInvite> TeamInvites { get; set; }
+    public DbSet<TeamRole> TeamRoles { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
 
       base.OnModelCreating(builder);
 
-      builder.Entity<UserProfile>().HasIndex(p => p.DisplayName).IsUnique();
+      builder.Entity<UserProfile>().HasIndex(p => p.UserName).IsUnique();
       builder.Entity<UserProfile>().HasIndex(p => p.Email).IsUnique();
 
       builder.Entity<TeamRole>().Property(b => b.Permissions)

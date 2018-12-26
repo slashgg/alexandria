@@ -17,5 +17,16 @@ namespace Alexandria.EF.Models
     /* Relations */
     [ForeignKey("UserProfileId")]
     public virtual UserProfile UserProfile { get; set; }
+
+    public Permission()
+    {
+
+    }
+
+    public Permission(Guid userProfileId, string ARN)
+    {
+      this.ARN = ARN;
+      this.UserProfileId = userProfileId;
+    }
   }
 }

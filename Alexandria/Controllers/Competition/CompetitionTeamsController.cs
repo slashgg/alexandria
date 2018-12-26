@@ -29,8 +29,12 @@ namespace Alexandria.Controllers.Competition
     [ProducesResponseType(typeof(BaseError), 400)]
     public async Task<OperationResult> CreateTeam([FromBody] DTO.Team.Create payload)
     {
-      var result = await this.teamService.CreateTeam(payload);
-      return Ok();
+      var result = await this.teamService.CreateTeam(this.CompetitionId, payload);
+      if (result.Success)
+      {
+        return Ok();
+      }
+      return new OperationResult(400, result.ErrorKey);
     }
   }
 }

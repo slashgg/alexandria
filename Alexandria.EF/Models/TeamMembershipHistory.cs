@@ -19,5 +19,13 @@ namespace Alexandria.EF.Models
     [ForeignKey("UserProfileId")]
     public virtual UserProfile UserProfile { get; set; }
 
+
+    public TeamMembershipHistory() { }
+
+    public TeamMembershipHistory(Guid userId, string notes)
+    {
+      this.UserProfileId = userId;
+      this.Notes = notes;
+    }
   }
 }

@@ -4,14 +4,16 @@ using Alexandria.EF.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Alexandria.EF.Migrations
 {
     [DbContext(typeof(AlexandriaContext))]
-    partial class AlexandriaContextModelSnapshot : ModelSnapshot
+    [Migration("20181224213948_MoveUniqueIndexFromDisplayNameToUserName")]
+    partial class MoveUniqueIndexFromDisplayNameToUserName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,17 +28,10 @@ namespace Alexandria.EF.Migrations
 
                     b.Property<DateTime>("CreatedAt");
 
-                    b.Property<string>("Description");
-
                     b.Property<Guid>("GameId");
 
                     b.Property<string>("Name")
                         .HasMaxLength(100);
-
-                    b.Property<string>("Title")
-                        .HasMaxLength(500);
-
-                    b.Property<string>("TitleCardImageURL");
 
                     b.HasKey("Id");
 
@@ -217,7 +212,7 @@ namespace Alexandria.EF.Migrations
 
                     b.HasIndex("CompetitionId");
 
-                    b.ToTable("TeamRoles");
+                    b.ToTable("TeamRole");
                 });
 
             modelBuilder.Entity("Alexandria.EF.Models.Tournament", b =>
@@ -243,8 +238,6 @@ namespace Alexandria.EF.Migrations
                     b.Property<DateTimeOffset?>("SignupOpenDate");
 
                     b.Property<DateTimeOffset?>("StartDate");
-
-                    b.Property<string>("TokenImageURL");
 
                     b.HasKey("Id");
 
@@ -386,12 +379,12 @@ namespace Alexandria.EF.Migrations
             modelBuilder.Entity("Alexandria.EF.Models.TeamInvite", b =>
                 {
                     b.HasOne("Alexandria.EF.Models.Team", "Team")
-                        .WithMany("TeamInvites")
+                        .WithMany()
                         .HasForeignKey("TeamId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Alexandria.EF.Models.UserProfile", "UserProfile")
-                        .WithMany("TeamInvites")
+                        .WithMany()
                         .HasForeignKey("UserProfileId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });

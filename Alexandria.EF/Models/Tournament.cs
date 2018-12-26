@@ -15,6 +15,7 @@ namespace Alexandria.EF.Models
     public bool CanSignup { get; set; } = false;
     public DateTimeOffset? SignupOpenDate { get; set; }
     public DateTimeOffset? SignupCloseDate { get; set; }
+    public string TokenImageURL { get; set; }
     
 
     /* Foreign Keys */

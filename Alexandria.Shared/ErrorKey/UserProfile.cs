@@ -6,6 +6,7 @@ namespace Alexandria.Shared.ErrorKey
 {
   public static class UserProfile
   {
-    public static string ProfileExists { get; } = "PROFILE.ALREADY_EXISTS";
+    public const string UserNotFound = "PROFILE.NOT_FOUND";
+    public const string ProfileExists = "PROFILE.ALREADY_EXISTS";
   }
 }

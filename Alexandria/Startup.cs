@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Alexandria.EF.Context;
 using Alexandria.Infrastructure.Filters;
+using Alexandria.Interfaces;
 using Alexandria.Interfaces.Services;
 using Alexandria.Orchestration.Mapper;
 using Alexandria.Orchestration.Services;
+using Alexandria.Orchestration.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -48,6 +50,8 @@ namespace Alexandria
       services.AddSvalbard();
       services.AddScoped<AlexandriaContext>();
       services.AddScoped<SaveChangesFilter>();
+      services.AddScoped<IUserUtils, UserUtils>();
+      services.AddScoped<IAuthorizationService, AuthorizationService>();
       services.AddScoped<IUserProfileService, UserProfileService>();
       services.AddScoped<ITeamService, TeamService>();
 
@@ -64,7 +68,6 @@ namespace Alexandria
               .AddIdentityServerAuthentication(options =>
               {
                 options.Authority = "https://passport.slash.gg";
-                //options.Authority = Production ? "https//passport.slash.gg" : "http://localhost:5000";
                 options.RequireHttpsMetadata = Production;
                 options.ApiName = "Alexandria";
               });
@@ -83,11 +86,11 @@ namespace Alexandria
       }
       else
       {
+        app.UseHttpsRedirection();
         // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
         app.UseHsts();
       }
 
-      app.UseHttpsRedirection();
       app.UseAuthentication();
       app.UseMvc();
       
