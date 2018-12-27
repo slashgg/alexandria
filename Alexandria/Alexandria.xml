@@ -13,8 +13,39 @@
         <member name="M:Alexandria.Controllers.TeamsController.DisbandTeam(System.Guid)">
             <summary>
             Disbands the specified team
+            Required Permissions: `team::{teamId}::disband`
             </summary>
-            <param name="teamId"></param>
+            <param name="teamId">Targeted TeanUd</param>
+            <returns></returns>
+        </member>
+        <member name="M:Alexandria.Controllers.Team.TeamInvitesController.GetTeamInvites">
+            <summary>
+            Get Invites for the given team
+            Permissions Required: `team::{teamId}::invite--send`
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Alexandria.Controllers.Team.TeamInvitesController.SendInvite(Alexandria.DTO.Team.InviteRequest)">
+            <summary>
+            Send Invite to a User via Email or UserName
+            </summary>
+            <param name="payload">The qualifying Email or UserName ({displayName}#{number})</param>
+            <returns></returns>
+        </member>
+        <member name="M:Alexandria.Controllers.Team.TeamInvitesController.ResendInvite(System.Guid)">
+            <summary>
+            Resends an existing invite
+            Required Permissions: `team::{teamId}::invite--send`
+            </summary>
+            <param name="inviteId">GUID of the Invite</param>
+            <returns></returns>
+        </member>
+        <member name="M:Alexandria.Controllers.Team.TeamInvitesController.RevokeInvite(System.Guid)">
+            <summary>
+            Revokes an Invite
+            Required permissions: `team::{teamId}::invite--revoke`
+            </summary>
+            <param name="inviteId">GUID of the invite</param>
             <returns></returns>
         </member>
         <member name="M:Alexandria.Controllers.UserProfileController.CreateProfile(Alexandria.DTO.UserProfile.Create)">
@@ -28,6 +59,28 @@
             <summary>
             Get the UserProfile of the logged in User
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Alexandria.Controllers.UserProfile.UserProfileInvitesController.GetInvites">
+            <summary>
+            Get the Invites for the logged in user
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Alexandria.Controllers.UserProfile.UserProfileInvitesController.DeclineInvite(System.Guid)">
+            <summary>
+            Decline the targeted invite
+            Reqyured Permissions: `invite::{inviteId}::handle`
+            </summary>
+            <param name="inviteId">GUID of the Invite</param>
+            <returns></returns>
+        </member>
+        <member name="M:Alexandria.Controllers.UserProfile.UserProfileInvitesController.AcceptInvite(System.Guid)">
+            <summary>
+            Accept the targeted invite
+            Reqyured Permissions: `invite::{inviteId}::handle`
+            </summary>
+            <param name="inviteId">GUID of the targeted invite</param>
             <returns></returns>
         </member>
     </members>

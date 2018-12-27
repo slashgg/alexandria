@@ -17,6 +17,6 @@ namespace Alexandria.DTO.UserProfile
     [DataMember(Name = "avatarURL")]
     public string AvatarURL { get; set; }
     [DataMember(Name ="memberships")]
-    public Dictionary<Guid, Membership> Memberships { get; set; }
+    public Dictionary<Guid, TeamMembership> Memberships { get; set; }
   }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Alexandria.Infrastructure;
 using Alexandria.Infrastructure.Filters;
 using Alexandria.Interfaces.Services;
 using Alexandria.Shared.ErrorKey;
@@ -11,9 +12,10 @@ namespace Alexandria.Controllers.Competition
 {
   [ApiExplorerSettings(GroupName = "Competition - Teams")]
   [Route("competitions/{competitionId}/teams")]
+  [ResourceSelectFilter("competitionId")]
   [ApiController]
   [Authorize]
-  public class CompetitionTeamsController : CompetitionBaseController
+  public class CompetitionTeamsController : ResourceBaseController
   {
     private readonly ITeamService teamService;
 
@@ -30,7 +32,7 @@ namespace Alexandria.Controllers.Competition
     [ProducesResponseType(typeof(BaseError), 400)]
     public async Task<OperationResult> CreateTeam([FromBody] DTO.Team.Create payload)
     {
-      var result = await this.teamService.CreateTeam(this.CompetitionId, payload);
+      var result = await this.teamService.CreateTeam(this.resourceId, payload);
       if (result.Success)
       {
         return Ok();

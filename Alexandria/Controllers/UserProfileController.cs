@@ -50,6 +50,7 @@ namespace Alexandria.Controllers
     [Authorize]
     [ProducesResponseType(typeof(DTO.UserProfile.Detail), 200)]
     [ProducesResponseType(typeof(BaseError), 400)]
+    [ProducesResponseType(typeof(void), 401)]
     [ProducesResponseType(typeof(void), 404)]
     public async Task<OperationResult> GetUserProfile()
     {

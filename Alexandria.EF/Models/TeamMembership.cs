@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using Alexandria.Shared.Utils;
 
 namespace Alexandria.EF.Models
 {
+  [ProtectedResource("team-membership")]
   public class TeamMembership : BaseEntity
   {
     /* Foreign Keys */

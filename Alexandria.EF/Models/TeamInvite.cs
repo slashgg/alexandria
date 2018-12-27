@@ -1,9 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using Alexandria.Shared.Enums;
+using Alexandria.Shared.Utils;
 
 namespace Alexandria.EF.Models
 {
+  [ProtectedResource("team-invite")]
   public class TeamInvite : BaseEntity
   {
     public string Email { get; set; }

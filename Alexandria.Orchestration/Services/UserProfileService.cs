@@ -1,8 +1,10 @@
 ﻿using Alexandria.EF.Context;
+using Alexandria.EF.Models;
 using Alexandria.Interfaces.Services;
 using Microsoft.EntityFrameworkCore;
 using Svalbard.Services;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -36,6 +38,17 @@ namespace Alexandria.Orchestration.Services
       return result;
     }
 
+    public async Task<ServiceResult<IList<DTO.UserProfile.TeamInvite>>> GetTeamInvites(Guid userId)
+    {
+      var result = new ServiceResult<IList<DTO.UserProfile.TeamInvite>>();
+
+      var invites = await this.context.TeamInvites.Include(i => i.Team).Include(i => i.UserProfile).Where(i => i.UserProfileId == userId).ToListAsync();
+      var inviteDTOs = invites.Select(AutoMapper.Mapper.Map<DTO.UserProfile.TeamInvite>).ToList();
+
+      result.Succeed(inviteDTOs);
+      return result;
+    }
+
     public async Task<ServiceResult> CreateAccount(DTO.UserProfile.Create account)
     {
       var result = new ServiceResult();
@@ -45,22 +58,28 @@ namespace Alexandria.Orchestration.Services
         return result;
       }
 
-      var userAccount = new EF.Models.UserProfile(account.Id, account.DisplayName, account.Email);
+      await this.DangerouslyCreateUserProfile(account);
+
+      result.Succeed();
+      return result;
+    }
+
+    private async Task<UserProfile> DangerouslyCreateUserProfile(DTO.UserProfile.Create userData)
+    {
+      var userAccount = new EF.Models.UserProfile(userData.Id, userData.DisplayName, userData.Email);
       await context.UserProfiles.AddAsync(userAccount);
 
-      var pendingInvites = await context.TeamInvites.Where(i => string.Equals(i.Email, account.Email, System.StringComparison.CurrentCultureIgnoreCase)).ToListAsync();
+      var pendingInvites = await context.TeamInvites.Where(i => string.Equals(i.Email, userData.Email, System.StringComparison.CurrentCultureIgnoreCase)).ToListAsync();
       if (pendingInvites.Any())
       {
         foreach (var invite in pendingInvites)
         {
-          invite.UserProfileId = account.Id;
+          invite.UserProfileId = userData.Id;
         }
 
         context.TeamInvites.UpdateRange(pendingInvites);
       }
-
-      result.Succeed();
-      return result;
+      return userAccount;
     }
   }
 }

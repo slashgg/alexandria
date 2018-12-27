@@ -9,6 +9,7 @@ namespace Alexandria.Orchestration.Mapper
       AutoMapper.Mapper.Initialize(cfg =>
       {
         cfg.AddProfile<UserProfileProfile>();
+        cfg.AddProfile<TeamProfile>();
       });
     }
   }

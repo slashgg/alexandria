@@ -18,6 +18,17 @@ namespace Alexandria.Controllers
       this.teamService = teamService;
     }
 
+    [HttpGet("{teamId}")]
+    public async Task<OperationResult> GetTeamDetail(Guid teamId)
+    {
+      var result = await this.teamService.GetTeamDetail(teamId);
+      if (result.Success)
+      {
+        return new OperationResult<DTO.Team.Detail>(result.Data);
+      }
+      return new OperationResult(result.ErrorKey);
+    }
+
     /// <summary>
     /// Disbands the specified team
     /// Required Permissions: `team::{teamId}::disband`
@@ -26,7 +37,7 @@ namespace Alexandria.Controllers
     /// <returns></returns>
     [HttpDelete("{teamId}")]
     [PermissionsRequired("team::{teamId}::disband")]
-    public async Task<OperationResult> DisbandTeam(Guid teamId)
+    public async Task<OperationResult> DisbandTeam([FromRoute]Guid teamId)
     {
       var result = await this.teamService.DisbandTeam(teamId);
       if (result.Success)

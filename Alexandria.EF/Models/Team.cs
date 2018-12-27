@@ -13,7 +13,7 @@ namespace Alexandria.EF.Models
     public string Name { get; set; }
     public string Abbreviation { get; set; }
     public string LogoURL { get; set; }
-    public TeamState TeamState { get; set; }
+    public TeamState TeamState { get; set; } = TeamState.Active;
 
     /* Foreign Keys */
     public Guid CompetitionId { get; set; }
@@ -29,17 +29,29 @@ namespace Alexandria.EF.Models
     public Team(string name)
     {
       this.Name = name;
+      this.Abbreviation = string.Join("", name.Where(char.IsUpper).ToArray());
     }
 
     public Team(Guid competitionId, string name)
     {
       this.CompetitionId = competitionId;
       this.Name = name;
+      this.Abbreviation = string.Join("", name.Where(char.IsUpper).ToArray());
     }
 
     public bool HasMember(Guid userId)
     {
       return this.TeamMemberships.Any(m => m.UserProfileId == userId);
+    }
+
+    public bool HasInvite(Guid userId)
+    {
+      return this.TeamInvites.Any(i => i.UserProfileId == userId);
+    }
+
+    public bool HasInvite(string email)
+    {
+      return this.TeamInvites.Any(i => i.Email == email);
     }
 
     public TeamMembership AddMember(Guid userId, Guid roleId, string notes = "")

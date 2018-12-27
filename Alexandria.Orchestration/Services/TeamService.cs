@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Net.Mail;
-using System.Text;
 using System.Threading.Tasks;
 using Alexandria.EF.Context;
 using Alexandria.EF.Models;
@@ -33,6 +31,43 @@ namespace Alexandria.Orchestration.Services
       this.authorizationService = authorizationService;
     }
 
+    public async Task<ServiceResult<DTO.Team.Detail>> GetTeamDetail(Guid teamId)
+    {
+      var result = new ServiceResult<DTO.Team.Detail>();
+      var team = await this.context.Teams
+                                   .Include(t => t.TeamMemberships)
+                                   .ThenInclude(m => m.TeamRole)
+                                   .Include(t => t.TeamMemberships)
+                                   .ThenInclude(m => m.UserProfile)
+                                   .FirstOrDefaultAsync(t => t.Id == teamId);
+
+      if (team == null)
+      {
+        result.ErrorKey = Shared.ErrorKey.Team.TeamNotFound;
+        return result;
+      }
+
+      result.Data = AutoMapper.Mapper.Map<DTO.Team.Detail>(team);
+      result.Succeed();
+
+      return result;
+    }
+
+    public async Task<ServiceResult<IList<DTO.Team.Invite>>> GetTeamInvites(Guid teamId)
+    {
+      var result = new ServiceResult<IList<DTO.Team.Invite>>();
+
+      var invites = await this.context.TeamInvites
+                                   .Include(i => i.UserProfile)
+                                   .Where(i => i.TeamId == teamId)
+                                   .ToListAsync();
+
+      var inviteDTOs = invites.Select(AutoMapper.Mapper.Map<DTO.Team.Invite>).ToList();
+      result.Succeed(inviteDTOs);
+
+      return result;
+    }
+
     public async Task<ServiceResult> CreateTeam(Guid competitionId, DTO.Team.Create teamData)
     {
       var id = this.httpContext.GetUserId();
@@ -43,7 +78,7 @@ namespace Alexandria.Orchestration.Services
 
       return await CreateTeam(competitionId, teamData, id.Value);
     }
-
+    
     public async Task<ServiceResult> CreateTeam(Guid competitionId, DTO.Team.Create teamData, Guid userId)
     {
       var result = new ServiceResult();
@@ -77,6 +112,53 @@ namespace Alexandria.Orchestration.Services
       return result;
     }
 
+    public async Task<ServiceResult> InviteMember(Guid teamId, string invitee)
+    {
+      var result = new ServiceResult();
+      var team = await this.context.Teams
+                             .Include(t => t.TeamInvites)
+                             .ThenInclude(t => t.UserProfile)
+                             .Include(t => t.TeamMemberships)
+                             .ThenInclude(t => t.UserProfile)
+                             .FirstOrDefaultAsync(t => t.Id == teamId);
+      // Check if Team Exists
+      if (team == null)
+      {
+        result.ErrorKey = Shared.ErrorKey.Team.TeamNotFound;
+        return result;
+      }
+
+      var invitedUser = await this.context.UserProfiles.FirstOrDefaultAsync(u => u.UserName == invitee || u.Email == invitee);
+
+      // Check if User is already a member
+      if (invitedUser != null && team.HasMember(invitedUser.Id))
+      {
+        result.ErrorKey = Shared.ErrorKey.TeamMembership.AlreadyMember;
+        return result;
+      }
+
+      // Check if there is already an invite for the user
+      if (team.HasInvite(invitee) || (invitedUser != null && team.HasInvite(invitedUser.Id)))
+      {
+        result.ErrorKey = Shared.ErrorKey.Invite.AlreadyInvited;
+        return result;
+      }
+
+      var invite = await this.DangerouslyCreateInvite(teamId, invitee);
+      if (invite == null)
+      {
+        result.ErrorKey = Shared.ErrorKey.Invite.InvalidRecipient;
+        return result;
+      }
+
+      team.TeamInvites.Add(invite);
+
+      this.context.Teams.Update(team);
+
+      result.Succeed();
+      return result;
+    }
+
     public async Task<ServiceResult> DisbandTeam(Guid teamId)
     {
       var result = new ServiceResult();
@@ -98,6 +180,43 @@ namespace Alexandria.Orchestration.Services
       return result;
     }
 
+    public async Task<ServiceResult> RemoveMember(Guid membershipId, string notes, bool forceRemove = false)
+    {
+      var result = new ServiceResult();
+
+      var membership = await this.context.TeamMemberships.Include(m => m.Team).ThenInclude(t => t.TeamMemberships).ThenInclude(m => m.TeamRole).FirstOrDefaultAsync(m => m.Id == membershipId);
+      if (membership == null)
+      {
+        result.ErrorKey = Shared.ErrorKey.TeamMembership.NotFound;
+        return result;
+      }
+      var team = membership.Team;
+
+      if (!forceRemove)
+      {
+        if (team.TeamMemberships.Count == 1)
+        {
+          result.ErrorKey = Shared.ErrorKey.TeamMembership.LastMember;
+          return result;
+        }
+
+        if (membership.TeamRole.RemoveProtection)
+        {
+          result.ErrorKey = Shared.ErrorKey.TeamMembership.Protected;
+          return result;
+        }
+      }
+
+      var userId = membership.UserProfileId;
+      await this.DangerouslyRemoveTeamMembership(team, userId, notes);
+
+      this.context.Teams.Update(team);
+
+      result.Succeed();
+      return result;
+    }
+
+
     private async Task<TeamInvite> DangerouslyCreateInvite(Guid teamId, string invitee)
     {
       var invite = new TeamInvite(teamId);
@@ -114,6 +233,8 @@ namespace Alexandria.Orchestration.Services
           }
 
           invite.UserProfileId = userId;
+          await this.authorizationService.AddPermission(userId, AuthorizationHelper.GenerateARN(typeof(TeamInvite), invite.Id.ToString(), Shared.Permissions.TeamInvite.All));
+
         }
         return invite;
       } else
@@ -131,6 +252,7 @@ namespace Alexandria.Orchestration.Services
 
         invite.UserProfileId = user.Id;
         invite.Email = user.Email;
+        await this.authorizationService.AddPermission(user.Id, AuthorizationHelper.GenerateARN(typeof(TeamInvite), invite.Id.ToString(), Shared.Permissions.TeamInvite.All));
 
         return invite;
       }
@@ -174,6 +296,9 @@ namespace Alexandria.Orchestration.Services
       if (membership != null)
       {
         var permissions = role.Permissions.Select(p => AuthorizationHelper.GenerateARN(typeof(Team), team.Id.ToString(), p)).ToList();
+        var membershipPermission = AuthorizationHelper.GenerateARN(typeof(TeamMembership), membership.Id.ToString(), Shared.Permissions.TeamMembership.All);
+
+        await this.authorizationService.AddPermission(userId, membershipPermission);
         await this.authorizationService.AddPermission(userId, permissions);
       }
 
@@ -200,6 +325,9 @@ namespace Alexandria.Orchestration.Services
       {
         await this.authorizationService.RemovePermission(userId, membership.TeamRole.Permissions);
       }
+
+      var membershipPermission = AuthorizationHelper.GenerateARN(typeof(TeamMembership), membership.Id.ToString(), Shared.Permissions.TeamMembership.All);
+      await this.authorizationService.RemovePermission(userId, membershipPermission);
 
       return membership;
     }

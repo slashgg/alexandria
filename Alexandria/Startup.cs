@@ -19,6 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
+using Newtonsoft.Json;
 using Svalbard;
 using static Alexandria.Infrastructure.Filters.PermissionsRequiredAttribute;
 
@@ -45,6 +46,19 @@ namespace Alexandria
         options.Filters.Add<SaveChangesFilter>();
       })
       .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+      //.AddJsonOptions(options =>
+      //{
+      //  options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+      //  options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+      //});
+
+      JsonConvert.DefaultSettings = () =>
+      {
+        return new JsonSerializerSettings
+        {
+          Converters = new List<JsonConverter> { new Newtonsoft.Json.Converters.StringEnumConverter() }
+        };
+      };
 
       services.AddHttpContextAccessor();
 

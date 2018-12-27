@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using Alexandria.Shared.Extensions;
 
 namespace Alexandria.Shared.Utils
 {
@@ -19,6 +20,14 @@ namespace Alexandria.Shared.Utils
       return $"{resourceAttribute.Name}::{resourceId}::{permission}";
     }
 
+    public static string GenerateARN(Type type, string resourceId, Enum permission)
+    {
+      var resourceAttribute = (ProtectedResourceAttribute)Attribute.GetCustomAttribute(type, typeof(ProtectedResourceAttribute));
+      var permissionValue = permission.GetStringValue();
+
+      return $"{resourceAttribute}::{resourceId}::{permissionValue}";
+    }
+
     public static string MasterPermission(string permission)
     {
       var permissionParts = permission.Split("::");
@@ -28,4 +37,5 @@ namespace Alexandria.Shared.Utils
       return masterPermission;
     }
   }
+
 }
