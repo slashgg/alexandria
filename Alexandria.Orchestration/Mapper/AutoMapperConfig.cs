@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Alexandria.Orchestration.Mapper.UserProfile;
-using AutoMapper;
+﻿using Alexandria.Orchestration.Mapper.UserProfile;
 
 namespace Alexandria.Orchestration.Mapper
 {

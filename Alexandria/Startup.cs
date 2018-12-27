@@ -20,6 +20,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using Svalbard;
+using static Alexandria.Infrastructure.Filters.PermissionsRequiredAttribute;
 
 namespace Alexandria
 {

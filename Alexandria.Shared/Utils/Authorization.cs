@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Text;
 
 namespace Alexandria.Shared.Utils
@@ -16,6 +17,15 @@ namespace Alexandria.Shared.Utils
       }
 
       return $"{resourceAttribute.Name}::{resourceId}::{permission}";
+    }
+
+    public static string MasterPermission(string permission)
+    {
+      var permissionParts = permission.Split("::");
+      permissionParts[permissionParts.Length - 1] = "*";
+      var masterPermission = string.Join("::", permissionParts);
+
+      return masterPermission;
     }
   }
 }

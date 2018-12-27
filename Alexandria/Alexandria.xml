@@ -10,6 +10,13 @@
             </summary>
             <param name="payload">Team Payload</param>
         </member>
+        <member name="M:Alexandria.Controllers.TeamsController.DisbandTeam(System.Guid)">
+            <summary>
+            Disbands the specified team
+            </summary>
+            <param name="teamId"></param>
+            <returns></returns>
+        </member>
         <member name="M:Alexandria.Controllers.UserProfileController.CreateProfile(Alexandria.DTO.UserProfile.Create)">
             <summary>
             This will create a UserProfile after an Account has been established in Passport

@@ -8,6 +8,7 @@ namespace Alexandria.Interfaces.Services
 {
   public interface ITeamService
   {
+    Task<ServiceResult> DisbandTeam(Guid teamId);
     Task<ServiceResult> CreateTeam(Guid competitionId, DTO.Team.Create teamData);
   }
 }

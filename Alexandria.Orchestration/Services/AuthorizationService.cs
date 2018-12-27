@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Alexandria.EF.Context;
 using Alexandria.EF.Models;
 using Alexandria.Interfaces.Services;
+using Alexandria.Shared.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace Alexandria.Orchestration.Services
@@ -44,7 +45,15 @@ namespace Alexandria.Orchestration.Services
     public async Task<bool> Can(Guid userId, string permission)
     {
       var user = await this.alexandriaContext.UserProfiles.Include(u => u.Permissions).FirstOrDefaultAsync(u => u.Id == userId);
-      return user.HasPermission(permission);
+      var can = user.HasPermission(permission);
+
+      if (!can)
+      {
+        var masterPermission = AuthorizationHelper.MasterPermission(permission);
+        can = user.HasPermission(masterPermission);
+      }
+
+      return can;
     }
 
     public async Task RemovePermission(Guid userId, string permission)

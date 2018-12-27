@@ -42,7 +42,6 @@ namespace Alexandria.Orchestration.Services
       }
 
       return await CreateTeam(competitionId, teamData, id.Value);
-
     }
 
     public async Task<ServiceResult> CreateTeam(Guid competitionId, DTO.Team.Create teamData, Guid userId)
@@ -78,7 +77,26 @@ namespace Alexandria.Orchestration.Services
       return result;
     }
 
-    
+    public async Task<ServiceResult> DisbandTeam(Guid teamId)
+    {
+      var result = new ServiceResult();
+
+      var team = await this.context.Teams.Include(t => t.TeamMemberships)
+                                         .ThenInclude(m => m.TeamRole)
+                                         .FirstOrDefaultAsync(t => t.Id == teamId);
+
+      if (team == null)
+      {
+        result.ErrorKey = Shared.ErrorKey.Team.TeamNotFound;
+        return result;
+      }
+
+      team = await this.DangerouslyDisbandTeam(team);
+      this.context.Teams.Update(team);
+
+      result.Succeed();
+      return result;
+    }
 
     private async Task<TeamInvite> DangerouslyCreateInvite(Guid teamId, string invitee)
     {
@@ -157,6 +175,30 @@ namespace Alexandria.Orchestration.Services
       {
         var permissions = role.Permissions.Select(p => AuthorizationHelper.GenerateARN(typeof(Team), team.Id.ToString(), p)).ToList();
         await this.authorizationService.AddPermission(userId, permissions);
+      }
+
+      return membership;
+    }
+
+    private async Task<Team> DangerouslyDisbandTeam(Team team)
+    {
+      team.TeamState = TeamState.Disbanded;
+      foreach (var member in team.TeamMemberships.ToList())
+      {
+        var membership = await this.DangerouslyRemoveTeamMembership(team, member.UserProfileId, "Disbanded");
+        this.context.TeamMemberships.Remove(membership);
+      }
+
+      return team;
+    }
+
+    private async Task<TeamMembership> DangerouslyRemoveTeamMembership(Team team, Guid userId, string notes)
+    {
+      var membership = team.TeamMemberships.FirstOrDefault(m => m.UserProfileId == userId);
+      team.RemoveMember(userId, notes);
+      if (membership.TeamRole.Permissions.Any())
+      {
+        await this.authorizationService.RemovePermission(userId, membership.TeamRole.Permissions);
       }
 
       return membership;

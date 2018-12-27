@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Alexandria.Infrastructure.Filters;
 using Alexandria.Interfaces.Services;
 using Alexandria.Shared.ErrorKey;
 using Microsoft.AspNetCore.Authorization;
@@ -34,6 +35,7 @@ namespace Alexandria.Controllers.Competition
       {
         return Ok();
       }
+
       return new OperationResult(400, result.ErrorKey);
     }
   }

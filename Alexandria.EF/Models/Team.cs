@@ -42,7 +42,6 @@ namespace Alexandria.EF.Models
       return this.TeamMemberships.Any(m => m.UserProfileId == userId);
     }
 
-
     public TeamMembership AddMember(Guid userId, Guid roleId, string notes = "")
     {
       if (this.HasMember(userId))
@@ -55,6 +54,18 @@ namespace Alexandria.EF.Models
       this.TeamMembershipHistories.Add(new TeamMembershipHistory(userId, notes));
 
       return membership;
+    }
+
+    public void RemoveMember(Guid userId, string notes = "")
+    {
+      var membership = this.TeamMemberships.FirstOrDefault(r => r.UserProfileId == userId);
+      if (membership == null)
+      {
+        return;
+      }
+
+      this.TeamMemberships.Remove(membership);
+      this.TeamMembershipHistories.Add(new TeamMembershipHistory(userId, notes));
     }
   }
 }

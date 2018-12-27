@@ -39,7 +39,6 @@ namespace Alexandria.Controllers
       {
         return new OperationResult(201);
       }
-
       return new OperationResult(result.ErrorKey);
     }
 
