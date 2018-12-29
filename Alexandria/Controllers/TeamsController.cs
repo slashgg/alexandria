@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Alexandria.Infrastructure.Filters;
 using Alexandria.Interfaces.Services;
+using Alexandria.Shared.ErrorKey;
 using Microsoft.AspNetCore.Mvc;
 using Svalbard;
 
@@ -19,6 +20,8 @@ namespace Alexandria.Controllers
     }
 
     [HttpGet("{teamId}")]
+    [ProducesResponseType(typeof(DTO.Team.Detail), 200)]
+    [ProducesResponseType(typeof(BaseError), 400)]
     public async Task<OperationResult> GetTeamDetail(Guid teamId)
     {
       var result = await this.teamService.GetTeamDetail(teamId);
@@ -37,12 +40,14 @@ namespace Alexandria.Controllers
     /// <returns></returns>
     [HttpDelete("{teamId}")]
     [PermissionsRequired("team::{teamId}::disband")]
+    [ProducesResponseType(typeof(void), 204)]
+    [ProducesResponseType(typeof(BaseError), 400)]
     public async Task<OperationResult> DisbandTeam([FromRoute]Guid teamId)
     {
       var result = await this.teamService.DisbandTeam(teamId);
       if (result.Success)
       {
-        return new OperationResult(200);
+        return new OperationResult(204);
       }
 
       return new OperationResult(result.ErrorKey);

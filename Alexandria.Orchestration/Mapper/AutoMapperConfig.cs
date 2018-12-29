@@ -1,4 +1,5 @@
-﻿using Alexandria.Orchestration.Mapper.UserProfile;
+﻿using Alexandria.Orchestration.Mapper.Competition;
+using Alexandria.Orchestration.Mapper.UserProfile;
 
 namespace Alexandria.Orchestration.Mapper
 {
@@ -10,6 +11,7 @@ namespace Alexandria.Orchestration.Mapper
       {
         cfg.AddProfile<UserProfileProfile>();
         cfg.AddProfile<TeamProfile>();
+        cfg.AddProfile<CompetitionProfile>();
       });
     }
   }

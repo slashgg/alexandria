@@ -13,5 +13,7 @@ namespace Alexandria.Interfaces.Services
     Task<ServiceResult<IList<DTO.Team.Invite>>> GetTeamInvites(Guid teamId);
     Task<ServiceResult> RemoveMember(Guid membershipId, string notes, bool forceRemove = false);
     Task<ServiceResult> InviteMember(Guid teamId, string invitee);
+    Task<ServiceResult> ResendInvite(Guid inviteId);
+    Task<ServiceResult> RevokeInvite(Guid inviteId);
   }
 }

@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
 using Alexandria.Shared.Enums;
+using NJsonSchema.Annotations;
 
 namespace Alexandria.DTO.UserProfile
 {
   [DataContract]
+  [JsonSchema("TeamTeamInvite")]
   public class TeamInvite
   {
     [DataMember(Name = "id")]

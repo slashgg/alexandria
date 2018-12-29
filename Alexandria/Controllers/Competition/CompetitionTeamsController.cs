@@ -6,6 +6,7 @@ using Alexandria.Interfaces.Services;
 using Alexandria.Shared.ErrorKey;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NJsonSchema.Annotations;
 using Svalbard;
 
 namespace Alexandria.Controllers.Competition
@@ -23,10 +24,12 @@ namespace Alexandria.Controllers.Competition
     {
       this.teamService = teamService;
     }
+
     /// <summary>
     /// Create a Team for a Competition
     /// </summary>
     /// <param name="payload">Team Payload</param>
+    /// <param name="competitionId">GUID of the competition</param>
     [HttpPost]
     [ProducesResponseType(typeof(void), 201)]
     [ProducesResponseType(typeof(BaseError), 400)]

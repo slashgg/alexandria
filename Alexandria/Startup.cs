@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Alexandria.EF.Context;
 using Alexandria.Infrastructure.Filters;
 using Alexandria.Interfaces;
@@ -11,17 +8,13 @@ using Alexandria.Orchestration.Services;
 using Alexandria.Orchestration.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using Newtonsoft.Json;
 using Svalbard;
-using static Alexandria.Infrastructure.Filters.PermissionsRequiredAttribute;
 
 namespace Alexandria
 {
@@ -69,6 +62,7 @@ namespace Alexandria
       services.AddScoped<IAuthorizationService, AuthorizationService>();
       services.AddScoped<IUserProfileService, UserProfileService>();
       services.AddScoped<ITeamService, TeamService>();
+      services.AddScoped<ICompetitionService, CompetitionService>();
 
       var connectionString = Configuration.GetConnectionString("Alexandria");
       services.AddDbContext<AlexandriaContext>(options =>
@@ -78,6 +72,7 @@ namespace Alexandria
           builder.MigrationsAssembly(typeof(AlexandriaContext).Assembly.FullName);
         });
       });
+
       IdentityModelEventSource.ShowPII = true;
       services.AddAuthentication("Bearer")
               .AddIdentityServerAuthentication(options =>
@@ -87,7 +82,11 @@ namespace Alexandria
                 options.ApiName = "Alexandria";
               });
 
-      services.AddSwaggerDocument();
+      services.AddSwaggerDocument(options =>
+      {
+        options.Title = "Alexandria";
+        options.Version = "1.0.0";
+      });
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -95,8 +94,7 @@ namespace Alexandria
     {
       if (env.IsDevelopment())
       {
-        app.UseSwagger();
-        app.UseSwaggerUi3();
+
         app.UseDeveloperExceptionPage();
       }
       else
@@ -106,9 +104,17 @@ namespace Alexandria
         app.UseHsts();
       }
 
+      app.UseCors(options =>
+      {
+        options.AllowAnyHeader();
+        options.AllowAnyMethod();
+        options.AllowAnyOrigin();
+      });
+
+      app.UseSwagger();
+      app.UseSwaggerUi3();
       app.UseAuthentication();
       app.UseMvc();
-      
     }
   }
 }

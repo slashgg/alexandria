@@ -13,6 +13,7 @@ namespace Alexandria.EF.Models
     public string Title { get; set; }
     public string Description { get; set; }
     public string TitleCardImageURL { get; set; }
+    public bool Active { get; set; } = false;
 
     /* Foreign Keys */
     public Guid GameId { get; set; }

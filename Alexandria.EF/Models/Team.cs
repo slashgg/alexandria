@@ -46,12 +46,12 @@ namespace Alexandria.EF.Models
 
     public bool HasInvite(Guid userId)
     {
-      return this.TeamInvites.Any(i => i.UserProfileId == userId);
+      return this.TeamInvites.Any(i => i.UserProfileId == userId && i.State == InviteState.Pending);
     }
 
     public bool HasInvite(string email)
     {
-      return this.TeamInvites.Any(i => i.Email == email);
+      return this.TeamInvites.Any(i => i.Email == email && i.State == InviteState.Pending);
     }
 
     public TeamMembership AddMember(Guid userId, Guid roleId, string notes = "")

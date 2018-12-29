@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using NJsonSchema.Annotations;
 
 namespace Alexandria.DTO.UserProfile
 {
   [DataContract]
+  [JsonSchema("TeamTeamMembership")]
   public class TeamMembership
   {
     [DataMember(Name = "id")]

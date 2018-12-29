@@ -4,10 +4,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using System.Text;
 using Alexandria.Shared.Enums;
+using NJsonSchema.Annotations;
 
 namespace Alexandria.DTO.Team
 {
   [DataContract]
+  [JsonSchema("TeamInviteRequest")]
   public class InviteRequest
   {
     [DataMember(Name = "invitee"), Required]
@@ -15,6 +17,7 @@ namespace Alexandria.DTO.Team
   }
 
   [DataContract]
+  [JsonSchema("userProfileTeamInvite")]
   public class Invite
   {
     [DataMember(Name = "id")]

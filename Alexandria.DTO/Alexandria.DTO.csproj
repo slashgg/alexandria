@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="NJsonSchema" Version="9.13.10" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Alexandria.Shared\Alexandria.Shared.csproj" />
   </ItemGroup>
 

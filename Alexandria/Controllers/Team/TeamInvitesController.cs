@@ -43,6 +43,7 @@ namespace Alexandria.Controllers.Team
     /// <summary>
     /// Send Invite to a User via Email or UserName
     /// </summary>
+    /// <param name="teamId">GUID of the Team</param>
     /// <param name="payload">The qualifying Email or UserName ({displayName}#{number})</param>
     /// <returns></returns>
     [HttpPost]
@@ -65,6 +66,7 @@ namespace Alexandria.Controllers.Team
     /// Resends an existing invite
     /// Required Permissions: `team::{teamId}::invite--send`
     /// </summary>
+    /// <param name="teamId">GUID of the Team</param>
     /// <param name="inviteId">GUID of the Invite</param>
     /// <returns></returns>
     [HttpPost("{inviteId}")]
@@ -74,13 +76,19 @@ namespace Alexandria.Controllers.Team
     [ProducesResponseType(typeof(void), 401)]
     public async Task<OperationResult> ResendInvite([FromRoute] Guid inviteId)
     {
-      return Ok();
+      var result = await this.teamService.ResendInvite(inviteId);
+      if (result.Success)
+      {
+        return new OperationResult(204);
+      }
+      return new OperationResult(result.ErrorKey);
     }
 
     /// <summary>
     /// Revokes an Invite
     /// Required permissions: `team::{teamId}::invite--revoke`
     /// </summary>
+    /// <param name="teamId">GUID of the Team</param>
     /// <param name="inviteId">GUID of the invite</param>
     /// <returns></returns>
     [HttpDelete("{inviteId}")]
@@ -90,7 +98,12 @@ namespace Alexandria.Controllers.Team
     [ProducesResponseType(typeof(void), 401)]
     public async Task<OperationResult> RevokeInvite([FromRoute] Guid inviteId)
     {
-      return Ok();
+      var result = await this.teamService.RevokeInvite(inviteId);
+      if (result.Success)
+      {
+        return new OperationResult(204);
+      }
+      return new OperationResult(result.ErrorKey);
     }
   }
 }

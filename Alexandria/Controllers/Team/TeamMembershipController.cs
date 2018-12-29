@@ -19,7 +19,13 @@ namespace Alexandria.Controllers.Team
     {
       this.teamService = teamService;
     }
-    
+
+    /// <summary>
+    /// Remove a Member from a Team
+    /// </summary>
+    /// <param name="teamId">GUID of the Team</param>
+    /// <param name="membershipId">GUID of the Membership</param>
+    /// <returns></returns>
     [HttpDelete("{membershipId}")]
     [PermissionsRequired("team::{teamId}::member--remove")]
     public async Task<OperationResult> RemoveMember([FromRoute]Guid membershipId)

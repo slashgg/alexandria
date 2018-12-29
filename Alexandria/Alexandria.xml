@@ -4,11 +4,33 @@
         <name>Alexandria</name>
     </assembly>
     <members>
+        <member name="M:Alexandria.Controllers.CompetitionsController.GetrActiveCompetitions">
+            <summary>
+            Get all active Competitions
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Alexandria.Controllers.CompetitionsController.GetCompetitionDetail(System.Guid)">
+            <summary>
+            Get Competition by Id
+            </summary>
+            <param name="competitionId">GUID of the competition</param>
+            <returns></returns>
+        </member>
+        <member name="M:Alexandria.Controllers.CompetitionsController.GetCompetitionDetailByName(System.String)">
+            <summary>
+            Get competition by name
+            This will automatically add the leading slash ('/')
+            </summary>
+            <param name="competitionName">Name without the leading slash (ex: `heroes-open` will become `/heroes-open`)</param>
+            <returns></returns>
+        </member>
         <member name="M:Alexandria.Controllers.Competition.CompetitionTeamsController.CreateTeam(Alexandria.DTO.Team.Create)">
             <summary>
             Create a Team for a Competition
             </summary>
             <param name="payload">Team Payload</param>
+            <param name="competitionId">GUID of the competition</param>
         </member>
         <member name="M:Alexandria.Controllers.TeamsController.DisbandTeam(System.Guid)">
             <summary>
@@ -29,6 +51,7 @@
             <summary>
             Send Invite to a User via Email or UserName
             </summary>
+            <param name="teamId">GUID of the Team</param>
             <param name="payload">The qualifying Email or UserName ({displayName}#{number})</param>
             <returns></returns>
         </member>
@@ -37,6 +60,7 @@
             Resends an existing invite
             Required Permissions: `team::{teamId}::invite--send`
             </summary>
+            <param name="teamId">GUID of the Team</param>
             <param name="inviteId">GUID of the Invite</param>
             <returns></returns>
         </member>
@@ -45,7 +69,16 @@
             Revokes an Invite
             Required permissions: `team::{teamId}::invite--revoke`
             </summary>
+            <param name="teamId">GUID of the Team</param>
             <param name="inviteId">GUID of the invite</param>
+            <returns></returns>
+        </member>
+        <member name="M:Alexandria.Controllers.Team.TeamMembershipController.RemoveMember(System.Guid)">
+            <summary>
+            Remove a Member from a Team
+            </summary>
+            <param name="teamId">GUID of the Team</param>
+            <param name="membershipId">GUID of the Membership</param>
             <returns></returns>
         </member>
         <member name="M:Alexandria.Controllers.UserProfileController.CreateProfile(Alexandria.DTO.UserProfile.Create)">

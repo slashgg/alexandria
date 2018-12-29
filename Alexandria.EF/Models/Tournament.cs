@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Alexandria.Shared.Enums;
 
 namespace Alexandria.EF.Models
 {
@@ -16,7 +17,7 @@ namespace Alexandria.EF.Models
     public DateTimeOffset? SignupOpenDate { get; set; }
     public DateTimeOffset? SignupCloseDate { get; set; }
     public string TokenImageURL { get; set; }
-    
+    public TournamentState State { get; set; } = TournamentState.Pending;
 
     /* Foreign Keys */
     public Guid CompetitionId { get; set; }

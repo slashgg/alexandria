@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Alexandria.DTO.Team;
+using NJsonSchema.Annotations;
 
 namespace Alexandria.DTO.UserProfile
 {
   [DataContract]
+  [JsonSchema("UserProfileDetail")]
   public class Detail
   {
     [DataMember(Name = "email")]

@@ -39,6 +39,7 @@ namespace Alexandria.Orchestration.Services
                                    .ThenInclude(m => m.TeamRole)
                                    .Include(t => t.TeamMemberships)
                                    .ThenInclude(m => m.UserProfile)
+                                   .Include(t => t.Competition)
                                    .FirstOrDefaultAsync(t => t.Id == teamId);
 
       if (team == null)
@@ -154,6 +155,37 @@ namespace Alexandria.Orchestration.Services
       team.TeamInvites.Add(invite);
 
       this.context.Teams.Update(team);
+
+      result.Succeed();
+      return result;
+    }
+
+    public async Task<ServiceResult> ResendInvite(Guid inviteId)
+    {
+      var result = new ServiceResult();
+      var invite = await this.context.TeamInvites.FirstOrDefaultAsync(i => i.Id == inviteId);
+      if (invite == null)
+      {
+        result.ErrorKey = Shared.ErrorKey.Invite.NotFound;
+        return result;
+      }
+
+      // Do Send Stuff
+      result.Succeed();
+      return result;
+    }
+
+    public async Task<ServiceResult> RevokeInvite(Guid inviteId)
+    {
+      var result = new ServiceResult();
+      var invite = await this.context.TeamInvites.FirstOrDefaultAsync(i => i.Id == inviteId);
+      if (invite == null)
+      {
+        result.ErrorKey = Shared.ErrorKey.Invite.NotFound;
+        return result;
+      }
+
+      invite.State = InviteState.Withdrawn;
 
       result.Succeed();
       return result;
