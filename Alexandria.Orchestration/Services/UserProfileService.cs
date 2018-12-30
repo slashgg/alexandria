@@ -49,6 +49,15 @@ namespace Alexandria.Orchestration.Services
       return result;
     }
 
+    public async Task<ServiceResult<IList<string>>> GetPermissions(Guid userId)
+    {
+      var result = new ServiceResult<IList<string>>();
+      var permissions = await this.context.Permissions.Where(p => p.UserProfileId == userId).Select(p => p.ARN).ToListAsync();
+
+      result.Succeed(permissions);
+      return result;
+    }
+
     public async Task<ServiceResult> CreateAccount(DTO.UserProfile.Create account)
     {
       var result = new ServiceResult();

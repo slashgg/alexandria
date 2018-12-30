@@ -52,12 +52,12 @@ namespace Alexandria.Controllers
     [ProducesResponseType(typeof(BaseError), 400)]
     [ProducesResponseType(typeof(void), 401)]
     [ProducesResponseType(typeof(void), 404)]
-    public async Task<OperationResult> GetUserProfile()
+    public async Task<OperationResult<DTO.UserProfile.Detail>> GetUserProfile()
     {
       var userId = HttpContext.GetUserId();
       if (userId == null)
       {
-        return new OperationResult(404);
+        return new OperationResult<DTO.UserProfile.Detail>(404);
       }
 
       var result = await this.userProfileService.GetUserProfileDetail(userId.Value);
@@ -66,7 +66,27 @@ namespace Alexandria.Controllers
         return new OperationResult<DTO.UserProfile.Detail>(result.Data);
       }
 
-      return new OperationResult(result.ErrorKey);
+      return new OperationResult<DTO.UserProfile.Detail>(result.ErrorKey);
+    }
+
+    /// <summary>
+    /// Get the Permissions for the logged in User
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("permissions")]
+    [Authorize]
+    [ProducesResponseType(typeof(IList<string>), 200)]
+    [ProducesResponseType(typeof(void), 401)]
+    public async Task<OperationResult<IList<string>>> GetPermissions()
+    {
+      var userId = HttpContext.GetUserId();
+      if (userId == null)
+      {
+        return new OperationResult<IList<string>>(404);
+      }
+
+      var result = await this.userProfileService.GetPermissions(userId.Value);
+      return new OperationResult<IList<string>>(result.Data);
     }
   }
 }

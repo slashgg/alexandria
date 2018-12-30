@@ -10,5 +10,6 @@ namespace Alexandria.Interfaces.Services
     Task<ServiceResult<DTO.UserProfile.Detail>> GetUserProfileDetail(Guid userId);
     Task<ServiceResult> CreateAccount(DTO.UserProfile.Create account);
     Task<ServiceResult<IList<DTO.UserProfile.TeamInvite>>> GetTeamInvites(Guid userId);
+    Task<ServiceResult<IList<string>>> GetPermissions(Guid userId);
   }
 }

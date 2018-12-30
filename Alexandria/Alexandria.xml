@@ -107,6 +107,12 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:Alexandria.Controllers.UserProfileController.GetPermissions">
+            <summary>
+            Get the Permissions for the logged in User
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:Alexandria.Controllers.UserProfile.UserProfileInvitesController.GetInvites">
             <summary>
             Get the Invites for the logged in user

@@ -61,5 +61,21 @@ namespace Alexandria.Orchestration.Services
       result.Succeed(applicationDTO);
       return result;
     }
+
+    public async Task<ServiceResult<DTO.Competition.TournamentApplication>> GetTournamentApplication(string tournamentSlug)
+    {
+      var result = new ServiceResult<DTO.Competition.TournamentApplication>();
+      var application = await this.alexandriaContext.TournamentApplications.Include(ta => ta.Tournament).FirstOrDefaultAsync(ta => ta.Tournament.Slug == tournamentSlug);
+      if (application == null)
+      {
+        result.ErrorKey = Shared.ErrorKey.Tournament.NoApplicationFound;
+        return result;
+      }
+
+      var applicationDTO = AutoMapper.Mapper.Map<DTO.Competition.TournamentApplication>(application);
+
+      result.Succeed(applicationDTO);
+      return result;
+    }
   }
 }

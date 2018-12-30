@@ -12,6 +12,8 @@ namespace Alexandria.DTO.Team
   {
     [DataMember(Name = "id")]
     public Guid Id { get; set; }
+    [DataMember(Name = "userId")]
+    public Guid UserId { get; set; }
     [DataMember(Name = "displayName")]
     public string DisplayName { get; set; }
     [DataMember(Name = "userName")]

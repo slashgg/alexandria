@@ -16,6 +16,7 @@ RUN dotnet restore Alexandria/Alexandria.csproj
 COPY . .
 WORKDIR /src/Alexandria
 RUN dotnet build Alexandria.csproj -c Release -o /app
+COPY ["Alexandria/Alexandria.xml", "./Alexandria"]
 
 FROM build AS publish
 RUN dotnet publish Alexandria.csproj -c Release -o /app
