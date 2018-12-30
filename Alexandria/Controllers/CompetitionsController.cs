@@ -62,7 +62,7 @@ namespace Alexandria.Controllers
     /// </summary>
     /// <param name="competitionSlug">Slug of the competiiton</param>
     /// <returns></returns>
-    [HttpGet]
+    [HttpGet("by-slug/{competitionSlug}")]
     [ProducesResponseType(typeof(DTO.Competition.Detail), 204)]
     [ProducesResponseType(typeof(BaseError), 400)]
     public async Task<OperationResult<DTO.Competition.Detail>> GetCompetitionDetailBySlug([FromRoute] string competitionSlug)
