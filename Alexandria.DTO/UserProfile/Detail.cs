@@ -10,6 +10,8 @@ namespace Alexandria.DTO.UserProfile
   [JsonSchema("UserProfileDetail")]
   public class Detail
   {
+    [DataMember(Name = "id")]
+    public string Id { get; set; }
     [DataMember(Name = "email")]
     public string Email { get; set; }
     [DataMember(Name ="displayName")]

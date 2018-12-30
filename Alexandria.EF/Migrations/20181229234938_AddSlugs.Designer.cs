@@ -4,14 +4,16 @@ using Alexandria.EF.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Alexandria.EF.Migrations
 {
     [DbContext(typeof(AlexandriaContext))]
-    partial class AlexandriaContextModelSnapshot : ModelSnapshot
+    [Migration("20181229234938_AddSlugs")]
+    partial class AddSlugs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,8 +53,6 @@ namespace Alexandria.EF.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("GameId");
-
-                    b.HasIndex("Slug");
 
                     b.ToTable("Competitions");
                 });
@@ -139,8 +139,6 @@ namespace Alexandria.EF.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CompetitionId");
-
-                    b.HasIndex("Slug");
 
                     b.ToTable("Teams");
                 });
@@ -272,8 +270,6 @@ namespace Alexandria.EF.Migrations
 
                     b.HasIndex("CompetitionId");
 
-                    b.HasIndex("Slug");
-
                     b.ToTable("Tournaments");
                 });
 
@@ -296,7 +292,7 @@ namespace Alexandria.EF.Migrations
 
                     b.HasIndex("TournamentId");
 
-                    b.ToTable("TournamentApplications");
+                    b.ToTable("TournamentApplication");
                 });
 
             modelBuilder.Entity("Alexandria.EF.Models.TournamentApplicationHistory", b =>

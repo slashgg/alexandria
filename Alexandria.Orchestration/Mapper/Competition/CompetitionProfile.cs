@@ -7,10 +7,18 @@ namespace Alexandria.Orchestration.Mapper.Competition
     public CompetitionProfile()
     {
       CreateMap<EF.Models.Competition, DTO.Competition.Detail>()
-        .ForMember(dest => dest.FormattedName, opt => opt.MapFrom(src => src.Name.Remove(0, 1)))
         .ForMember(dest => dest.Game, opt => opt.MapFrom(src => src.Game));
 
       CreateMap<EF.Models.Game, DTO.Competition.Detail.GameData>();
+      CreateMap<EF.Models.Tournament, DTO.Competition.Tournament>();
+
+      CreateMap<EF.Models.Tournament, DTO.Competition.TournamentApplication>()
+        .ForMember(dest => dest.Questions, opt => opt.MapFrom(src => src.TournamentApplicationQuestions))
+        .ForMember(dest => dest.Tournament, opt => opt.MapFrom(src => src));
+
+      CreateMap<EF.Models.Tournament, DTO.Competition.TournamentApplication.TournamentData>();
+      CreateMap<EF.Models.TournamentApplicationQuestion, DTO.Competition.TournamentApplicationQuestion>()
+        .ForMember(dest => dest.Question, opt => opt.MapFrom(src => src.QuestionKey));
     }
   }
 }

@@ -19,7 +19,14 @@ namespace Alexandria.Infrastructure.Filters
       if (context.Controller is ResourceBaseController && ((ResourceBaseController)context.Controller).ControllerContext.RouteData.Values.TryGetValue(this.resourceParam, out object value))
       {
         var controller = (ResourceBaseController)context.Controller;
-        controller.resourceId = Guid.Parse((string)value);
+        try {
+          var guid = Guid.Parse((string)value);
+          controller.resourceId = guid;
+        } catch
+        {
+          var name = (string)value;
+          controller.Slug = name;
+        }
       }
     }
   }

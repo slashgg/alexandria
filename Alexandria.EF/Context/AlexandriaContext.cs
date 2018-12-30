@@ -19,6 +19,9 @@ namespace Alexandria.EF.Context
     public DbSet<TeamMembership> TeamMemberships { get; set; }
     public DbSet<TeamInvite> TeamInvites { get; set; }
     public DbSet<TeamRole> TeamRoles { get; set; }
+    public DbSet<TournamentApplication> TournamentApplications { get; set; }
+    public DbSet<TournamentApplicationQuestion> TournamentApplicationQuestions { get; set; }
+    public DbSet<TournamentApplicationQuestionAnswer> TournamentApplicationQuestionAnswers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -30,6 +33,16 @@ namespace Alexandria.EF.Context
 
       builder.Entity<TeamRole>().Property(b => b.Permissions)
                                 .HasConversion(AlexandriaValueConverter.SplitStringConverter);
+
+      builder.Entity<TournamentApplicationQuestion>().Property(b => b.SelectOptions)
+                                                     .HasConversion(AlexandriaValueConverter.SplitStringConverter);
+
+      builder.Entity<Competition>().Property(b => b.MinTeamSize)
+                                   .HasDefaultValue(1);
+
+      builder.Entity<Competition>().HasIndex(b => b.Slug);
+      builder.Entity<Team>().HasIndex(b => b.Slug);
+      builder.Entity<Tournament>().HasIndex(b => b.Slug);
 
       var foreignKeys = builder.Model.GetEntityTypes().SelectMany(t => t.GetForeignKeys());
 

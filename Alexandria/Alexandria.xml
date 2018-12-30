@@ -17,12 +17,11 @@
             <param name="competitionId">GUID of the competition</param>
             <returns></returns>
         </member>
-        <member name="M:Alexandria.Controllers.CompetitionsController.GetCompetitionDetailByName(System.String)">
+        <member name="M:Alexandria.Controllers.CompetitionsController.GetCompetitionDetailBySlug(System.String)">
             <summary>
-            Get competition by name
-            This will automatically add the leading slash ('/')
+            Get competition by slug
             </summary>
-            <param name="competitionName">Name without the leading slash (ex: `heroes-open` will become `/heroes-open`)</param>
+            <param name="competitionSlug">Slug of the competiiton</param>
             <returns></returns>
         </member>
         <member name="M:Alexandria.Controllers.Competition.CompetitionTeamsController.CreateTeam(Alexandria.DTO.Team.Create)">
@@ -31,6 +30,20 @@
             </summary>
             <param name="payload">Team Payload</param>
             <param name="competitionId">GUID of the competition</param>
+        </member>
+        <member name="M:Alexandria.Controllers.Competition.CompetitionTournamentsController.GetTournamentsForCompetition">
+            <summary>
+            Get the tournaments for this competition
+            </summary>
+            <param name="competitionId">GUID or slug of the competition</param>
+            <returns></returns>
+        </member>
+        <member name="M:Alexandria.Controllers.Competition.CompetitionTournamentsController.GetOpenApplications">
+            <summary>
+            Get the currently tournaments open for application for this competition
+            </summary>
+            <param name="competitionId">GUID or slug of the competition</param>
+            <returns></returns>
         </member>
         <member name="M:Alexandria.Controllers.TeamsController.DisbandTeam(System.Guid)">
             <summary>

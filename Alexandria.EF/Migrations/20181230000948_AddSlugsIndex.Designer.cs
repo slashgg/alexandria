@@ -4,14 +4,16 @@ using Alexandria.EF.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Alexandria.EF.Migrations
 {
     [DbContext(typeof(AlexandriaContext))]
-    partial class AlexandriaContextModelSnapshot : ModelSnapshot
+    [Migration("20181230000948_AddSlugsIndex")]
+    partial class AddSlugsIndex
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -296,7 +298,7 @@ namespace Alexandria.EF.Migrations
 
                     b.HasIndex("TournamentId");
 
-                    b.ToTable("TournamentApplications");
+                    b.ToTable("TournamentApplication");
                 });
 
             modelBuilder.Entity("Alexandria.EF.Models.TournamentApplicationHistory", b =>

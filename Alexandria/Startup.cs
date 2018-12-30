@@ -62,6 +62,7 @@ namespace Alexandria
       services.AddScoped<IAuthorizationService, AuthorizationService>();
       services.AddScoped<IUserProfileService, UserProfileService>();
       services.AddScoped<ITeamService, TeamService>();
+      services.AddScoped<ITournamentService, TournamentService>();
       services.AddScoped<ICompetitionService, CompetitionService>();
 
       var connectionString = Configuration.GetConnectionString("Alexandria");

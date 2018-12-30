@@ -30,12 +30,11 @@ namespace Alexandria.Orchestration.Services
       return result;
     }
 
-    public async Task<ServiceResult<DTO.Competition.Detail>> GetCompetitionByName(string name)
+    public async Task<ServiceResult<DTO.Competition.Detail>> GetCompetitionBySlug(string slug)
     {
       var result = new ServiceResult<DTO.Competition.Detail>();
-      name = $"/{name}";
 
-      var competition = await this.alexandriaContext.Competitions.Include(c => c.Game).FirstOrDefaultAsync(c => c.Name == name);
+      var competition = await this.alexandriaContext.Competitions.Include(c => c.Game).FirstOrDefaultAsync(c => c.Slug == slug);
 
       result.Data = AutoMapper.Mapper.Map<DTO.Competition.Detail>(competition);
       result.Succeed();
@@ -61,6 +60,57 @@ namespace Alexandria.Orchestration.Services
       var competitionDTOs = competitions.Select(AutoMapper.Mapper.Map<DTO.Competition.Detail>).ToList();
 
       result.Succeed(competitionDTOs);
+      return result;
+    }
+
+
+    public async Task<ServiceResult<IList<DTO.Competition.Tournament>>> GetTournaments(Guid competitionId)
+    {
+      var result = new ServiceResult<IList<DTO.Competition.Tournament>>();
+
+      var tournaments = await alexandriaContext.Tournaments.Where(t => t.CompetitionId == competitionId).ToListAsync();
+      var tournamentDTOs = tournaments.Select(AutoMapper.Mapper.Map<DTO.Competition.Tournament>).ToList();
+
+      result.Succeed(tournamentDTOs);
+      return result;
+    }
+
+    public async Task<ServiceResult<IList<DTO.Competition.Tournament>>> GetTournaments(string competitionSlug)
+    {
+      var result = new ServiceResult<IList<DTO.Competition.Tournament>>();
+
+      var tournaments = await alexandriaContext.Tournaments.Include(t => t.Competition).Where(t => t.Competition.Slug == competitionSlug).ToListAsync();
+      var tournamentDTOs = tournaments.Select(AutoMapper.Mapper.Map<DTO.Competition.Tournament>).ToList();
+
+      result.Succeed(tournamentDTOs);
+      return result;
+    }
+
+    public async Task<ServiceResult<DTO.Competition.Tournament>> GetTournament(Guid tournamentId)
+    {
+      var result = new ServiceResult<DTO.Competition.Tournament>();
+      var tournament = await alexandriaContext.Tournaments.FirstOrDefaultAsync(t => t.Id == tournamentId);
+
+      if (tournament == null)
+      {
+        result.ErrorKey = Shared.ErrorKey.Tournament.NotFound;
+      }
+
+      result.Data = AutoMapper.Mapper.Map<DTO.Competition.Tournament>(tournament);
+      return result;
+    }
+
+    public async Task<ServiceResult<DTO.Competition.Tournament>> GetTournament(string slug)
+    {
+      var result = new ServiceResult<DTO.Competition.Tournament>();
+      var tournament = await alexandriaContext.Tournaments.FirstOrDefaultAsync(t => t.Slug == slug);
+
+      if (tournament == null)
+      {
+        result.ErrorKey = Shared.ErrorKey.Tournament.NotFound;
+      }
+
+      result.Data = AutoMapper.Mapper.Map<DTO.Competition.Tournament>(tournament);
       return result;
     }
   }

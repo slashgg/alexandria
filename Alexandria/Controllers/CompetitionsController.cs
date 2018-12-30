@@ -58,17 +58,16 @@ namespace Alexandria.Controllers
     }
 
     /// <summary>
-    /// Get competition by name
-    /// This will automatically add the leading slash ('/')
+    /// Get competition by slug
     /// </summary>
-    /// <param name="competitionName">Name without the leading slash (ex: `heroes-open` will become `/heroes-open`)</param>
+    /// <param name="competitionSlug">Slug of the competiiton</param>
     /// <returns></returns>
-    [HttpGet("by-name/{competitionName}")]
+    [HttpGet]
     [ProducesResponseType(typeof(DTO.Competition.Detail), 204)]
     [ProducesResponseType(typeof(BaseError), 400)]
-    public async Task<OperationResult<DTO.Competition.Detail>> GetCompetitionDetailByName([FromRoute] string competitionName)
+    public async Task<OperationResult<DTO.Competition.Detail>> GetCompetitionDetailBySlug([FromRoute] string competitionSlug)
     {
-      var result = await this.competitionService.GetCompetitionByName(competitionName);
+      var result = await this.competitionService.GetCompetitionBySlug(competitionSlug);
       if (result.Success)
       {
         return new OperationResult<DTO.Competition.Detail>(result.Data);

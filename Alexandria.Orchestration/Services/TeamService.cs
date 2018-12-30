@@ -292,7 +292,7 @@ namespace Alexandria.Orchestration.Services
 
     private async Task<Team> DangerouslyCreateTeam(Guid competitionId, DTO.Team.Create teamData, Guid ownerId)
     {
-      var team = new Team(competitionId, teamData.Name);
+      var team = new Team(competitionId, teamData.Name, teamData.Abbreviation);
       if (teamData.Invites.Any())
       {
         foreach (var invitee in teamData.Invites)
