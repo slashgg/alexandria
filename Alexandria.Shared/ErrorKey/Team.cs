@@ -5,5 +5,6 @@
     public const string TeamNotFound = "TEAM.TEAM_NOT_FOUND";
     public const string AlreadyInTeam = "TEAM.ALREADY_IN_TEAM";
     public const string NameTaken = "TEAM.NAME_TAKEN";
+    public const string Disbanded = "TEAM.DISBANDED";
   }
 }

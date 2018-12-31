@@ -12,5 +12,10 @@ namespace Alexandria.Interfaces.Services
     Task<ServiceResult<IList<DTO.Competition.TournamentApplication>>> GetOpenTournamentApplications(Guid competitionId);
     Task<ServiceResult<DTO.Competition.TournamentApplication>> GetTournamentApplication(string tournamentSlug);
     Task<ServiceResult<DTO.Competition.TournamentApplication>> GetTournamentApplication(Guid tournamentId);
+    Task<ServiceResult<DTO.Tournament.TournamentApplication>> GetTeamApplication(Guid tournamentId, Guid teamId);
+    Task<ServiceResult<DTO.Tournament.TournamentApplication>> GetTeamApplication(string tournamentSlug, Guid teamId);
+    Task<ServiceResult> WithdrawTeamApplication(Guid tournamentId, Guid teamId);
+    Task<ServiceResult> WithdrawTeamApplication(string tournamentSlug, Guid teamId);
+    Task<ServiceResult> TeamApplyToTournament(Guid teamId, DTO.Tournament.TeamTournamentApplicationRequest teamApplication);
   }
 }

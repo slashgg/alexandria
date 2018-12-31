@@ -15,5 +15,11 @@ namespace Alexandria.EF.Models
     /* Relations */
     [ForeignKey("TeamId")]
     public virtual Team Team { get; set; }
+
+    public TournamentApplicationHistory(TournamentApplicationState state, string notes)
+    {
+      this.State = state;
+      this.Notes = notes;
+    }
   }
 }

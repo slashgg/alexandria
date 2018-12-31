@@ -77,5 +77,132 @@ namespace Alexandria.Orchestration.Services
       result.Succeed(applicationDTO);
       return result;
     }
+
+    public async Task<ServiceResult> TeamApplyToTournament(Guid teamId, DTO.Tournament.TeamTournamentApplicationRequest teamApplication)
+    {
+      var result = new ServiceResult();
+
+      var tournament = await this.alexandriaContext.Tournaments.Include(t => t.TournamentApplications).ThenInclude(t => t.TournamentApplicationQuestionAnswers).FirstOrDefaultAsync(t => t.Id == teamApplication.TournamentId);
+      if (tournament == null)
+      {
+        result.ErrorKey = Shared.ErrorKey.Tournament.NotFound;
+        return result;
+      }
+
+      if (!tournament.CanSignup)
+      {
+        result.ErrorKey = Shared.ErrorKey.Tournament.ApplicationsClosed;
+        return result;
+      }
+
+      var application = tournament.TournamentApplications.FirstOrDefault(ta => ta.TeamId == teamId);
+      if (application == null)
+      {
+        application = await this.DangerouslyCreateTournamentApplication(teamId, teamApplication);
+      } else
+      {
+        application = await this.DangerouslyUpdateTournamentApplication(application, teamApplication.Answers);
+      }
+
+      result.Succeed();
+      return result;
+    }
+
+    public async Task<ServiceResult> WithdrawTeamApplication(string tournamentSlug, Guid teamId)
+    {
+      var result = new ServiceResult();
+      var tournament = await this.alexandriaContext.Tournaments.FirstOrDefaultAsync(t => t.Slug == tournamentSlug);
+      if (tournament == null)
+      {
+        result.ErrorKey = Shared.ErrorKey.Tournament.NotFound;
+        return result;
+      }
+
+      return await this.WithdrawTeamApplication(tournament.Id, teamId);
+    }
+
+    public async Task<ServiceResult> WithdrawTeamApplication(Guid tournamentId, Guid teamId)
+    {
+      var result = new ServiceResult();
+
+      var tournamentApplication = await this.alexandriaContext.TournamentApplications.FirstOrDefaultAsync(ta => ta.TournamentId == tournamentId && ta.TeamId == teamId);
+
+      if (tournamentApplication == null)
+      {
+        result.ErrorKey = Shared.ErrorKey.TournamentApplication.NotFound;
+        return result;
+      }
+
+      await this.DangerouslyWithdrawTournamentApplication(tournamentApplication);
+      return result;
+    }
+
+    public async Task<ServiceResult<DTO.Tournament.TournamentApplication>> GetTeamApplication(string tournamentSlug, Guid teamId)
+    {
+      var result = new ServiceResult<DTO.Tournament.TournamentApplication>();
+      var tournament = await this.alexandriaContext.Tournaments.FirstOrDefaultAsync(t => t.Slug == tournamentSlug);
+      if (tournament == null)
+      {
+        result.ErrorKey = Shared.ErrorKey.Tournament.NotFound;
+        return result;
+      }
+      return await this.GetTeamApplication(tournament.Id, teamId);
+    }
+
+    public async Task<ServiceResult<DTO.Tournament.TournamentApplication>> GetTeamApplication(Guid tournamentId, Guid teamId)
+    {
+      var result = new ServiceResult<DTO.Tournament.TournamentApplication>();
+
+      var tournamentApplication = await this.alexandriaContext.TournamentApplications.FirstOrDefaultAsync(ta => ta.TournamentId == tournamentId && ta.TeamId == teamId);
+
+      if (tournamentApplication == null)
+      {
+        result.ErrorKey = Shared.ErrorKey.TournamentApplication.NotFound;
+        return result;
+      }
+
+      var applicationDTO = AutoMapper.Mapper.Map<DTO.Tournament.TournamentApplication>(tournamentApplication);
+      result.Succeed(applicationDTO);
+
+      return result;
+    }
+
+    private async Task<EF.Models.TournamentApplication> DangerouslyCreateTournamentApplication(Guid teamId, DTO.Tournament.TeamTournamentApplicationRequest teamApplication)
+    {
+      var application = new EF.Models.TournamentApplication(teamId, teamApplication.TournamentId);
+
+      foreach (var answer in teamApplication.Answers)
+      {
+        var questionAnswer = new EF.Models.TournamentApplicationQuestionAnswer(answer.Id, answer.Answer);
+        application.AddAnswer(questionAnswer);
+      }
+
+      application.Initialize();
+      this.alexandriaContext.TournamentApplications.Add(application);
+
+      return application;
+    }
+
+    private async Task<EF.Models.TournamentApplication> DangerouslyUpdateTournamentApplication(EF.Models.TournamentApplication application, IList<DTO.Tournament.TournamentApplicationQuestionAnswer> answers)
+    {
+      foreach (var answer in answers)
+      {
+        var questionAnswer = new EF.Models.TournamentApplicationQuestionAnswer(answer.Id, answer.Answer);
+        application.AddAnswer(questionAnswer);
+      }
+
+      application.Mark(Shared.Enums.TournamentApplicationState.Pending, "Updated");
+      this.alexandriaContext.TournamentApplications.Update(application);
+
+      return application;
+    }
+
+    private async Task<EF.Models.TournamentApplication> DangerouslyWithdrawTournamentApplication(EF.Models.TournamentApplication application)
+    {
+      application.Mark(Shared.Enums.TournamentApplicationState.Withdrawn, "Withdrawn");
+      this.alexandriaContext.TournamentApplications.Update(application);
+
+      return application;
+    }
   }
 }

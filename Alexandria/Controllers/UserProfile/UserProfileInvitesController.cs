@@ -18,10 +18,12 @@ namespace Alexandria.Controllers.UserProfile
   public class UserProfileInvitesController : ControllerBase
   {
     private readonly IUserProfileService userProfileService;
+    private readonly ITeamService teamService;
 
-    public UserProfileInvitesController(IUserProfileService userProfileService)
+    public UserProfileInvitesController(IUserProfileService userProfileService, ITeamService teamService)
     {
       this.userProfileService = userProfileService;
+      this.teamService = teamService;
     }
 
     /// <summary>
@@ -49,34 +51,44 @@ namespace Alexandria.Controllers.UserProfile
 
     /// <summary>
     /// Decline the targeted invite
-    /// Reqyured Permissions: `invite::{inviteId}::handle`
+    /// Reqyured Permissions: `team-invite::{inviteId}::handle`
     /// </summary>
     /// <param name="inviteId">GUID of the Invite</param>
     /// <returns></returns>
     [HttpDelete("{inviteId}")]
-    [PermissionsRequired("invite::{inviteId}::handle")]
+    [PermissionsRequired("team-invite::{inviteId}::handle")]
     [ProducesResponseType(typeof(void), 204)]
     [ProducesResponseType(typeof(BaseError), 400)]
     [ProducesResponseType(typeof(void), 401)]
     public async Task<OperationResult> DeclineInvite([FromRoute] Guid inviteId)
     {
-      return new OperationResult(204);
+      var result = await this.teamService.DeclineInvite(inviteId);
+      if (result != null)
+      {
+        return new OperationResult(204);
+      }
+      return new OperationResult(result.ErrorKey);
     }
 
     /// <summary>
     /// Accept the targeted invite
-    /// Reqyured Permissions: `invite::{inviteId}::handle`
+    /// Reqyured Permissions: `team-invite::{inviteId}::handle`
     /// </summary>
     /// <param name="inviteId">GUID of the targeted invite</param>
     /// <returns></returns>
     [HttpPut("{inviteId}")]
-    [PermissionsRequired("invite::{inviteId}::handle")]
+    [PermissionsRequired("team-invite::{inviteId}::handle")]
     [ProducesResponseType(typeof(void), 204)]
     [ProducesResponseType(typeof(BaseError), 400)]
     [ProducesResponseType(typeof(void), 401)]
     public async Task<OperationResult> AcceptInvite([FromRoute] Guid inviteId)
     {
-      return new OperationResult(204);
+      var result = await this.teamService.AcceptInvite(inviteId);
+      if (result != null)
+      {
+        return new OperationResult(204);
+      }
+      return new OperationResult(result.ErrorKey);
     }
   }
 }

@@ -15,5 +15,7 @@ namespace Alexandria.Interfaces.Services
     Task<ServiceResult> InviteMember(Guid teamId, string invitee);
     Task<ServiceResult> ResendInvite(Guid inviteId);
     Task<ServiceResult> RevokeInvite(Guid inviteId);
+    Task<ServiceResult> AcceptInvite(Guid inviteId);
+    Task<ServiceResult> DeclineInvite(Guid inviteId);
   }
 }

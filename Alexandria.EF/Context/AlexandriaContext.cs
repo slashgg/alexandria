@@ -42,6 +42,12 @@ namespace Alexandria.EF.Context
                                    .HasDefaultValue(1);
 
       builder.Entity<Competition>().HasIndex(b => b.Slug);
+      builder.Entity<Competition>().HasMany(c => c.TeamRoles)
+                                   .WithOne(tr => tr.Competition)
+                                   .HasForeignKey(tr => tr.CompetitionId);
+
+
+
       builder.Entity<Team>().HasIndex(b => b.Slug);
       builder.Entity<Tournament>().HasIndex(b => b.Slug);
 

@@ -19,5 +19,11 @@ namespace Alexandria.EF.Models
     public virtual TournamentApplication TournamentApplication { get; set; }
     [ForeignKey("TournamentApplicationQuestionId")]
     public virtual TournamentApplicationQuestion TournamentApplicationQuestion { get; set; }
+
+    public TournamentApplicationQuestionAnswer(Guid questionId, string answer)
+    {
+      this.Answer = answer;
+      this.TournamentApplicationQuestionId = questionId;
+    }
   }
 }

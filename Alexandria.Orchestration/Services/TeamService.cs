@@ -248,6 +248,117 @@ namespace Alexandria.Orchestration.Services
       return result;
     }
 
+    public async Task<ServiceResult> AcceptInvite(Guid inviteId)
+    {
+      var result = new ServiceResult();
+
+      var invite = await this.context.TeamInvites.Include(i => i.Team)
+                                                 .ThenInclude(t => t.TeamMemberships)
+                                                 .Include(i => i.UserProfile)
+                                                 .ThenInclude(u => u.TeamMemberships)
+                                                 .FirstOrDefaultAsync(i => i.Id == inviteId);
+      // Check if User is null;
+      if (invite == null)
+      {
+        result.ErrorKey = Shared.ErrorKey.Invite.NotFound;
+        return result;
+      }
+
+      // Check if the invite state is valid;
+      if (invite.CanBeRedeemed())
+      {
+        result.ErrorKey = Shared.ErrorKey.Invite.AlreadyUsed;
+        return result;
+      }
+
+      var team = invite.Team;
+      var user = invite.UserProfile;
+
+      // If no direct user is found, lets see if somebody exists
+      if (user == null)
+      {
+        user = await this.context.UserProfiles.Include(u => u.TeamMemberships).FirstOrDefaultAsync(u => u.Email == invite.Email);
+      }
+
+      // if no user is found, short circuit. 
+      if (user == null)
+      {
+        result.ErrorKey = Shared.ErrorKey.Invite.InvalidUser;
+        return result;
+      }
+
+      // Check if user is not in differemt team
+      if (user.HasTeam(team.CompetitionId))
+      {
+        result.ErrorKey = Shared.ErrorKey.UserProfile.AlreadyInCompetitionTeam;
+        return result;
+      }
+
+      // Check if Team exists
+      if (team == null)
+      {
+        result.ErrorKey = Shared.ErrorKey.Team.TeamNotFound;
+        return result;
+      }
+
+      // User os a;readu member of this team
+      if (team.HasMember(user.Id))
+      {
+        result.ErrorKey = Shared.ErrorKey.Team.AlreadyInTeam;
+        return result;
+      }
+
+      // Team is already disbanded
+      if (team.TeamState == TeamState.Disbanded)
+      {
+        result.ErrorKey = Shared.ErrorKey.Team.Disbanded;
+        return result;
+      }
+
+      // Find the default role for a given competitoin
+      var role = await this.context.TeamRoles.FirstOrDefaultAsync(r => r.Id == this.context.Competitions.FirstOrDefault(c => c.Id == team.CompetitionId).DefaultRoleId);
+      if (role == null)
+      {
+        result.ErrorKey = Shared.ErrorKey.Competition.NoDefaultRoleSet;
+        return result;
+      }
+
+      await this.DangerouslyCreateTeamMembership(team, user.Id, role.Id, "Invite Accepted");
+      await this.DangerouslyAcceptTeamInvite(invite);
+
+      this.context.Teams.Update(team);
+      this.context.TeamInvites.Update(invite);
+
+      result.Succeed();
+
+      return result;
+    }
+
+    public async Task<ServiceResult> DeclineInvite(Guid inviteId)
+    {
+      var result = new ServiceResult();
+
+      var invite = await this.context.TeamInvites.FirstOrDefaultAsync(i => i.Id == inviteId);
+      // Check if User is null;
+      if (invite == null)
+      {
+        result.ErrorKey = Shared.ErrorKey.Invite.NotFound;
+        return result;
+      }
+
+      // Check if the invite state is valid;
+      if (invite.CanBeRedeemed())
+      {
+        result.ErrorKey = Shared.ErrorKey.Invite.AlreadyUsed;
+        return result;
+      }
+
+      await this.DangerouslyDeclineTeamInvite(invite);
+
+      result.Succeed();
+
+      return result;
+    }
 
     private async Task<TeamInvite> DangerouslyCreateInvite(Guid teamId, string invitee)
     {
@@ -362,6 +473,18 @@ namespace Alexandria.Orchestration.Services
       await this.authorizationService.RemovePermission(userId, membershipPermission);
 
       return membership;
+    }
+
+    private async Task<TeamInvite> DangerouslyAcceptTeamInvite(TeamInvite invite)
+    {
+      invite.Mark(InviteState.Accepted);
+      return invite;
+    }
+
+    private async Task<TeamInvite> DangerouslyDeclineTeamInvite(TeamInvite invite)
+    {
+      invite.Mark(InviteState.Declined);
+      return invite;
     }
   }
 }

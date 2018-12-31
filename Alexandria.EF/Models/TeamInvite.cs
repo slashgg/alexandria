@@ -32,5 +32,15 @@ namespace Alexandria.EF.Models
       this.Email = email;
       this.UserProfileId = userId;
     }
+
+    public bool CanBeRedeemed()
+    {
+      return State == InviteState.Pending;
+    }
+
+    public void Mark(InviteState state)
+    {
+      this.State = state;
+    }
   }
 }

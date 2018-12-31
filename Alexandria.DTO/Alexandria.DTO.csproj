@@ -12,8 +12,4 @@
     <ProjectReference Include="..\Alexandria.Shared\Alexandria.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Tournament\" />
-  </ItemGroup>
-
 </Project>

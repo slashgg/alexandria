@@ -35,9 +35,9 @@ namespace Alexandria.EF.Models
       this.Email = email;
     }
 
-    public bool HasTeam(Guid competition)
+    public bool HasTeam(Guid competitionId)
     {
-      return TeamMemberships.Any(m => m.Team.CompetitionId == competition);
+      return TeamMemberships.Any(m => m.Team.CompetitionId == competitionId);
     }
 
     public bool HasPermission(string ARN)
