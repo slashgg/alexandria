@@ -21,7 +21,7 @@ namespace Alexandria.DTO.Team
   public class Invite
   {
     [DataMember(Name = "id")]
-    public Guid Name { get; set; }
+    public Guid Id { get; set; }
     [DataMember(Name = "createdAt")]
     public DateTime CreatedAt { get; set; }
     [DataMember(Name = "state")]
