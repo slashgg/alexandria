@@ -60,6 +60,8 @@ namespace Alexandria.Controllers.UserProfile
     [ProducesResponseType(typeof(void), 204)]
     [ProducesResponseType(typeof(BaseError), 400)]
     [ProducesResponseType(typeof(void), 401)]
+    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(BaseError), 422)]
     public async Task<OperationResult> DeclineInvite([FromRoute] Guid inviteId)
     {
       var result = await this.teamService.DeclineInvite(inviteId);
@@ -67,7 +69,7 @@ namespace Alexandria.Controllers.UserProfile
       {
         return new OperationResult(204);
       }
-      return new OperationResult(result.ErrorKey);
+      return new OperationResult(result.Error);
     }
 
     /// <summary>
@@ -81,6 +83,10 @@ namespace Alexandria.Controllers.UserProfile
     [ProducesResponseType(typeof(void), 204)]
     [ProducesResponseType(typeof(BaseError), 400)]
     [ProducesResponseType(typeof(void), 401)]
+    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(BaseError), 409)]
+    [ProducesResponseType(typeof(BaseError), 410)]
+    [ProducesResponseType(typeof(BaseError), 422)]
     public async Task<OperationResult> AcceptInvite([FromRoute] Guid inviteId)
     {
       var result = await this.teamService.AcceptInvite(inviteId);
@@ -88,7 +94,7 @@ namespace Alexandria.Controllers.UserProfile
       {
         return new OperationResult(204);
       }
-      return new OperationResult(result.ErrorKey);
+      return new OperationResult(result.Error);
     }
   }
 }

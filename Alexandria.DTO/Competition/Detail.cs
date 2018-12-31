@@ -26,6 +26,8 @@ namespace Alexandria.DTO.Competition
     public int? MaxTeamSize { get; set; }
     [DataMember(Name = "minTeamSize")]
     public int MinTeamSize { get; set; }
+    [DataMember(Name = "rulesSlug")]
+    public string RulesSlug { get; set; }
     [DataMember(Name = "game")]
     public GameData Game { get; set; } = new GameData();
 

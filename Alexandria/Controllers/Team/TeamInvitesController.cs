@@ -32,7 +32,6 @@ namespace Alexandria.Controllers.Team
     [HttpGet]
     [PermissionsRequired("team::{teamId}::invite--send")]
     [ProducesResponseType(typeof(IList<DTO.Team.Invite>), 200)]
-    [ProducesResponseType(typeof(BaseError), 400)]
     [ProducesResponseType(typeof(void), 401)]
     public async Task<OperationResult<IList<DTO.Team.Invite>>> GetTeamInvites()
     {
@@ -51,6 +50,8 @@ namespace Alexandria.Controllers.Team
     [ProducesResponseType(typeof(void), 201)]
     [ProducesResponseType(typeof(BaseError), 400)]
     [ProducesResponseType(typeof(void), 401)]
+    [ProducesResponseType(typeof(BaseError), 409)]
+    [ProducesResponseType(typeof(BaseError), 422)]
     public async Task<OperationResult> SendInvite([FromBody] DTO.Team.InviteRequest payload)
     {
       var result = await this.teamService.InviteMember(this.resourceId, payload.Invitee);
@@ -59,7 +60,7 @@ namespace Alexandria.Controllers.Team
         return new OperationResult(201);
       }
 
-      return new OperationResult(result.ErrorKey);
+      return new OperationResult(result.Error);
     }
 
     /// <summary>
@@ -74,6 +75,7 @@ namespace Alexandria.Controllers.Team
     [ProducesResponseType(typeof(void), 201)]
     [ProducesResponseType(typeof(BaseError), 400)]
     [ProducesResponseType(typeof(void), 401)]
+    [ProducesResponseType(typeof(BaseError), 404)]
     public async Task<OperationResult> ResendInvite([FromRoute] Guid inviteId)
     {
       var result = await this.teamService.ResendInvite(inviteId);
@@ -81,7 +83,7 @@ namespace Alexandria.Controllers.Team
       {
         return new OperationResult(204);
       }
-      return new OperationResult(result.ErrorKey);
+      return new OperationResult(result.Error);
     }
 
     /// <summary>
@@ -96,6 +98,7 @@ namespace Alexandria.Controllers.Team
     [ProducesResponseType(typeof(void), 204)]
     [ProducesResponseType(typeof(BaseError), 400)]
     [ProducesResponseType(typeof(void), 401)]
+    [ProducesResponseType(typeof(void), 404)]
     public async Task<OperationResult> RevokeInvite([FromRoute] Guid inviteId)
     {
       var result = await this.teamService.RevokeInvite(inviteId);
@@ -103,7 +106,7 @@ namespace Alexandria.Controllers.Team
       {
         return new OperationResult(204);
       }
-      return new OperationResult(result.ErrorKey);
+      return new OperationResult(result.Error);
     }
   }
 }

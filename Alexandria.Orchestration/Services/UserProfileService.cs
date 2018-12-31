@@ -29,7 +29,7 @@ namespace Alexandria.Orchestration.Services
                                                 .FirstOrDefaultAsync(u => u.Id == userId);
       if (user == null)
       {
-        result.ErrorKey = Shared.ErrorKey.UserProfile.UserNotFound;
+        result.Error = Shared.ErrorKey.UserProfile.UserNotFound;
         return result;
       }
 
@@ -63,7 +63,7 @@ namespace Alexandria.Orchestration.Services
       var result = new ServiceResult();
       if (context.UserProfiles.Any(u => u.Email == account.Email || u.DisplayName == account.DisplayName || u.Id == account.Id))
       {
-        result.ErrorKey = Shared.ErrorKey.UserProfile.ProfileExists;
+        result.Error = Shared.ErrorKey.UserProfile.ProfileExists;
         return result;
       }
 

@@ -33,6 +33,8 @@ namespace Alexandria.Controllers.Competition
     [HttpPost]
     [ProducesResponseType(typeof(void), 201)]
     [ProducesResponseType(typeof(BaseError), 400)]
+    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(BaseError), 409)]
     public async Task<OperationResult> CreateTeam([FromBody] DTO.Team.Create payload)
     {
       var result = await this.teamService.CreateTeam(this.resourceId, payload);
@@ -41,7 +43,7 @@ namespace Alexandria.Controllers.Competition
         return Ok();
       }
 
-      return new OperationResult(400, result.ErrorKey);
+      return new OperationResult(result.Error);
     }
   }
 }

@@ -35,7 +35,7 @@ namespace Alexandria.Controllers.Team
     [PermissionsRequired("team::{teamId}::tournament--join")]
     [ProducesResponseType(typeof(DTO.Tournament.TournamentApplication), 200)]
     [ProducesResponseType(typeof(void), 401)]
-    [ProducesResponseType(typeof(void), 404)]
+    [ProducesResponseType(typeof(BaseError), 404)]
     public async Task<OperationResult<DTO.Tournament.TournamentApplication>> GetTournamentApplication([FromRoute] Guid tournamentId)
     {
       var result = await this.tournamentService.GetTeamApplication(tournamentId, this.resourceId);
@@ -43,7 +43,7 @@ namespace Alexandria.Controllers.Team
       {
         return new OperationResult<DTO.Tournament.TournamentApplication>(result.Data);
       }
-      return new OperationResult<DTO.Tournament.TournamentApplication>(result.ErrorKey);
+      return new OperationResult<DTO.Tournament.TournamentApplication>(result.Error);
     }
 
     /// <summary>
@@ -57,7 +57,7 @@ namespace Alexandria.Controllers.Team
     [PermissionsRequired("team::{teamId}::tournament--join")]
     [ProducesResponseType(typeof(DTO.Tournament.TournamentApplication), 200)]
     [ProducesResponseType(typeof(void), 401)]
-    [ProducesResponseType(typeof(void), 404)]
+    [ProducesResponseType(typeof(BaseError), 404)]
     public async Task<OperationResult<DTO.Tournament.TournamentApplication>> GetTournamentApplication([FromRoute] string tournamentSlug)
     {
       var result = await this.tournamentService.GetTeamApplication(tournamentSlug, this.resourceId);
@@ -65,7 +65,7 @@ namespace Alexandria.Controllers.Team
       {
         return new OperationResult<DTO.Tournament.TournamentApplication>(result.Data);
       }
-      return new OperationResult<DTO.Tournament.TournamentApplication>(result.ErrorKey);
+      return new OperationResult<DTO.Tournament.TournamentApplication>(result.Error);
     }
 
     /// <summary>
@@ -80,6 +80,8 @@ namespace Alexandria.Controllers.Team
     [ProducesResponseType(typeof(void), 201)]
     [ProducesResponseType(typeof(BaseError), 400)]
     [ProducesResponseType(typeof(void), 401)]
+    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(BaseError), 423)]
     public async Task<OperationResult> ApplyToTournament([FromBody] DTO.Tournament.TeamTournamentApplicationRequest payload)
     {
       var result = await tournamentService.TeamApplyToTournament(this.resourceId, payload);
@@ -87,7 +89,7 @@ namespace Alexandria.Controllers.Team
       {
         return new OperationResult(201);
       }
-      return new OperationResult(result.ErrorKey);
+      return new OperationResult(result.Error);
     }
 
     /// <summary>
@@ -102,6 +104,7 @@ namespace Alexandria.Controllers.Team
     [ProducesResponseType(typeof(void), 204)]
     [ProducesResponseType(typeof(BaseError), 400)]
     [ProducesResponseType(typeof(void), 401)]
+    [ProducesResponseType(typeof(BaseError), 404)]
     public async Task<OperationResult> WithdrawApplication([FromRoute] Guid tournamentId)
     {
       var result = await this.tournamentService.WithdrawTeamApplication(tournamentId, this.resourceId);
@@ -109,7 +112,7 @@ namespace Alexandria.Controllers.Team
       {
         return new OperationResult(204);
       }
-      return new OperationResult(result.ErrorKey);
+      return new OperationResult(result.Error);
     }
 
     /// <summary>
@@ -124,6 +127,7 @@ namespace Alexandria.Controllers.Team
     [ProducesResponseType(typeof(void), 204)]
     [ProducesResponseType(typeof(BaseError), 400)]
     [ProducesResponseType(typeof(void), 401)]
+    [ProducesResponseType(typeof(BaseError), 404)]
     public async Task<OperationResult> WithdrawApplication([FromRoute] string tournamentSlug)
     {
       var result = await this.tournamentService.WithdrawTeamApplication(tournamentSlug, this.resourceId);
@@ -131,7 +135,7 @@ namespace Alexandria.Controllers.Team
       {
         return new OperationResult(204);
       }
-      return new OperationResult(result.ErrorKey);
+      return new OperationResult(result.Error);
     }
   }
 }

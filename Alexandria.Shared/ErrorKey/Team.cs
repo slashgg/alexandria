@@ -1,10 +1,12 @@
-﻿namespace Alexandria.Shared.ErrorKey
+﻿using Svalbard;
+
+namespace Alexandria.Shared.ErrorKey
 {
   public static class Team
   {
-    public const string TeamNotFound = "TEAM.TEAM_NOT_FOUND";
-    public const string AlreadyInTeam = "TEAM.ALREADY_IN_TEAM";
-    public const string NameTaken = "TEAM.NAME_TAKEN";
-    public const string Disbanded = "TEAM.DISBANDED";
+    public static ServiceError TeamNotFound = new ServiceError("TEAM.TEAM_NOT_FOUND", 404);
+    public static ServiceError AlreadyInTeam = new ServiceError("TEAM.ALREADY_IN_TEAM", 409);
+    public static ServiceError NameTaken = new ServiceError("TEAM.NAME_TAKEN", 400);
+    public static ServiceError Disbanded = new ServiceError("TEAM.DISBANDED", 410);
   }
 }

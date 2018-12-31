@@ -27,7 +27,7 @@ namespace Alexandria.Controllers
     [HttpGet("active")]
     [ProducesResponseType(typeof(IList<DTO.Competition.Detail>), 204)]
     [ProducesResponseType(typeof(void), 400)]
-    public async Task<OperationResult<IList<DTO.Competition.Detail>>> GetrActiveCompetitions()
+    public async Task<OperationResult<IList<DTO.Competition.Detail>>> GetActiveCompetitions()
     {
       var result = await this.competitionService.GetActiveCompetitions();
       if (result.Success)
@@ -54,7 +54,7 @@ namespace Alexandria.Controllers
         return new OperationResult<DTO.Competition.Detail>(result.Data);
       }
 
-      return new OperationResult<DTO.Competition.Detail>(result.ErrorKey);
+      return new OperationResult<DTO.Competition.Detail>(result.Error);
     }
 
     /// <summary>
@@ -73,7 +73,7 @@ namespace Alexandria.Controllers
         return new OperationResult<DTO.Competition.Detail>(result.Data);
       }
 
-      return new OperationResult<DTO.Competition.Detail>(result.ErrorKey);
+      return new OperationResult<DTO.Competition.Detail>(result.Error);
     }
   }
 }

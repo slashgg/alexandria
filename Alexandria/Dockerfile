@@ -12,6 +12,8 @@ COPY Alexandria.DTO/Alexandria.DTO.csproj Alexandria.DTO/
 COPY Alexandria.EF/Alexandria.EF.csproj Alexandria.EF/
 COPY Alexandria.Interfaces/Alexandria.Interfaces.csproj Alexandria.Interfaces/
 COPY Alexandria.Orchestration/Alexandria.Orchestration.csproj Alexandria.Orchestration/
+COPY Alexandria.ExternalServices/Alexandria.ExternalServices.csproj Alexandria.ExternalServices/
+
 RUN dotnet restore Alexandria/Alexandria.csproj
 COPY . .
 WORKDIR /src/Alexandria

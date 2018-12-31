@@ -19,9 +19,15 @@ namespace Alexandria.Controllers
       this.teamService = teamService;
     }
 
+    /// <summary>
+    /// Get Team Details
+    /// </summary>
+    /// <param name="teamId">GUID of the team</param>
+    /// <returns></returns>
     [HttpGet("{teamId}")]
     [ProducesResponseType(typeof(DTO.Team.Detail), 200)]
     [ProducesResponseType(typeof(BaseError), 400)]
+    [ProducesResponseType(typeof(BaseError), 404)]
     public async Task<OperationResult> GetTeamDetail(Guid teamId)
     {
       var result = await this.teamService.GetTeamDetail(teamId);
@@ -29,7 +35,7 @@ namespace Alexandria.Controllers
       {
         return new OperationResult<DTO.Team.Detail>(result.Data);
       }
-      return new OperationResult(result.ErrorKey);
+      return new OperationResult(result.Error);
     }
 
     /// <summary>
@@ -42,6 +48,7 @@ namespace Alexandria.Controllers
     [PermissionsRequired("team::{teamId}::disband")]
     [ProducesResponseType(typeof(void), 204)]
     [ProducesResponseType(typeof(BaseError), 400)]
+    [ProducesResponseType(typeof(BaseError), 404)]
     public async Task<OperationResult> DisbandTeam([FromRoute]Guid teamId)
     {
       var result = await this.teamService.DisbandTeam(teamId);
@@ -50,7 +57,7 @@ namespace Alexandria.Controllers
         return new OperationResult(204);
       }
 
-      return new OperationResult(result.ErrorKey);
+      return new OperationResult(result.Error);
     }
   }
 }

@@ -23,10 +23,11 @@ namespace Alexandria
               if (hosting.HostingEnvironment.IsProduction())
               {
                 secrets.Add("ConnectionStrings");
+                secrets.Add("Queues");
               }
               config.SetBasePath(hosting.HostingEnvironment.ContentRootPath);
               config.AddJsonFile("appsettings.json");
-              config.AddJsonFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: false);
+              config.AddJsonFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.json", optional: false, reloadOnChange: false);
               config.AddAWSSecrets(options =>
               {
                 options.Region = "us-east-1";

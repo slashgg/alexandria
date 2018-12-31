@@ -1,9 +1,11 @@
-﻿namespace Alexandria.Shared.ErrorKey
+﻿using Svalbard;
+
+namespace Alexandria.Shared.ErrorKey
 {
   public class Tournament
   {
-    public const string NoApplicationFound = "TOURNAMENT.APPLICATION.NOT_FOUND";
-    public const string NotFound = "TOURNAMENT.NOT_FOUND";
-    public const string ApplicationsClosed = "TOURNAMENT.APPLICATIONS_CLOSED";
+    public static ServiceError NoApplicationFound = new ServiceError("TOURNAMENT.APPLICATION.NOT_FOUND", 404);
+    public static ServiceError NotFound = new ServiceError("TOURNAMENT.NOT_FOUND", 404);
+    public static ServiceError ApplicationsClosed = new ServiceError("TOURNAMENT.APPLICATIONS_CLOSED", 423);
   }
 }

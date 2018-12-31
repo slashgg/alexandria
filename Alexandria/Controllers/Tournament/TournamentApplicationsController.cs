@@ -21,9 +21,13 @@ namespace Alexandria.Controllers.Tournament
       this.tournamentService = tournamentService;
     }
 
+    /// <summary>
+    /// Get the ApplicationData for a Tournament
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
     [ProducesResponseType(typeof(DTO.Competition.TournamentApplication), 200)]
-    [ProducesResponseType(typeof(void), 404)]
+    [ProducesResponseType(typeof(BaseError), 404)]
     public async Task<OperationResult<DTO.Competition.TournamentApplication>> GetApplication()
     {
       if (this.resourceId != Guid.Empty)
@@ -34,7 +38,7 @@ namespace Alexandria.Controllers.Tournament
           return new OperationResult<DTO.Competition.TournamentApplication>(result.Data);
         }
 
-        return new OperationResult<DTO.Competition.TournamentApplication>(404, result.ErrorKey);
+        return new OperationResult<DTO.Competition.TournamentApplication>(result.Error);
       } else
       {
         var result = await this.tournamentService.GetTournamentApplication(this.Slug);
@@ -42,7 +46,7 @@ namespace Alexandria.Controllers.Tournament
         {
           return new OperationResult<DTO.Competition.TournamentApplication>(result.Data);
         }
-        return new OperationResult<DTO.Competition.TournamentApplication>(404, result.ErrorKey);
+        return new OperationResult<DTO.Competition.TournamentApplication>(result.Error);
       }
     }
   }

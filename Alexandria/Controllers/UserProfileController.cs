@@ -32,6 +32,7 @@ namespace Alexandria.Controllers
     [HttpPost]
     [ProducesResponseType(typeof(void), 201)]
     [ProducesResponseType(typeof(BaseError), 400)]
+    [ProducesResponseType(typeof(BaseError), 409)]
     public async Task<OperationResult> CreateProfile([FromBody] Alexandria.DTO.UserProfile.Create payload)
     {
       var result = await userProfileService.CreateAccount(payload);
@@ -39,7 +40,7 @@ namespace Alexandria.Controllers
       {
         return new OperationResult(201);
       }
-      return new OperationResult(result.ErrorKey);
+      return new OperationResult(result.Error);
     }
 
     /// <summary>
@@ -51,7 +52,7 @@ namespace Alexandria.Controllers
     [ProducesResponseType(typeof(DTO.UserProfile.Detail), 200)]
     [ProducesResponseType(typeof(BaseError), 400)]
     [ProducesResponseType(typeof(void), 401)]
-    [ProducesResponseType(typeof(void), 404)]
+    [ProducesResponseType(typeof(BaseError), 404)]
     public async Task<OperationResult<DTO.UserProfile.Detail>> GetUserProfile()
     {
       var userId = HttpContext.GetUserId();
@@ -66,7 +67,7 @@ namespace Alexandria.Controllers
         return new OperationResult<DTO.UserProfile.Detail>(result.Data);
       }
 
-      return new OperationResult<DTO.UserProfile.Detail>(result.ErrorKey);
+      return new OperationResult<DTO.UserProfile.Detail>(result.Error);
     }
 
     /// <summary>
@@ -77,6 +78,7 @@ namespace Alexandria.Controllers
     [Authorize]
     [ProducesResponseType(typeof(IList<string>), 200)]
     [ProducesResponseType(typeof(void), 401)]
+    [ProducesResponseType(typeof(BaseError), 404)]
     public async Task<OperationResult<IList<string>>> GetPermissions()
     {
       var userId = HttpContext.GetUserId();

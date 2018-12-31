@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 using Alexandria.EF.Context;
 using Alexandria.EF.Models;
 using Alexandria.Interfaces;
+using Alexandria.Interfaces.Processing;
 using Alexandria.Interfaces.Services;
 using Alexandria.Shared.Enums;
 using Alexandria.Shared.Extensions;
 using Alexandria.Shared.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Svalbard.Services;
 
 namespace Alexandria.Orchestration.Services
@@ -22,13 +24,17 @@ namespace Alexandria.Orchestration.Services
     private readonly AlexandriaContext context;
     private readonly IUserUtils userUtils;
     private readonly IAuthorizationService authorizationService;
+    private readonly IBackgroundWorker backgroundWorker;
+    private readonly Shared.Configuration.Queue queues;
 
-    public TeamService(IHttpContextAccessor httpContext, AlexandriaContext context, IUserUtils userUtils, IAuthorizationService authorizationService)
+    public TeamService(IHttpContextAccessor httpContext, AlexandriaContext context, IUserUtils userUtils, IAuthorizationService authorizationService, IBackgroundWorker backgroundWorker, IOptions<Shared.Configuration.Queue> queues)
     {
       this.httpContext = httpContext.HttpContext;
       this.context = context;
       this.userUtils = userUtils;
       this.authorizationService = authorizationService;
+      this.backgroundWorker = backgroundWorker;
+      this.queues = queues.Value;
     }
 
     public async Task<ServiceResult<DTO.Team.Detail>> GetTeamDetail(Guid teamId)
@@ -44,7 +50,7 @@ namespace Alexandria.Orchestration.Services
 
       if (team == null)
       {
-        result.ErrorKey = Shared.ErrorKey.Team.TeamNotFound;
+        result.Error = Shared.ErrorKey.Team.TeamNotFound;
         return result;
       }
 
@@ -87,7 +93,7 @@ namespace Alexandria.Orchestration.Services
       // Check if name is taken
       if (context.Teams.Any(t => string.Equals(teamData.Name, t.Name, StringComparison.CurrentCultureIgnoreCase) && t.CompetitionId == competitionId && t.TeamState != TeamState.Disbanded))
       {
-        result.ErrorKey = Shared.ErrorKey.Team.NameTaken;
+        result.Error = Shared.ErrorKey.Team.NameTaken;
         return result;
       }
 
@@ -95,13 +101,13 @@ namespace Alexandria.Orchestration.Services
       var user = await context.UserProfiles.Include(u => u.TeamMemberships).ThenInclude(m => m.Team).FirstOrDefaultAsync(u => u.Id == userId);
       if (user == null)
       {
-        result.ErrorKey = Shared.ErrorKey.UserProfile.UserNotFound;
+        result.Error = Shared.ErrorKey.UserProfile.UserNotFound;
       }
 
       // Check if user is already in team for this competition
       if (user.HasTeam(competitionId))
       {
-        result.ErrorKey = Shared.ErrorKey.Team.AlreadyInTeam;
+        result.Error = Shared.ErrorKey.Team.AlreadyInTeam;
         return result;
       }
 
@@ -125,7 +131,7 @@ namespace Alexandria.Orchestration.Services
       // Check if Team Exists
       if (team == null)
       {
-        result.ErrorKey = Shared.ErrorKey.Team.TeamNotFound;
+        result.Error = Shared.ErrorKey.Team.TeamNotFound;
         return result;
       }
 
@@ -134,21 +140,21 @@ namespace Alexandria.Orchestration.Services
       // Check if User is already a member
       if (invitedUser != null && team.HasMember(invitedUser.Id))
       {
-        result.ErrorKey = Shared.ErrorKey.TeamMembership.AlreadyMember;
+        result.Error = Shared.ErrorKey.TeamMembership.AlreadyMember;
         return result;
       }
 
       // Check if there is already an invite for the user
       if (team.HasInvite(invitee) || (invitedUser != null && team.HasInvite(invitedUser.Id)))
       {
-        result.ErrorKey = Shared.ErrorKey.Invite.AlreadyInvited;
+        result.Error = Shared.ErrorKey.Invite.AlreadyInvited;
         return result;
       }
 
       var invite = await this.DangerouslyCreateInvite(teamId, invitee);
       if (invite == null)
       {
-        result.ErrorKey = Shared.ErrorKey.Invite.InvalidRecipient;
+        result.Error = Shared.ErrorKey.Invite.InvalidRecipient;
         return result;
       }
 
@@ -166,7 +172,7 @@ namespace Alexandria.Orchestration.Services
       var invite = await this.context.TeamInvites.FirstOrDefaultAsync(i => i.Id == inviteId);
       if (invite == null)
       {
-        result.ErrorKey = Shared.ErrorKey.Invite.NotFound;
+        result.Error = Shared.ErrorKey.Invite.NotFound;
         return result;
       }
 
@@ -181,11 +187,12 @@ namespace Alexandria.Orchestration.Services
       var invite = await this.context.TeamInvites.FirstOrDefaultAsync(i => i.Id == inviteId);
       if (invite == null)
       {
-        result.ErrorKey = Shared.ErrorKey.Invite.NotFound;
+        result.Error = Shared.ErrorKey.Invite.NotFound;
         return result;
       }
 
-      invite.State = InviteState.Withdrawn;
+      invite.Mark(InviteState.Withdrawn);
+      this.context.TeamInvites.Update(invite);
 
       result.Succeed();
       return result;
@@ -201,7 +208,7 @@ namespace Alexandria.Orchestration.Services
 
       if (team == null)
       {
-        result.ErrorKey = Shared.ErrorKey.Team.TeamNotFound;
+        result.Error = Shared.ErrorKey.Team.TeamNotFound;
         return result;
       }
 
@@ -219,7 +226,7 @@ namespace Alexandria.Orchestration.Services
       var membership = await this.context.TeamMemberships.Include(m => m.Team).ThenInclude(t => t.TeamMemberships).ThenInclude(m => m.TeamRole).FirstOrDefaultAsync(m => m.Id == membershipId);
       if (membership == null)
       {
-        result.ErrorKey = Shared.ErrorKey.TeamMembership.NotFound;
+        result.Error = Shared.ErrorKey.TeamMembership.NotFound;
         return result;
       }
       var team = membership.Team;
@@ -228,13 +235,13 @@ namespace Alexandria.Orchestration.Services
       {
         if (team.TeamMemberships.Count == 1)
         {
-          result.ErrorKey = Shared.ErrorKey.TeamMembership.LastMember;
+          result.Error = Shared.ErrorKey.TeamMembership.LastMember;
           return result;
         }
 
         if (membership.TeamRole.RemoveProtection)
         {
-          result.ErrorKey = Shared.ErrorKey.TeamMembership.Protected;
+          result.Error = Shared.ErrorKey.TeamMembership.Protected;
           return result;
         }
       }
@@ -260,14 +267,14 @@ namespace Alexandria.Orchestration.Services
       // Check if User is null;
       if (invite == null)
       {
-        result.ErrorKey = Shared.ErrorKey.Invite.NotFound;
+        result.Error = Shared.ErrorKey.Invite.NotFound;
         return result;
       }
 
       // Check if the invite state is valid;
       if (invite.CanBeRedeemed())
       {
-        result.ErrorKey = Shared.ErrorKey.Invite.AlreadyUsed;
+        result.Error = Shared.ErrorKey.Invite.AlreadyUsed;
         return result;
       }
 
@@ -283,35 +290,35 @@ namespace Alexandria.Orchestration.Services
       // if no user is found, short circuit. 
       if (user == null)
       {
-        result.ErrorKey = Shared.ErrorKey.Invite.InvalidUser;
+        result.Error = Shared.ErrorKey.Invite.InvalidUser;
         return result;
       }
 
       // Check if user is not in differemt team
       if (user.HasTeam(team.CompetitionId))
       {
-        result.ErrorKey = Shared.ErrorKey.UserProfile.AlreadyInCompetitionTeam;
+        result.Error = Shared.ErrorKey.UserProfile.AlreadyInCompetitionTeam;
         return result;
       }
 
       // Check if Team exists
       if (team == null)
       {
-        result.ErrorKey = Shared.ErrorKey.Team.TeamNotFound;
+        result.Error = Shared.ErrorKey.Team.TeamNotFound;
         return result;
       }
 
       // User os a;readu member of this team
       if (team.HasMember(user.Id))
       {
-        result.ErrorKey = Shared.ErrorKey.Team.AlreadyInTeam;
+        result.Error = Shared.ErrorKey.Team.AlreadyInTeam;
         return result;
       }
 
       // Team is already disbanded
       if (team.TeamState == TeamState.Disbanded)
       {
-        result.ErrorKey = Shared.ErrorKey.Team.Disbanded;
+        result.Error = Shared.ErrorKey.Team.Disbanded;
         return result;
       }
 
@@ -319,7 +326,7 @@ namespace Alexandria.Orchestration.Services
       var role = await this.context.TeamRoles.FirstOrDefaultAsync(r => r.Id == this.context.Competitions.FirstOrDefault(c => c.Id == team.CompetitionId).DefaultRoleId);
       if (role == null)
       {
-        result.ErrorKey = Shared.ErrorKey.Competition.NoDefaultRoleSet;
+        result.Error = Shared.ErrorKey.Competition.NoDefaultRoleSet;
         return result;
       }
 
@@ -342,14 +349,14 @@ namespace Alexandria.Orchestration.Services
       // Check if User is null;
       if (invite == null)
       {
-        result.ErrorKey = Shared.ErrorKey.Invite.NotFound;
+        result.Error = Shared.ErrorKey.Invite.NotFound;
         return result;
       }
 
       // Check if the invite state is valid;
       if (invite.CanBeRedeemed())
       {
-        result.ErrorKey = Shared.ErrorKey.Invite.AlreadyUsed;
+        result.Error = Shared.ErrorKey.Invite.AlreadyUsed;
         return result;
       }
 
@@ -379,7 +386,6 @@ namespace Alexandria.Orchestration.Services
           await this.authorizationService.AddPermission(userId, AuthorizationHelper.GenerateARN(typeof(TeamInvite), invite.Id.ToString(), Shared.Permissions.TeamInvite.All));
 
         }
-        return invite;
       } else
       {
         var user = await this.context.UserProfiles.Include(u => u.TeamInvites).FirstOrDefaultAsync(u => u.UserName == invitee);
@@ -396,9 +402,13 @@ namespace Alexandria.Orchestration.Services
         invite.UserProfileId = user.Id;
         invite.Email = user.Email;
         await this.authorizationService.AddPermission(user.Id, AuthorizationHelper.GenerateARN(typeof(TeamInvite), invite.Id.ToString(), Shared.Permissions.TeamInvite.All));
-
-        return invite;
       }
+
+      var team = await this.context.Teams.Include(t => t.Competition).FirstOrDefaultAsync(t => t.Id == teamId);
+      var message = new DTO.EMail.Message<DTO.EMail.TeamInvite>(invite.Email, "", new DTO.EMail.TeamInvite(invite.Id, team.Competition.Id, team.Competition.Name, team.Competition.Slug, team.Id, team.Name, team.Slug));
+      await this.backgroundWorker.SendMessage(this.queues.Email, message);
+
+      return invite;
     }
 
     private async Task<Team> DangerouslyCreateTeam(Guid competitionId, DTO.Team.Create teamData, Guid ownerId)

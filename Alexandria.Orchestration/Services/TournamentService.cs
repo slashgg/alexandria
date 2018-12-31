@@ -52,7 +52,7 @@ namespace Alexandria.Orchestration.Services
 
       if (application == null)
       {
-        result.ErrorKey = Shared.ErrorKey.Tournament.NoApplicationFound;
+        result.Error = Shared.ErrorKey.Tournament.NoApplicationFound;
         return result;
       }
 
@@ -68,7 +68,7 @@ namespace Alexandria.Orchestration.Services
       var application = await this.alexandriaContext.TournamentApplications.Include(ta => ta.Tournament).FirstOrDefaultAsync(ta => ta.Tournament.Slug == tournamentSlug);
       if (application == null)
       {
-        result.ErrorKey = Shared.ErrorKey.Tournament.NoApplicationFound;
+        result.Error = Shared.ErrorKey.Tournament.NoApplicationFound;
         return result;
       }
 
@@ -85,13 +85,13 @@ namespace Alexandria.Orchestration.Services
       var tournament = await this.alexandriaContext.Tournaments.Include(t => t.TournamentApplications).ThenInclude(t => t.TournamentApplicationQuestionAnswers).FirstOrDefaultAsync(t => t.Id == teamApplication.TournamentId);
       if (tournament == null)
       {
-        result.ErrorKey = Shared.ErrorKey.Tournament.NotFound;
+        result.Error = Shared.ErrorKey.Tournament.NotFound;
         return result;
       }
 
       if (!tournament.CanSignup)
       {
-        result.ErrorKey = Shared.ErrorKey.Tournament.ApplicationsClosed;
+        result.Error = Shared.ErrorKey.Tournament.ApplicationsClosed;
         return result;
       }
 
@@ -114,7 +114,7 @@ namespace Alexandria.Orchestration.Services
       var tournament = await this.alexandriaContext.Tournaments.FirstOrDefaultAsync(t => t.Slug == tournamentSlug);
       if (tournament == null)
       {
-        result.ErrorKey = Shared.ErrorKey.Tournament.NotFound;
+        result.Error = Shared.ErrorKey.Tournament.NotFound;
         return result;
       }
 
@@ -129,7 +129,7 @@ namespace Alexandria.Orchestration.Services
 
       if (tournamentApplication == null)
       {
-        result.ErrorKey = Shared.ErrorKey.TournamentApplication.NotFound;
+        result.Error = Shared.ErrorKey.TournamentApplication.NotFound;
         return result;
       }
 
@@ -143,7 +143,7 @@ namespace Alexandria.Orchestration.Services
       var tournament = await this.alexandriaContext.Tournaments.FirstOrDefaultAsync(t => t.Slug == tournamentSlug);
       if (tournament == null)
       {
-        result.ErrorKey = Shared.ErrorKey.Tournament.NotFound;
+        result.Error = Shared.ErrorKey.Tournament.NotFound;
         return result;
       }
       return await this.GetTeamApplication(tournament.Id, teamId);
@@ -157,7 +157,7 @@ namespace Alexandria.Orchestration.Services
 
       if (tournamentApplication == null)
       {
-        result.ErrorKey = Shared.ErrorKey.TournamentApplication.NotFound;
+        result.Error = Shared.ErrorKey.TournamentApplication.NotFound;
         return result;
       }
 

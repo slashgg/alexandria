@@ -1,11 +1,15 @@
 ﻿using System.Collections.Generic;
 using Alexandria.EF.Context;
+using Alexandria.ExternalServices.BackgroundWorker;
 using Alexandria.Infrastructure.Filters;
 using Alexandria.Interfaces;
+using Alexandria.Interfaces.Processing;
 using Alexandria.Interfaces.Services;
 using Alexandria.Orchestration.Mapper;
 using Alexandria.Orchestration.Services;
 using Alexandria.Orchestration.Utils;
+using Amazon;
+using Amazon.SQS;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -53,11 +57,14 @@ namespace Alexandria
         };
       };
 
+      services.AddDefaultAWSOptions(new Amazon.Extensions.NETCore.Setup.AWSOptions { Region = RegionEndpoint.USEast1 });
       services.AddHttpContextAccessor();
-
       services.AddSvalbard();
+      services.Configure<Shared.Configuration.Queue>(Configuration.GetSection("Queues"));
       services.AddScoped<AlexandriaContext>();
       services.AddScoped<SaveChangesFilter>();
+      services.AddAWSService<IAmazonSQS>();
+      services.AddScoped<IBackgroundWorker, SQSBackgroundWorker>();
       services.AddScoped<IUserUtils, UserUtils>();
       services.AddScoped<IAuthorizationService, AuthorizationService>();
       services.AddScoped<IUserProfileService, UserProfileService>();
@@ -87,6 +94,11 @@ namespace Alexandria
       {
         options.Title = "Alexandria";
         options.Version = "1.0.0";
+        options.PostProcess = settings =>
+        {
+          settings.Schemes.Clear();
+          settings.Schemes.Add(NSwag.SwaggerSchema.Https);
+        };
       });
     }
 

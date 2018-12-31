@@ -17,6 +17,7 @@ namespace Alexandria.EF.Models
     public bool Active { get; set; } = false;
     public int? MaxTeamSize { get; set; }
     public int MinTeamSize { get; set; } = 1;
+    public string RulesSlug { get; set; }
 
     /* Foreign Keys */
     public Guid GameId { get; set; }

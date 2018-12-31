@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Svalbard;
 
 namespace Alexandria.Shared.ErrorKey
 {
   public static class Competition
   {
-    public const string NotFound = "COMPETITION.NOT_FOUND";
-    public const string NoDefaultRoleSet = "COMPETITION.NO_DEFAULT_ROLE";
+    public static ServiceError NotFound = new ServiceError("COMPETITION.NOT_FOUND", 404);
+    public static ServiceError NoDefaultRoleSet = new ServiceError("COMPETITION.NO_DEFAULT_ROLE", 409);
   }
 }

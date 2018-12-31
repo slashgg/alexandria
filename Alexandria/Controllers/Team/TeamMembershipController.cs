@@ -32,6 +32,9 @@ namespace Alexandria.Controllers.Team
     [ProducesResponseType(typeof(void), 204)]
     [ProducesResponseType(typeof(BaseError), 400)]
     [ProducesResponseType(typeof(void), 401)]
+    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(BaseError), 422)]
+    [ProducesResponseType(typeof(BaseError), 423)]
     public async Task<OperationResult> RemoveMember([FromRoute]Guid membershipId)
     {
       var result = await this.teamService.RemoveMember(membershipId, "Remove");
@@ -40,7 +43,7 @@ namespace Alexandria.Controllers.Team
         return new NoContentResult();
       }
 
-      return new OperationResult(result.ErrorKey);
+      return new OperationResult(result.Error);
     }
   }
 }

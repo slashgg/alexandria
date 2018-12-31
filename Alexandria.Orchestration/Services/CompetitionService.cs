@@ -93,7 +93,7 @@ namespace Alexandria.Orchestration.Services
 
       if (tournament == null)
       {
-        result.ErrorKey = Shared.ErrorKey.Tournament.NotFound;
+        result.Error = Shared.ErrorKey.Tournament.NotFound;
       }
 
       result.Data = AutoMapper.Mapper.Map<DTO.Competition.Tournament>(tournament);
@@ -107,7 +107,7 @@ namespace Alexandria.Orchestration.Services
 
       if (tournament == null)
       {
-        result.ErrorKey = Shared.ErrorKey.Tournament.NotFound;
+        result.Error = Shared.ErrorKey.Tournament.NotFound;
       }
 
       result.Data = AutoMapper.Mapper.Map<DTO.Competition.Tournament>(tournament);

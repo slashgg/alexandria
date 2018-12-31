@@ -1,10 +1,12 @@
-﻿namespace Alexandria.Shared.ErrorKey
+﻿using Svalbard;
+
+namespace Alexandria.Shared.ErrorKey
 {
   public static class TeamMembership
   {
-    public const string NotFound = "MEMBERSHIP.NOT_FOUND";
-    public const string LastMember = "MEMBERSHIP.LAST_MEMBER";
-    public const string Protected = "MEMBERSHIP.PROTECTED";
-    public const string AlreadyMember = "MEMBERSIP.ALREADY_MEMBER";
+    public static ServiceError NotFound = new ServiceError("MEMBERSHIP.NOT_FOUND", 404);
+    public static ServiceError LastMember = new ServiceError("MEMBERSHIP.LAST_MEMBER", 422);
+    public static ServiceError Protected = new ServiceError("MEMBERSHIP.PROTECTED", 423);
+    public static ServiceError AlreadyMember = new ServiceError("MEMBERSIP.ALREADY_MEMBER", 409);
   }
 }
