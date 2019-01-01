@@ -20,7 +20,7 @@ namespace Alexandria.DTO.UserProfile
     public string UserName { get; set; }
     [DataMember(Name = "avatarURL")]
     public string AvatarURL { get; set; }
-    [DataMember(Name ="memberships")]
-    public Dictionary<Guid, TeamMembership> Memberships { get; set; }
+    [DataMember(Name = "memberships")]
+    public List<TeamMembership> Memberships { get; set; } = new List<TeamMembership>();
   }
 }

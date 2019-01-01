@@ -24,6 +24,7 @@ namespace Alexandria.Orchestration.Services
       var result = new ServiceResult<DTO.UserProfile.Detail>();
       var user = await this.context.UserProfiles.Include(u => u.TeamMemberships)
                                                 .ThenInclude(m => m.Team)
+                                                .ThenInclude(t => t.Competition)
                                                 .Include(u => u.TeamMemberships)
                                                 .ThenInclude(m => m.TeamRole)
                                                 .FirstOrDefaultAsync(u => u.Id == userId);

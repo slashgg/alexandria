@@ -114,7 +114,7 @@ namespace Alexandria.Orchestration.Services
       // Check if user is already in team for this competition
       if (user.HasTeam(competitionId))
       {
-        result.Error = Shared.ErrorKey.Team.AlreadyInTeam;
+        result.Error = Shared.ErrorKey.UserProfile.AlreadyInCompetitionTeam;
         return result;
       }
 
@@ -155,7 +155,7 @@ namespace Alexandria.Orchestration.Services
       // Check if User is already a member
       if (invitedUser != null && team.HasMember(invitedUser.Id))
       {
-        result.Error = Shared.ErrorKey.TeamMembership.AlreadyMember;
+        result.Error = Shared.ErrorKey.Team.AlreadyInTeam;
         return result;
       }
 
@@ -329,7 +329,7 @@ namespace Alexandria.Orchestration.Services
         return result;
       }
 
-      // User os a;readu member of this team
+      // User os alreadu member of this team
       if (team.HasMember(user.Id))
       {
         result.Error = Shared.ErrorKey.Team.AlreadyInTeam;

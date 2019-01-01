@@ -52,7 +52,7 @@ namespace Alexandria.Orchestration.Services
 
       if (application == null)
       {
-        result.Error = Shared.ErrorKey.Tournament.NoApplicationFound;
+        result.Error = Shared.ErrorKey.Tournament.NotFound;
         return result;
       }
 
@@ -65,10 +65,10 @@ namespace Alexandria.Orchestration.Services
     public async Task<ServiceResult<DTO.Competition.TournamentApplication>> GetTournamentApplication(string tournamentSlug)
     {
       var result = new ServiceResult<DTO.Competition.TournamentApplication>();
-      var application = await this.alexandriaContext.TournamentApplications.Include(ta => ta.Tournament).FirstOrDefaultAsync(ta => ta.Tournament.Slug == tournamentSlug);
+      var application = await this.alexandriaContext.Tournaments.Include(t => t.TournamentApplicationQuestions).FirstOrDefaultAsync(t => t.Slug == tournamentSlug);
       if (application == null)
       {
-        result.Error = Shared.ErrorKey.Tournament.NoApplicationFound;
+        result.Error = Shared.ErrorKey.Tournament.NotFound;
         return result;
       }
 
