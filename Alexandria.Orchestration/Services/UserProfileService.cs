@@ -42,7 +42,12 @@ namespace Alexandria.Orchestration.Services
     {
       var result = new ServiceResult<IList<DTO.UserProfile.TeamInvite>>();
 
-      var invites = await this.context.TeamInvites.Include(i => i.Team).Include(i => i.UserProfile).Where(i => i.UserProfileId == userId).ToListAsync();
+      var invites = await this.context.TeamInvites.Include(i => i.Team)
+                                                  .ThenInclude(t => t.Competition)
+                                                  .Include(i => i.UserProfile)
+                                                  .Where(i => i.UserProfileId == userId)
+                                                  .ToListAsync();
+
       var inviteDTOs = invites.Select(AutoMapper.Mapper.Map<DTO.UserProfile.TeamInvite>).ToList();
 
       result.Succeed(inviteDTOs);

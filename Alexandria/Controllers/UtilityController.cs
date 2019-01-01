@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using NSwag.Annotations;
 
 namespace Alexandria.Controllers
@@ -11,6 +12,13 @@ namespace Alexandria.Controllers
     public IActionResult HealthCheck()
     {
       return Ok();
+    }
+
+    [SwaggerIgnore]
+    [HttpGet("test-error")]
+    public IActionResult TestError()
+    {
+      throw new System.Exception("Test Error");
     }
   }
 }

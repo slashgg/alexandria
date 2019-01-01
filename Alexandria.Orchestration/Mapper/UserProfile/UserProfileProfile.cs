@@ -17,6 +17,7 @@ namespace Alexandria.Orchestration.Mapper.UserProfile
 
       this.CreateMap<EF.Models.TeamInvite, DTO.UserProfile.TeamInvite>()
         .ForMember(dest => dest.Team, opt => opt.MapFrom(src => src.Team.Name))
+        .ForMember(dest => dest.CompetitionSlug, opt => opt.MapFrom(src => src.Team.Competition.Slug))
         .ForMember(dest => dest.TeamId, opt => opt.MapFrom(src => src.TeamId));
     }
   }

@@ -90,6 +90,13 @@ namespace Alexandria.Orchestration.Services
     {
       var result = new ServiceResult();
 
+      var competition = await this.context.Competitions.FirstOrDefaultAsync(t => t.Id == competitionId);
+      if (competition == null)
+      {
+        result.Error = Shared.ErrorKey.Competition.NotFound;
+        return result;
+      }
+
       // Check if name is taken
       if (context.Teams.Any(t => string.Equals(teamData.Name, t.Name, StringComparison.CurrentCultureIgnoreCase) && t.CompetitionId == competitionId && t.TeamState != TeamState.Disbanded))
       {
@@ -114,6 +121,12 @@ namespace Alexandria.Orchestration.Services
       var team = await this.DangerouslyCreateTeam(competitionId, teamData, user.Id);
 
       this.context.Teams.Add(team);
+      foreach (var invite in team.TeamInvites.ToList())
+      {
+        var message = new DTO.EMail.Message<DTO.EMail.TeamInvite>(invite.Email, TransactionalEmail.TeamInvite, new DTO.EMail.TeamInvite(invite.Id, competition.Id, competition.Name, competition.Slug, team.Id, team.Name, team.Slug));
+        await this.backgroundWorker.SendMessage(this.queues.Email, message);
+      }
+
       result.Succeed();
 
       return result;
@@ -127,7 +140,9 @@ namespace Alexandria.Orchestration.Services
                              .ThenInclude(t => t.UserProfile)
                              .Include(t => t.TeamMemberships)
                              .ThenInclude(t => t.UserProfile)
+                             .Include(t => t.Competition)
                              .FirstOrDefaultAsync(t => t.Id == teamId);
+
       // Check if Team Exists
       if (team == null)
       {
@@ -161,6 +176,8 @@ namespace Alexandria.Orchestration.Services
       team.TeamInvites.Add(invite);
 
       this.context.Teams.Update(team);
+      var message = new DTO.EMail.Message<DTO.EMail.TeamInvite>(invite.Email, TransactionalEmail.TeamInvite, new DTO.EMail.TeamInvite(invite.Id, team.Competition.Id, team.Competition.Name, team.Competition.Slug, team.Id, team.Name, team.Slug));
+      await this.backgroundWorker.SendMessage(this.queues.Email, message);
 
       result.Succeed();
       return result;
@@ -408,10 +425,6 @@ namespace Alexandria.Orchestration.Services
         await this.authorizationService.AddPermission(user.Id, AuthorizationHelper.GenerateARN(typeof(TeamInvite), invite.Id.ToString(), Shared.Permissions.TeamInvite.All));
       }
 
-      var team = await this.context.Teams.Include(t => t.Competition).FirstOrDefaultAsync(t => t.Id == teamId);
-      var message = new DTO.EMail.Message<DTO.EMail.TeamInvite>(invite.Email, TransactionalEmail.TeamInvite, new DTO.EMail.TeamInvite(invite.Id, team.Competition.Id, team.Competition.Name, team.Competition.Slug, team.Id, team.Name, team.Slug));
-      await this.backgroundWorker.SendMessage(this.queues.Email, message);
-
       return invite;
     }
 
@@ -469,6 +482,11 @@ namespace Alexandria.Orchestration.Services
       {
         var membership = await this.DangerouslyRemoveTeamMembership(team, member.UserProfileId, "Disbanded");
         this.context.TeamMemberships.Remove(membership);
+      }
+
+      foreach (var invite in team.TeamInvites.Where(i => i.State == InviteState.Pending).ToList())
+      {
+        invite.Mark(InviteState.Withdrawn);
       }
 
       return team;

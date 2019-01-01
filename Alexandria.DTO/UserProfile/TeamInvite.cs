@@ -21,5 +21,7 @@ namespace Alexandria.DTO.UserProfile
     public string Team { get; set; }
     [DataMember(Name = "state")]
     public InviteState State { get; set; }
+    [DataMember(Name = "competitionSlug")]
+    public string CompetitionSlug { get; set; }
   }
 }
