@@ -20,6 +20,7 @@ namespace Alexandria
             {
               var prod = hosting.HostingEnvironment.IsProduction();
               var secrets = new List<string>();
+              secrets.Add("SendGrid");
               if (hosting.HostingEnvironment.IsProduction())
               {
                 secrets.Add("ConnectionStrings");

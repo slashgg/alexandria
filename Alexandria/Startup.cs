@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Alexandria.EF.Context;
 using Alexandria.ExternalServices.BackgroundWorker;
+using Alexandria.ExternalServices.Mailer;
 using Alexandria.Infrastructure.Filters;
 using Alexandria.Interfaces;
 using Alexandria.Interfaces.Processing;
@@ -17,6 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using Newtonsoft.Json;
 using Svalbard;
@@ -62,6 +64,7 @@ namespace Alexandria
       services.AddHttpContextAccessor();
       services.AddSvalbard();
       services.Configure<Shared.Configuration.Queue>(Configuration.GetSection("Queues"));
+      services.Configure<Shared.Configuration.SendGridConfig>(Configuration.GetSection("SendGrid"));
       services.AddScoped<AlexandriaContext>();
       services.AddScoped<SaveChangesFilter>();
       services.AddAWSService<IAmazonSQS>();
@@ -72,6 +75,12 @@ namespace Alexandria
       services.AddScoped<ITeamService, TeamService>();
       services.AddScoped<ITournamentService, TournamentService>();
       services.AddScoped<ICompetitionService, CompetitionService>();
+
+      services.AddSingleton<IMailer, SendGridMailer>(provider =>
+      {
+        var accessor = provider.GetRequiredService<IOptions<Shared.Configuration.SendGridConfig>>();
+        return new SendGridMailer(accessor.Value.ApiKey);
+      });
 
       services.AddHostedService<TransactionalService>();
 

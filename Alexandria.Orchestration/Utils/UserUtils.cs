@@ -45,7 +45,7 @@ namespace Alexandria.Orchestration.Utils
     public bool GetIdFromEmail(string email, out Guid userId)
     {
       userId = this.context.UserProfiles.Where(u => u.Email == email).Select(u => u.Id).FirstOrDefault();
-      return userId != null;
+      return userId != null && userId != Guid.Empty;
     }
 
     public async Task<string> GetEmailFromUserName(string userName)

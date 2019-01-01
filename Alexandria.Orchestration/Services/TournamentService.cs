@@ -153,7 +153,7 @@ namespace Alexandria.Orchestration.Services
     {
       var result = new ServiceResult<DTO.Tournament.TournamentApplication>();
 
-      var tournamentApplication = await this.alexandriaContext.TournamentApplications.FirstOrDefaultAsync(ta => ta.TournamentId == tournamentId && ta.TeamId == teamId);
+      var tournamentApplication = await this.alexandriaContext.TournamentApplications.Include(t => t.TournamentApplicationQuestionAnswers).FirstOrDefaultAsync(ta => ta.TournamentId == tournamentId && ta.TeamId == teamId);
 
       if (tournamentApplication == null)
       {

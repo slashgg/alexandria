@@ -9,7 +9,7 @@ namespace Alexandria.DTO.EMail
   {
     public T Data { get; set; }
 
-    public Message(string recipient, string emailTemplate, TransactionalEmail type, T data) : base(recipient, emailTemplate, type)
+    public Message(string recipient, TransactionalEmail type, T data) : base(recipient, type)
     {
       this.Data = data;
     }
@@ -18,13 +18,11 @@ namespace Alexandria.DTO.EMail
   public class Message
   {
     public string Recipient { get; set; }
-    public string EmailTemplate { get; set; }
     public TransactionalEmail TransactionalType { get; set; }
 
-    public Message(string recipient, string emailTemplate, TransactionalEmail type)
+    public Message(string recipient, TransactionalEmail type)
     {
       this.Recipient = recipient;
-      this.EmailTemplate = emailTemplate;
       this.TransactionalType = type;
     }
   }

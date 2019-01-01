@@ -12,13 +12,15 @@ namespace Alexandria.Orchestration.BackgroundServices
 {
   public class TransactionalService : BackgroundService
   {
-    public string queue;
-    public IBackgroundWorker backgroundWorker;
+    private string queue;
+    private IBackgroundWorker backgroundWorker;
+    private IMailer mailer;
 
-    public TransactionalService(IOptions<Shared.Configuration.Queue> queues, IBackgroundWorker backgroundWorker)
+    public TransactionalService(IOptions<Shared.Configuration.Queue> queues, IBackgroundWorker backgroundWorker, IMailer mailClient)
     {
       this.queue = queues.Value.Email;
       this.backgroundWorker = backgroundWorker;
+      this.mailer = mailClient;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -31,6 +33,7 @@ namespace Alexandria.Orchestration.BackgroundServices
           foreach (var message in messages)
           {
             await this.HandleEmail(message.Data);
+            await this.backgroundWorker.AcknowledgeMessage(this.queue, message.Receipt);
           }
         }
       }
@@ -38,7 +41,7 @@ namespace Alexandria.Orchestration.BackgroundServices
 
     public async Task HandleEmail(DTO.EMail.Message<object> email)
     {
-      
+      await this.mailer.SendEmail(email.TransactionalType, email.Recipient, email.Data);
     }
   }
 }
