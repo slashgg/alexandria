@@ -176,6 +176,10 @@ namespace Alexandria.Orchestration.Services
         return result;
       }
 
+      var team = await this.context.Teams.Include(t => t.Competition).FirstOrDefaultAsync(t => t.Id == invite.TeamId);
+      var message = new DTO.EMail.Message<DTO.EMail.TeamInvite>(invite.Email, TransactionalEmail.TeamInvite, new DTO.EMail.TeamInvite(invite.Id, team.Competition.Id, team.Competition.Name, team.Competition.Slug, team.Id, team.Name, team.Slug));
+      await this.backgroundWorker.SendMessage(this.queues.Email, message);
+
       // Do Send Stuff
       result.Succeed();
       return result;

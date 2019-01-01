@@ -35,6 +35,7 @@ namespace Alexandria
                 options.Secrets = secrets.ToArray();
               });
             })
+            .UseSentry()
             .UseStartup<Startup>();
   }
 }
