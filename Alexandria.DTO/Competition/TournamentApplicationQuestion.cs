@@ -11,6 +11,8 @@ namespace Alexandria.DTO.Competition
   [JsonSchema("CompetitionTournamentApplicationQuestion")]
   public class TournamentApplicationQuestion
   {
+    [DataMember(Name = "id")]
+    public Guid Id { get; set; }
     [DataMember(Name = "question")]
     public string Question { get; set; }
     [DataMember(Name = "fieldType")]

@@ -10,12 +10,13 @@ namespace Alexandria.EF.Models
     public string Notes { get; set; }
     
     /* Foreign Key */
-    public Guid TeamId { get; set; }
+    public Guid TournamentApplicationId { get; set; }
 
     /* Relations */
-    [ForeignKey("TeamId")]
-    public virtual Team Team { get; set; }
+    [ForeignKey("TournamentApplicationId")]
+    public virtual TournamentApplication TournamentApplication { get; set; }
 
+    public TournamentApplicationHistory() { }
     public TournamentApplicationHistory(TournamentApplicationState state, string notes)
     {
       this.State = state;

@@ -70,6 +70,7 @@ namespace Alexandria.Controllers
       var result = await this.competitionService.GetCompetitionBySlug(competitionSlug);
       if (result.Success)
       {
+        
         return new OperationResult<DTO.Competition.Detail>(result.Data);
       }
 

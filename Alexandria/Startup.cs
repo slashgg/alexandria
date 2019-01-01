@@ -5,6 +5,7 @@ using Alexandria.Infrastructure.Filters;
 using Alexandria.Interfaces;
 using Alexandria.Interfaces.Processing;
 using Alexandria.Interfaces.Services;
+using Alexandria.Orchestration.BackgroundServices;
 using Alexandria.Orchestration.Mapper;
 using Alexandria.Orchestration.Services;
 using Alexandria.Orchestration.Utils;
@@ -64,13 +65,15 @@ namespace Alexandria
       services.AddScoped<AlexandriaContext>();
       services.AddScoped<SaveChangesFilter>();
       services.AddAWSService<IAmazonSQS>();
-      services.AddScoped<IBackgroundWorker, SQSBackgroundWorker>();
+      services.AddSingleton<IBackgroundWorker, SQSBackgroundWorker>();
       services.AddScoped<IUserUtils, UserUtils>();
       services.AddScoped<IAuthorizationService, AuthorizationService>();
       services.AddScoped<IUserProfileService, UserProfileService>();
       services.AddScoped<ITeamService, TeamService>();
       services.AddScoped<ITournamentService, TournamentService>();
       services.AddScoped<ICompetitionService, CompetitionService>();
+
+      services.AddHostedService<TransactionalService>();
 
       var connectionString = Configuration.GetConnectionString("Alexandria");
       services.AddDbContext<AlexandriaContext>(options =>

@@ -35,9 +35,14 @@ namespace Alexandria.Orchestration.Services
       var result = new ServiceResult<DTO.Competition.Detail>();
 
       var competition = await this.alexandriaContext.Competitions.Include(c => c.Game).FirstOrDefaultAsync(c => c.Slug == slug);
+      if (competition == null)
+      {
+        result.Error = Shared.ErrorKey.Competition.NotFound;
+        return result;
+      }
 
-      result.Data = AutoMapper.Mapper.Map<DTO.Competition.Detail>(competition);
-      result.Succeed();
+      var dto = AutoMapper.Mapper.Map<DTO.Competition.Detail>(competition);
+      result.Succeed(dto);
       return result;
     }
 
@@ -45,9 +50,14 @@ namespace Alexandria.Orchestration.Services
     {
       var result = new ServiceResult<DTO.Competition.Detail>();
       var competition = await this.alexandriaContext.Competitions.Include(c => c.Game).FirstOrDefaultAsync(c => c.Id == competitionId);
+      if (competition == null)
+      {
+        result.Error = Shared.ErrorKey.Competition.NotFound;
+        return result;
+      }
 
-      result.Data = AutoMapper.Mapper.Map<DTO.Competition.Detail>(competition);
-      result.Succeed();
+      var dto = AutoMapper.Mapper.Map<DTO.Competition.Detail>(competition);
+      result.Succeed(dto);
 
       return result;
     }
@@ -94,6 +104,7 @@ namespace Alexandria.Orchestration.Services
       if (tournament == null)
       {
         result.Error = Shared.ErrorKey.Tournament.NotFound;
+        return result;
       }
 
       result.Data = AutoMapper.Mapper.Map<DTO.Competition.Tournament>(tournament);
@@ -108,6 +119,7 @@ namespace Alexandria.Orchestration.Services
       if (tournament == null)
       {
         result.Error = Shared.ErrorKey.Tournament.NotFound;
+        return result;
       }
 
       result.Data = AutoMapper.Mapper.Map<DTO.Competition.Tournament>(tournament);

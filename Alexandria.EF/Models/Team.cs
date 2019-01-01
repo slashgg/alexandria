@@ -24,7 +24,7 @@ namespace Alexandria.EF.Models
     public virtual Competition Competition { get; set; }
     public virtual ICollection<TeamInvite> TeamInvites { get; set; } = new List<TeamInvite>();
     public virtual ICollection<TeamMembership> TeamMemberships { get; set; } = new List<TeamMembership>();
-    public virtual ICollection<TournamentApplicationHistory> TournamentApplicationHistories { get; set; } = new List<TournamentApplicationHistory>();
+    public virtual ICollection<TournamentApplication> TournamentApplications { get; set; } = new List<TournamentApplication>();
     public virtual ICollection<TeamMembershipHistory> TeamMembershipHistories { get; set; } = new List<TeamMembershipHistory>();
 
     public Team(string name)

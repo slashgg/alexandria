@@ -27,7 +27,7 @@ namespace Alexandria
               }
               config.SetBasePath(hosting.HostingEnvironment.ContentRootPath);
               config.AddJsonFile("appsettings.json");
-              config.AddJsonFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.json", optional: false, reloadOnChange: false);
+              config.AddJsonFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: false);
               config.AddAWSSecrets(options =>
               {
                 options.Region = "us-east-1";

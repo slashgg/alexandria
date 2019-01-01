@@ -405,7 +405,7 @@ namespace Alexandria.Orchestration.Services
       }
 
       var team = await this.context.Teams.Include(t => t.Competition).FirstOrDefaultAsync(t => t.Id == teamId);
-      var message = new DTO.EMail.Message<DTO.EMail.TeamInvite>(invite.Email, "", new DTO.EMail.TeamInvite(invite.Id, team.Competition.Id, team.Competition.Name, team.Competition.Slug, team.Id, team.Name, team.Slug));
+      var message = new DTO.EMail.Message<DTO.EMail.TeamInvite>(invite.Email, "", TransactionalEmail.TeamInvite, new DTO.EMail.TeamInvite(invite.Id, team.Competition.Id, team.Competition.Name, team.Competition.Slug, team.Id, team.Name, team.Slug));
       await this.backgroundWorker.SendMessage(this.queues.Email, message);
 
       return invite;

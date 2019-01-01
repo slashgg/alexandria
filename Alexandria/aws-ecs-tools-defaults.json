@@ -17,7 +17,7 @@
     "task-execution-role"       : "ecsTaskExecutionRole",
     "container-name"            : "Alexandria",
     "container-port-mapping"    : "80:80",
-    "container-environment-variables" : "\"ASPNETCORE_ENVIRONMENT\"=\"Production\"",
+    "container-environment-variables" : "\"ASPNETCORE_ENVIRONMENT\"=\"Production\";\"AWS_ENABLE_ENDPOINT_DISCOVERY\"=\"true\"",
     "skip-image-push"                 : false,
     "cluster-service"                 : "Alexandria",
     "desired-count"                   : 1,

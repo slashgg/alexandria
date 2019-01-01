@@ -57,7 +57,7 @@ namespace Alexandria.Controllers.Competition
     [ProducesResponseType(typeof(List<DTO.Competition.TournamentApplication>), 200)]
     public async Task<OperationResult<IList<DTO.Competition.TournamentApplication>>> GetOpenApplications()
     {
-      if (this.resourceId == null)
+      if (this.resourceId != Guid.Empty)
       {
         var result = await this.tournamentService.GetOpenTournamentApplications(this.resourceId);
         return new OperationResult<IList<DTO.Competition.TournamentApplication>>(result.Data);

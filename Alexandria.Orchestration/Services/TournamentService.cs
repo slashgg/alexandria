@@ -48,7 +48,7 @@ namespace Alexandria.Orchestration.Services
     public async Task<ServiceResult<DTO.Competition.TournamentApplication>> GetTournamentApplication(Guid tournamentId)
     {
       var result = new ServiceResult<DTO.Competition.TournamentApplication>();
-      var application = await alexandriaContext.TournamentApplications.Include(ta => ta.Tournament).FirstOrDefaultAsync(ta => ta.TournamentId == tournamentId);
+      var application = await alexandriaContext.Tournaments.Include(t => t.TournamentApplicationQuestions).FirstOrDefaultAsync(ta => ta.Id == tournamentId);
 
       if (application == null)
       {

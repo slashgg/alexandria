@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Alexandria.Shared.Enums;
 
 namespace Alexandria.DTO.EMail
 {
@@ -8,7 +9,7 @@ namespace Alexandria.DTO.EMail
   {
     public T Data { get; set; }
 
-    public Message(string recipient, string emailTemplate, T data) : base(recipient, emailTemplate)
+    public Message(string recipient, string emailTemplate, TransactionalEmail type, T data) : base(recipient, emailTemplate, type)
     {
       this.Data = data;
     }
@@ -18,11 +19,13 @@ namespace Alexandria.DTO.EMail
   {
     public string Recipient { get; set; }
     public string EmailTemplate { get; set; }
+    public TransactionalEmail TransactionalType { get; set; }
 
-    public Message(string recipient, string emailTemplate)
+    public Message(string recipient, string emailTemplate, TransactionalEmail type)
     {
       this.Recipient = recipient;
       this.EmailTemplate = emailTemplate;
+      this.TransactionalType = type;
     }
   }
 }
