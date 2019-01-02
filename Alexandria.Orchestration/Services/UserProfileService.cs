@@ -1,6 +1,7 @@
 ﻿using Alexandria.EF.Context;
 using Alexandria.EF.Models;
 using Alexandria.Interfaces.Services;
+using Alexandria.Shared.Utils;
 using Microsoft.EntityFrameworkCore;
 using Svalbard.Services;
 using System;
@@ -13,10 +14,12 @@ namespace Alexandria.Orchestration.Services
   public class UserProfileService : IUserProfileService
   {
     private readonly EF.Context.AlexandriaContext context;
+    private readonly IAuthorizationService authorizationService;
 
-    public UserProfileService(AlexandriaContext context)
+    public UserProfileService(AlexandriaContext context, IAuthorizationService authorizationService)
     {
       this.context = context;
+      this.authorizationService = authorizationService;
     }
 
     public async Task<ServiceResult<DTO.UserProfile.Detail>> GetUserProfileDetail(Guid userId)
@@ -90,6 +93,7 @@ namespace Alexandria.Orchestration.Services
         foreach (var invite in pendingInvites)
         {
           invite.UserProfileId = userData.Id;
+          await this.authorizationService.AddPermission(userData.Id, AuthorizationHelper.GenerateARN(typeof(TeamInvite), invite.Id.ToString(), Shared.Permissions.TeamInvite.All));
         }
 
         context.TeamInvites.UpdateRange(pendingInvites);

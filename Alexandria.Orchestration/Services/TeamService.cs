@@ -212,7 +212,7 @@ namespace Alexandria.Orchestration.Services
         return result;
       }
 
-      invite.Mark(InviteState.Withdrawn);
+      await this.DangerouslyWithdrawInvite(invite);
       this.context.TeamInvites.Update(invite);
 
       result.Succeed();
@@ -293,7 +293,7 @@ namespace Alexandria.Orchestration.Services
       }
 
       // Check if the invite state is valid;
-      if (invite.CanBeRedeemed())
+      if (!invite.CanBeRedeemed())
       {
         result.Error = Shared.ErrorKey.Invite.AlreadyUsed;
         return result;
@@ -375,7 +375,7 @@ namespace Alexandria.Orchestration.Services
       }
 
       // Check if the invite state is valid;
-      if (invite.CanBeRedeemed())
+      if (!invite.CanBeRedeemed())
       {
         result.Error = Shared.ErrorKey.Invite.AlreadyUsed;
         return result;
@@ -486,7 +486,7 @@ namespace Alexandria.Orchestration.Services
 
       foreach (var invite in team.TeamInvites.Where(i => i.State == InviteState.Pending).ToList())
       {
-        invite.Mark(InviteState.Withdrawn);
+        await this.DangerouslyWithdrawInvite(invite);
       }
 
       return team;
@@ -501,6 +501,7 @@ namespace Alexandria.Orchestration.Services
         await this.authorizationService.RemovePermission(userId, membership.TeamRole.Permissions);
       }
 
+      context.TeamMemberships.Remove(membership);
       var membershipPermission = AuthorizationHelper.GenerateARN(typeof(TeamMembership), membership.Id.ToString(), Shared.Permissions.TeamMembership.All);
       await this.authorizationService.RemovePermission(userId, membershipPermission);
 
@@ -510,12 +511,30 @@ namespace Alexandria.Orchestration.Services
     private async Task<TeamInvite> DangerouslyAcceptTeamInvite(TeamInvite invite)
     {
       invite.Mark(InviteState.Accepted);
+      if (invite.UserProfileId != null && invite.UserProfileId != Guid.Empty && invite.UserProfileId.HasValue)
+      {
+        await this.authorizationService.RemovePermission(invite.UserProfileId.Value, AuthorizationHelper.GenerateARN(typeof(TeamInvite), invite.Id.ToString(), Shared.Permissions.TeamInvite.All));
+      }
       return invite;
     }
 
     private async Task<TeamInvite> DangerouslyDeclineTeamInvite(TeamInvite invite)
     {
       invite.Mark(InviteState.Declined);
+      if (invite.UserProfileId != null && invite.UserProfileId != Guid.Empty && invite.UserProfileId.HasValue)
+      {
+        await this.authorizationService.RemovePermission(invite.UserProfileId.Value, AuthorizationHelper.GenerateARN(typeof(TeamInvite), invite.Id.ToString(), Shared.Permissions.TeamInvite.All));
+      }
+      return invite;
+    }
+
+    private async Task<TeamInvite> DangerouslyWithdrawInvite(TeamInvite invite)
+    {
+      invite.Mark(InviteState.Withdrawn);
+      if (invite.UserProfileId != null && invite.UserProfileId != Guid.Empty && invite.UserProfileId.HasValue)
+      {
+        await this.authorizationService.RemovePermission(invite.UserProfileId.Value, AuthorizationHelper.GenerateARN(typeof(TeamInvite), invite.Id.ToString(), Shared.Permissions.TeamInvite.All));
+      }
       return invite;
     }
   }

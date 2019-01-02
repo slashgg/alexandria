@@ -65,7 +65,7 @@ namespace Alexandria.Controllers.UserProfile
     public async Task<OperationResult> DeclineInvite([FromRoute] Guid inviteId)
     {
       var result = await this.teamService.DeclineInvite(inviteId);
-      if (result != null)
+      if (result.Success)
       {
         return new OperationResult(204);
       }
@@ -90,7 +90,7 @@ namespace Alexandria.Controllers.UserProfile
     public async Task<OperationResult> AcceptInvite([FromRoute] Guid inviteId)
     {
       var result = await this.teamService.AcceptInvite(inviteId);
-      if (result != null)
+      if (result.Success)
       {
         return new OperationResult(204);
       }

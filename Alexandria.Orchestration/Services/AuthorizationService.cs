@@ -58,19 +58,20 @@ namespace Alexandria.Orchestration.Services
 
     public async Task RemovePermission(Guid userId, string permission)
     {
-      var user = await this.alexandriaContext.UserProfiles.Include(u => u.Permissions).FirstOrDefaultAsync(u => u.Id == userId);
-      if (user.HasPermission(permission))
+      var permissionModel = await this.alexandriaContext.Permissions.FirstOrDefaultAsync(p => p.ARN == permission && p.UserProfileId == userId);
+      if (permissionModel != null)
       {
-        var permissionModel = user.Permissions.FirstOrDefault(p => p.ARN == permission);
         this.alexandriaContext.Remove(permissionModel);
       }
     }
 
     public async Task RemovePermission(Guid userId, IList<string> permissions)
     {
-      var user = await this.alexandriaContext.UserProfiles.Include(u => u.Permissions).FirstOrDefaultAsync(u => u.Id == userId);
-      var userPermissions = user.Permissions.Where(p => user.HasPermission(p.ARN));
-      this.alexandriaContext.RemoveRange(userPermissions);
+      var permissonModels = await alexandriaContext.Permissions.Where(p => p.Id == userId && permissions.Contains(p.ARN)).ToListAsync();
+      if (permissonModels.Any())
+      {
+        this.alexandriaContext.RemoveRange(permissonModels);
+      }
     }
   }
 }
