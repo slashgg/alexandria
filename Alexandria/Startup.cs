@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Alexandria.EF.Context;
 using Alexandria.ExternalServices.BackgroundWorker;
 using Alexandria.ExternalServices.Mailer;
@@ -22,7 +21,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using Newtonsoft.Json;
-using Sentry.AspNetCore;
 using Svalbard;
 
 namespace Alexandria
@@ -99,7 +97,7 @@ namespace Alexandria
       services.AddAuthentication("Bearer")
               .AddIdentityServerAuthentication(options =>
               {
-                options.Authority = "https://passport.slash.gg";
+                options.Authority = Production ? "https://passport.slash.gg" : "http://localhost:52215";
                 options.RequireHttpsMetadata = Production;
                 options.ApiName = "Alexandria";
               });

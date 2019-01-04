@@ -1,13 +1,14 @@
-﻿using Alexandria.EF.Context;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Alexandria.DTO.UserProfile;
+using Alexandria.EF.Context;
 using Alexandria.EF.Models;
 using Alexandria.Interfaces.Services;
 using Alexandria.Shared.Utils;
 using Microsoft.EntityFrameworkCore;
 using Svalbard.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Alexandria.Orchestration.Services
 {
@@ -25,7 +26,7 @@ namespace Alexandria.Orchestration.Services
     public async Task<ServiceResult<DTO.UserProfile.Detail>> GetUserProfileDetail(Guid userId)
     {
       var result = new ServiceResult<DTO.UserProfile.Detail>();
-      var user = await this.context.UserProfiles.Include(u => u.TeamMemberships)
+      var user = await context.UserProfiles.Include(u => u.TeamMemberships)
                                                 .ThenInclude(m => m.Team)
                                                 .ThenInclude(t => t.Competition)
                                                 .Include(u => u.TeamMemberships)
@@ -46,7 +47,7 @@ namespace Alexandria.Orchestration.Services
     {
       var result = new ServiceResult<IList<DTO.UserProfile.TeamInvite>>();
 
-      var invites = await this.context.TeamInvites.Include(i => i.Team)
+      var invites = await context.TeamInvites.Include(i => i.Team)
                                                   .ThenInclude(t => t.Competition)
                                                   .Include(i => i.UserProfile)
                                                   .Where(i => i.UserProfileId == userId)
@@ -61,10 +62,15 @@ namespace Alexandria.Orchestration.Services
     public async Task<ServiceResult<IList<string>>> GetPermissions(Guid userId)
     {
       var result = new ServiceResult<IList<string>>();
-      var permissions = await this.context.Permissions.Where(p => p.UserProfileId == userId).Select(p => p.ARN).ToListAsync();
+      var permissions = await context.Permissions.Where(p => p.UserProfileId == userId).Select(p => p.ARN).ToListAsync();
 
       result.Succeed(permissions);
       return result;
+    }
+
+    public Task<ServiceResult<List<ConnectionDetail>>> GetConnections(Guid value)
+    {
+      throw new NotImplementedException();
     }
 
     public async Task<ServiceResult> CreateAccount(DTO.UserProfile.Create account)
@@ -76,7 +82,7 @@ namespace Alexandria.Orchestration.Services
         return result;
       }
 
-      await this.DangerouslyCreateUserProfile(account);
+      await DangerouslyCreateUserProfile(account);
 
       result.Succeed();
       return result;
@@ -93,7 +99,7 @@ namespace Alexandria.Orchestration.Services
         foreach (var invite in pendingInvites)
         {
           invite.UserProfileId = userData.Id;
-          await this.authorizationService.AddPermission(userData.Id, AuthorizationHelper.GenerateARN(typeof(TeamInvite), invite.Id.ToString(), Shared.Permissions.TeamInvite.All));
+          await authorizationService.AddPermission(userData.Id, AuthorizationHelper.GenerateARN(typeof(DTO.UserProfile.TeamInvite), invite.Id.ToString(), Shared.Permissions.TeamInvite.All));
         }
 
         context.TeamInvites.UpdateRange(pendingInvites);

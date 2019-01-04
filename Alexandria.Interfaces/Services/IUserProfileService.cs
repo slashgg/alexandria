@@ -1,4 +1,5 @@
-﻿using Svalbard.Services;
+﻿using Alexandria.DTO.UserProfile;
+using Svalbard.Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,5 +12,6 @@ namespace Alexandria.Interfaces.Services
     Task<ServiceResult> CreateAccount(DTO.UserProfile.Create account);
     Task<ServiceResult<IList<DTO.UserProfile.TeamInvite>>> GetTeamInvites(Guid userId);
     Task<ServiceResult<IList<string>>> GetPermissions(Guid userId);
+    Task<ServiceResult<List<ConnectionDetail>>> GetConnections(Guid value);
   }
 }
