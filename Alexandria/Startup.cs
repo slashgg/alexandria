@@ -2,6 +2,7 @@
 using Alexandria.EF.Context;
 using Alexandria.ExternalServices.BackgroundWorker;
 using Alexandria.ExternalServices.Mailer;
+using Alexandria.Infrastructure.Authorization;
 using Alexandria.Infrastructure.Filters;
 using Alexandria.Interfaces;
 using Alexandria.Interfaces.Processing;
@@ -12,6 +13,7 @@ using Alexandria.Orchestration.Services;
 using Alexandria.Orchestration.Utils;
 using Amazon;
 using Amazon.SQS;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +23,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using Newtonsoft.Json;
+using NSwag.SwaggerGeneration.Processors.Security;
 using Svalbard;
 
 namespace Alexandria
@@ -45,12 +48,12 @@ namespace Alexandria
       {
         options.Filters.Add<SaveChangesFilter>();
       })
-      .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-      //.AddJsonOptions(options =>
-      //{
-      //  options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-      //  options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
-      //});
+      .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+      .AddJsonOptions(options =>
+      {
+        options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+        options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+      });
 
       JsonConvert.DefaultSettings = () =>
       {
@@ -70,7 +73,7 @@ namespace Alexandria
       services.AddAWSService<IAmazonSQS>();
       services.AddSingleton<IBackgroundWorker, SQSBackgroundWorker>();
       services.AddScoped<IUserUtils, UserUtils>();
-      services.AddScoped<IAuthorizationService, AuthorizationService>();
+      services.AddScoped<Interfaces.Services.IAuthorizationService, AuthorizationService>();
       services.AddScoped<IUserProfileService, UserProfileService>();
       services.AddScoped<ITeamService, TeamService>();
       services.AddScoped<ITournamentService, TournamentService>();
@@ -93,6 +96,12 @@ namespace Alexandria
         });
       });
 
+      services.AddAuthorization(options =>
+      {
+        options.DefaultPolicy = AuthorizationPolicies.Default;
+        options.AddPolicy("Backchannel", AuthorizationPolicies.Backchannel);
+      });
+
       IdentityModelEventSource.ShowPII = true;
       services.AddAuthentication("Bearer")
               .AddIdentityServerAuthentication(options =>
@@ -108,9 +117,30 @@ namespace Alexandria
         options.Version = "1.0.0";
         options.PostProcess = settings =>
         {
-          settings.Schemes.Clear();
-          settings.Schemes.Add(NSwag.SwaggerSchema.Https);
+          if (Production)
+          {
+            settings.Schemes.Clear();
+            settings.Schemes.Add(NSwag.SwaggerSchema.Https);
+          }
         };
+
+        options.OperationProcessors.Add(new OperationSecurityScopeProcessor("oauth2"));
+
+        options.DocumentProcessors.Add(new SecurityDefinitionAppender("oauth2", new NSwag.SwaggerSecurityScheme
+        {
+          Type = NSwag.SwaggerSecuritySchemeType.OAuth2,
+          OpenIdConnectUrl = "http://localhost:52215/.well-known/openid-configuration",
+          TokenUrl = "http://localhost:52215/connect/token",
+          AuthorizationUrl = "http://localhost:52215/connect/authorize",
+          Flow = NSwag.SwaggerOAuth2Flow.Implicit,
+          Scheme = "Bearer",
+          Name = "Authorization",
+          In = NSwag.SwaggerSecurityApiKeyLocation.Header,
+          Scopes = new Dictionary<string, string>
+          {
+            { "@slashgg/alexandria.full_access", "Alexandria" }
+          }
+        }));
       });
     }
 
@@ -137,7 +167,16 @@ namespace Alexandria
       });
 
       app.UseSwagger();
-      app.UseSwaggerUi3();
+      app.UseSwaggerUi3(configuration =>
+      {
+        configuration.OAuth2Client = new NSwag.AspNetCore.OAuth2ClientSettings
+        {
+          AppName = "Alexandria",
+          ClientId = "slashgg-alexandria-swagger",
+        };
+
+        configuration.OAuth2Client.AdditionalQueryStringParameters.Add("nonce", System.Guid.NewGuid().ToString("N"));
+      });
       app.UseAuthentication();
       app.UseMvc();
     }

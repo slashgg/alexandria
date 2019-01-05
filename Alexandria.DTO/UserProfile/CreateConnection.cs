@@ -1,9 +1,11 @@
 ﻿using System.Runtime.Serialization;
 using Alexandria.Shared.Enums;
+using NJsonSchema.Annotations;
 
 namespace Alexandria.DTO.UserProfile
 {
   [DataContract]
+  [JsonSchema("UserProfileCreateConnection")]
   public class CreateConnection
   {
     [DataMember(Name = "userId")]

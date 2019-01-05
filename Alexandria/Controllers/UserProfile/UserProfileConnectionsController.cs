@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Alexandria.Infrastructure.Filters;
 using Alexandria.Interfaces.Services;
 using Alexandria.Shared.ErrorKey;
 using Alexandria.Shared.Extensions;
@@ -44,6 +45,55 @@ namespace Alexandria.Controllers.UserProfile
       }
 
       return new OperationResult<List<DTO.UserProfile.ConnectionDetail>>(result.Error);
+    }
+
+    /// <summary>
+    /// Deletes the connection
+    /// Requires permission: `external-account::{connectionId}::delete`.
+    /// This method is idempotent.
+    /// </summary>
+    /// <param name="connectionId">GUID of the connection to delete</param>
+    /// <returns></returns>
+    [HttpDelete("{connectionId}")]
+    [PermissionsRequired("external-account::{connectionId}::delete")]
+    [ProducesResponseType(typeof(void), 204)]
+    [ProducesResponseType(typeof(void), 401)]
+    public async Task<OperationResult> DeleteConnection(string connectionId)
+    {
+      var userId = HttpContext.GetUserId();
+      if (!userId.HasValue)
+      {
+        return new OperationResult(204);
+      }
+
+      var result = await profileService.DeleteConnection(connectionId);
+      if (result.Success)
+      {
+        return new OperationResult(204);
+      }
+
+      return new OperationResult(result.Error);
+    }
+
+    /// <summary>
+    /// Creates the given connection. Requires the @slashgg/alexandria.backchannel scope.
+    /// </summary>
+    /// <param name="createDto"></param>
+    /// <returns></returns>
+    [HttpPost]
+    [Authorize("Backchannel")]
+    [ProducesResponseType(typeof(void), 201)]
+    [ProducesResponseType(typeof(void), 401)]
+    [ProducesResponseType(typeof(BaseError), 400)]
+    public async Task<OperationResult> CreateConnection(DTO.UserProfile.CreateConnection createDto)
+    {
+      var result = await profileService.CreateConnection(createDto);
+      if (result.Success)
+      {
+        return new OperationResult(201);
+      }
+
+      return new OperationResult(result.Error);
     }
   }
 }
