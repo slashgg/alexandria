@@ -13,7 +13,6 @@ using Alexandria.Orchestration.Services;
 using Alexandria.Orchestration.Utils;
 using Amazon;
 using Amazon.SQS;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -73,7 +72,7 @@ namespace Alexandria
       services.AddAWSService<IAmazonSQS>();
       services.AddSingleton<IBackgroundWorker, SQSBackgroundWorker>();
       services.AddScoped<IUserUtils, UserUtils>();
-      services.AddScoped<Interfaces.Services.IAuthorizationService, AuthorizationService>();
+      services.AddScoped<IAuthorizationService, AuthorizationService>();
       services.AddScoped<IUserProfileService, UserProfileService>();
       services.AddScoped<ITeamService, TeamService>();
       services.AddScoped<ITournamentService, TournamentService>();
@@ -102,11 +101,13 @@ namespace Alexandria
         options.AddPolicy("Backchannel", AuthorizationPolicies.Backchannel);
       });
 
+      var passportHost = Production ? "https://passport.slash.gg" : "http://localhost:52215";
+
       IdentityModelEventSource.ShowPII = true;
       services.AddAuthentication("Bearer")
               .AddIdentityServerAuthentication(options =>
               {
-                options.Authority = Production ? "https://passport.slash.gg" : "http://localhost:52215";
+                options.Authority = passportHost;
                 options.RequireHttpsMetadata = Production;
                 options.ApiName = "Alexandria";
               });
@@ -129,9 +130,9 @@ namespace Alexandria
         options.DocumentProcessors.Add(new SecurityDefinitionAppender("oauth2", new NSwag.SwaggerSecurityScheme
         {
           Type = NSwag.SwaggerSecuritySchemeType.OAuth2,
-          OpenIdConnectUrl = "http://localhost:52215/.well-known/openid-configuration",
-          TokenUrl = "http://localhost:52215/connect/token",
-          AuthorizationUrl = "http://localhost:52215/connect/authorize",
+          OpenIdConnectUrl = $"{passportHost}/.well-known/openid-configuration",
+          TokenUrl = $"{passportHost}/connect/token",
+          AuthorizationUrl = $"{passportHost}/connect/authorize",
           Flow = NSwag.SwaggerOAuth2Flow.Implicit,
           Scheme = "Bearer",
           Name = "Authorization",
