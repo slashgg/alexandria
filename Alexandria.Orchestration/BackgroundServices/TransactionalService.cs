@@ -36,6 +36,10 @@ namespace Alexandria.Orchestration.BackgroundServices
             await this.backgroundWorker.AcknowledgeMessage(this.queue, message.Receipt);
           }
         }
+
+        // This sleep consumes 80% of our SQS free tier requests. The other 20% is likely
+        // consumed by acks and pushes.
+        Thread.Sleep(3240);
       }
     }
 
