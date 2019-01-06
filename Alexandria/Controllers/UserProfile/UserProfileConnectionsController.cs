@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Alexandria.Infrastructure.Filters;
 using Alexandria.Interfaces.Services;
+using Alexandria.Shared.Enums;
 using Alexandria.Shared.ErrorKey;
 using Alexandria.Shared.Extensions;
 using Microsoft.AspNetCore.Authorization;
@@ -46,6 +47,46 @@ namespace Alexandria.Controllers.UserProfile
 
       return new OperationResult<List<DTO.UserProfile.ConnectionDetail>>(result.Error);
     }
+
+    /// <summary>
+    /// Gets the connection
+    /// </summary>
+    /// <param name="provider">The name of the provider to fetch</param>
+    /// <returns></returns>
+    [HttpGet("{provider}")]
+    [ProducesResponseType(typeof(DTO.UserProfile.ConnectionDetail), 200)]
+    [ProducesResponseType(typeof(void), 401)]
+    [ProducesResponseType(typeof(void), 404)]
+    public async Task<OperationResult<DTO.UserProfile.ConnectionDetail>> GetConnection(string provider)
+    {
+      var userId = HttpContext.GetUserId();
+      if (!userId.HasValue)
+      {
+        return new OperationResult<DTO.UserProfile.ConnectionDetail>(404);
+      }
+
+      ExternalProvider providerValue;
+      switch (provider)
+      {
+        case "battle.net":
+          providerValue = ExternalProvider.BattleNet;
+          break;
+        case "discord":
+          providerValue = ExternalProvider.Discord;
+          break;
+        default:
+          providerValue = 0;
+          break;
+      }
+      var result = await profileService.GetConnection(userId.Value, providerValue);
+      if (result.Success)
+      {
+        return new OperationResult<DTO.UserProfile.ConnectionDetail>(result.Data);
+      }
+
+      return new OperationResult<DTO.UserProfile.ConnectionDetail>(result.Error);
+    }
+
 
     /// <summary>
     /// Deletes the connection

@@ -6,6 +6,7 @@ using Alexandria.DTO.UserProfile;
 using Alexandria.EF.Context;
 using Alexandria.EF.Models;
 using Alexandria.Interfaces.Services;
+using Alexandria.Shared.Enums;
 using Alexandria.Shared.Utils;
 using Microsoft.EntityFrameworkCore;
 using Svalbard.Services;
@@ -68,14 +69,29 @@ namespace Alexandria.Orchestration.Services
       return result;
     }
 
-    public async Task<ServiceResult<List<ConnectionDetail>>> GetConnections(Guid value)
+    public async Task<ServiceResult<List<ConnectionDetail>>> GetConnections(Guid userId)
     {
       var result = new ServiceResult<List<ConnectionDetail>>();
 
-      var connections = await context.ExternalAccount.Where(ea => ea.Id.Equals(value)).ToListAsync();
+      var connections = await context.ExternalAccount.Where(ea => ea.UserProfileId.Equals(userId)).ToListAsync();
       var connectionDtos = connections.Select(AutoMapper.Mapper.Map<ConnectionDetail>).ToList();
       result.Succeed(connectionDtos);
 
+      return result;
+    }
+
+    public async Task<ServiceResult<ConnectionDetail>> GetConnection(Guid userId, ExternalProvider provider)
+    {
+      var result = new ServiceResult<ConnectionDetail>();
+
+      var connection = await context.ExternalAccount.FirstOrDefaultAsync(ea => ea.UserProfileId.Equals(userId) && ea.Provider.Equals(provider));
+      if (connection == null)
+      {
+        result.Error = Shared.ErrorKey.UserProfile.ExternalAccountNotFound;
+        return result;
+      }
+
+      result.Succeed(AutoMapper.Mapper.Map<ConnectionDetail>(connection));
       return result;
     }
 
@@ -103,6 +119,14 @@ namespace Alexandria.Orchestration.Services
         return result;
       }
 
+      // Look for a matching external account
+      if (context.ExternalAccount.Any(ea => ea.Provider == createDto.Provider && ea.ExternalId.Equals(createDto.ExternalId)))
+      {
+        result.Error = Shared.ErrorKey.UserProfile.ExternalAccountExists;
+
+        return result;
+      }
+
       await DangerouslyCreateExternalConnection(createDto, profileId);
 
       result.Succeed();
@@ -115,7 +139,7 @@ namespace Alexandria.Orchestration.Services
       Guid id;
       if (Guid.TryParse(connectionId, out id))
       {
-        var connection = await context.ExternalAccount.FindAsync(connectionId);
+        var connection = await context.ExternalAccount.FindAsync(id);
         if (connection != null)
         {
           await DangerouslyDeleteConnection(connection);

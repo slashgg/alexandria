@@ -8,6 +8,9 @@ namespace Alexandria.DTO.UserProfile
   [JsonSchema("UserProfileConnectionDetail")]
   public class ConnectionDetail
   {
+    [DataMember(Name = "id")]
+    public string Id { get; set; }
+
     [DataMember(Name = "provider")]
     public ExternalProvider Provider { get; set; }
 

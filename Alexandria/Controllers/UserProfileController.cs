@@ -30,6 +30,7 @@ namespace Alexandria.Controllers
     /// <param name="payload">The User Account Information</param>
     /// <returns></returns>
     [HttpPost]
+    [Authorize("Backchannel")]
     [ProducesResponseType(typeof(void), 201)]
     [ProducesResponseType(typeof(BaseError), 400)]
     [ProducesResponseType(typeof(BaseError), 409)]
