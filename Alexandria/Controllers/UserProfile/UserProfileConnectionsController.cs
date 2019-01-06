@@ -74,6 +74,9 @@ namespace Alexandria.Controllers.UserProfile
         case "discord":
           providerValue = ExternalProvider.Discord;
           break;
+        case "twitch":
+          providerValue = ExternalProvider.Twitch;
+          break;
         default:
           providerValue = 0;
           break;
