@@ -11,6 +11,7 @@ namespace Alexandria.EF.Context
     {
     }
 
+    public DbSet<ExternalAccount> ExternalAccount { get; set; }
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<UserProfile> UserProfiles { get; set; }
     public DbSet<Game> Games { get; set; }

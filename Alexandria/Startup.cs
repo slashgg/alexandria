@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Alexandria.EF.Context;
 using Alexandria.ExternalServices.BackgroundWorker;
 using Alexandria.ExternalServices.Mailer;
+using Alexandria.Infrastructure.Authorization;
 using Alexandria.Infrastructure.Filters;
 using Alexandria.Interfaces;
 using Alexandria.Interfaces.Processing;
@@ -22,7 +22,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using Newtonsoft.Json;
-using Sentry.AspNetCore;
+using NSwag.SwaggerGeneration.Processors.Security;
 using Svalbard;
 
 namespace Alexandria
@@ -47,12 +47,12 @@ namespace Alexandria
       {
         options.Filters.Add<SaveChangesFilter>();
       })
-      .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-      //.AddJsonOptions(options =>
-      //{
-      //  options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-      //  options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
-      //});
+      .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+      .AddJsonOptions(options =>
+      {
+        options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+        options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+      });
 
       JsonConvert.DefaultSettings = () =>
       {
@@ -95,11 +95,19 @@ namespace Alexandria
         });
       });
 
+      services.AddAuthorization(options =>
+      {
+        options.DefaultPolicy = AuthorizationPolicies.Default;
+        options.AddPolicy("Backchannel", AuthorizationPolicies.Backchannel);
+      });
+
+      var passportHost = Production ? "https://passport.slash.gg" : "http://localhost:52215";
+
       IdentityModelEventSource.ShowPII = true;
       services.AddAuthentication("Bearer")
               .AddIdentityServerAuthentication(options =>
               {
-                options.Authority = "https://passport.slash.gg";
+                options.Authority = passportHost;
                 options.RequireHttpsMetadata = Production;
                 options.ApiName = "Alexandria";
               });
@@ -110,9 +118,30 @@ namespace Alexandria
         options.Version = "1.0.0";
         options.PostProcess = settings =>
         {
-          settings.Schemes.Clear();
-          settings.Schemes.Add(NSwag.SwaggerSchema.Https);
+          if (Production)
+          {
+            settings.Schemes.Clear();
+            settings.Schemes.Add(NSwag.SwaggerSchema.Https);
+          }
         };
+
+        options.OperationProcessors.Add(new OperationSecurityScopeProcessor("oauth2"));
+
+        options.DocumentProcessors.Add(new SecurityDefinitionAppender("oauth2", new NSwag.SwaggerSecurityScheme
+        {
+          Type = NSwag.SwaggerSecuritySchemeType.OAuth2,
+          OpenIdConnectUrl = $"{passportHost}/.well-known/openid-configuration",
+          TokenUrl = $"{passportHost}/connect/token",
+          AuthorizationUrl = $"{passportHost}/connect/authorize",
+          Flow = NSwag.SwaggerOAuth2Flow.Implicit,
+          Scheme = "Bearer",
+          Name = "Authorization",
+          In = NSwag.SwaggerSecurityApiKeyLocation.Header,
+          Scopes = new Dictionary<string, string>
+          {
+            { "@slashgg/alexandria.full_access", "Alexandria" }
+          }
+        }));
       });
     }
 
@@ -139,7 +168,16 @@ namespace Alexandria
       });
 
       app.UseSwagger();
-      app.UseSwaggerUi3();
+      app.UseSwaggerUi3(configuration =>
+      {
+        configuration.OAuth2Client = new NSwag.AspNetCore.OAuth2ClientSettings
+        {
+          AppName = "Alexandria",
+          ClientId = "slashgg-alexandria-swagger",
+        };
+
+        configuration.OAuth2Client.AdditionalQueryStringParameters.Add("nonce", System.Guid.NewGuid().ToString("N"));
+      });
       app.UseAuthentication();
       app.UseMvc();
     }

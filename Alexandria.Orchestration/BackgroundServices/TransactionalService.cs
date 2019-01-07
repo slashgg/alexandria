@@ -36,6 +36,9 @@ namespace Alexandria.Orchestration.BackgroundServices
             await this.backgroundWorker.AcknowledgeMessage(this.queue, message.Receipt);
           }
         }
+
+        // 1 minute batching
+        Thread.Sleep(60 * 1000);
       }
     }
 

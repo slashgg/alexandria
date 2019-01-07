@@ -23,6 +23,7 @@ namespace Alexandria.Orchestration.Mapper.UserProfile
         .ForMember(dest => dest.TeamId, opt => opt.MapFrom(src => src.TeamId));
 
       this.CreateMap<EF.Models.Competition, DTO.UserProfile.TeamMembership.CompetitionData>();
+      this.CreateMap<EF.Models.ExternalAccount, DTO.UserProfile.ConnectionDetail>();
     }
   }
 }
