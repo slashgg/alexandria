@@ -165,7 +165,7 @@ namespace Alexandria.Orchestration.Services
       return result;
     }
 
-    public async Task<ExternalAccount> DangerouslyCreateExternalConnection(CreateConnection dto, Guid profileId)
+    private async Task<ExternalAccount> DangerouslyCreateExternalConnection(CreateConnection dto, Guid profileId)
     {
       var externalAccount = new ExternalAccount(dto.Provider, dto.Name, dto.ExternalId, profileId);
 
