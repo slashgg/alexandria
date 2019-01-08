@@ -192,7 +192,8 @@ namespace Alexandria.Orchestration.Services
         foreach (var invite in pendingInvites)
         {
           invite.UserProfileId = userData.Id;
-          await authorizationService.AddPermission(userData.Id, AuthorizationHelper.GenerateARN(typeof(EF.Models.TeamInvite), invite.Id.ToString(), Shared.Permissions.TeamInvite.All));
+          var invitePermission = new Permission(userData.Id, AuthorizationHelper.GenerateARN(typeof(EF.Models.TeamInvite), invite.Id.ToString(), Shared.Permissions.TeamInvite.All));
+          context.Permissions.Add(invitePermission);
         }
 
         context.TeamInvites.UpdateRange(pendingInvites);

@@ -25,12 +25,11 @@ namespace Alexandria.Orchestration.Services
     public async Task AddPermission(Guid userId, string permission)
     {
       var user = await this.alexandriaContext.UserProfiles.Include(u => u.Permissions).FirstOrDefaultAsync(u => u.Id == userId);
-      if (!user.HasPermission(permission))
+      if (user != null && !user.HasPermission(permission))
       {
         var permissionModel = new Permission(userId, permission);
         this.alexandriaContext.Add(permissionModel);
       }
-
     }
 
     public async Task AddPermission(Guid userId, IList<string> permissions)

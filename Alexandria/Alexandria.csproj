@@ -26,7 +26,7 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="8.0.0" />
     <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.3.6" />
-    <PackageReference Include="AWSSDK.SQS" Version="3.3.3.44" />
+    <PackageReference Include="AWSSDK.SQS" Version="3.3.3.46" />
     <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="2.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
@@ -38,13 +38,13 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.4.2" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.4.3" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.0" />
-    <PackageReference Include="NSwag.AspNetCore" Version="12.0.9" />
+    <PackageReference Include="NSwag.AspNetCore" Version="12.0.10" />
     <PackageReference Include="Sendgrid" Version="9.10.0" />
-    <PackageReference Include="Sentry" Version="1.1.0" />
-    <PackageReference Include="Sentry.AspNetCore" Version="1.1.0" />
-    <PackageReference Include="Svalbard" Version="1.4.1" />
+    <PackageReference Include="Sentry" Version="1.1.1" />
+    <PackageReference Include="Sentry.AspNetCore" Version="1.1.1" />
+    <PackageReference Include="Svalbard" Version="1.4.2" />
   </ItemGroup>
 
   <ItemGroup>
