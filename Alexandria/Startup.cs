@@ -12,6 +12,7 @@ using Alexandria.Orchestration.Mapper;
 using Alexandria.Orchestration.Services;
 using Alexandria.Orchestration.Utils;
 using Amazon;
+using Amazon.S3;
 using Amazon.SQS;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -70,6 +71,7 @@ namespace Alexandria
       services.AddScoped<AlexandriaContext>();
       services.AddScoped<SaveChangesFilter>();
       services.AddAWSService<IAmazonSQS>();
+      services.AddAWSService<IAmazonS3>();
       services.AddSingleton<IBackgroundWorker, SQSBackgroundWorker>();
       services.AddScoped<IUserUtils, UserUtils>();
       services.AddScoped<IAuthorizationService, AuthorizationService>();
@@ -77,6 +79,7 @@ namespace Alexandria
       services.AddScoped<ITeamService, TeamService>();
       services.AddScoped<ITournamentService, TournamentService>();
       services.AddScoped<ICompetitionService, CompetitionService>();
+      services.AddScoped<IFileService, S3Service>();
 
       services.AddSingleton<IMailer, SendGridMailer>(provider =>
       {
