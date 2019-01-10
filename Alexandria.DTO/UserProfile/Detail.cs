@@ -16,6 +16,8 @@ namespace Alexandria.DTO.UserProfile
     public string Email { get; set; }
     [DataMember(Name ="displayName")]
     public string DisplayName { get; set; }
+    [DataMember(Name = "birthday")]
+    public string Birthday { get; set; }
     [DataMember(Name ="userName")]
     public string UserName { get; set; }
     [DataMember(Name = "avatarURL")]

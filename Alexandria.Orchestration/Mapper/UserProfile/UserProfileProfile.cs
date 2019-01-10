@@ -8,7 +8,8 @@ namespace Alexandria.Orchestration.Mapper.UserProfile
     public UserProfileProfile()
     {
       this.CreateMap<EF.Models.UserProfile, DTO.UserProfile.Detail>()
-        .ForMember(dest => dest.Memberships, opt => opt.MapFrom(src => src.TeamMemberships));
+        .ForMember(dest => dest.Memberships, opt => opt.MapFrom(src => src.TeamMemberships))
+        .ForMember(dest => dest.Birthday, opt => opt.MapFrom(src => src.Birthday.HasValue ? src.Birthday.Value.ToString("yyyy-MM-dd") : string.Empty));
 
       this.CreateMap<EF.Models.TeamMembership, DTO.UserProfile.TeamMembership>()
         .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.TeamRole.Name))

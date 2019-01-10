@@ -11,10 +11,13 @@ namespace Alexandria.DTO.Asset
   {
     [DataMember(Name = "url")]
     public string Url { get; set; }
+    [DataMember(Name = "correlationId")]
+    public uint CorrelationId { get; set; }
 
-    public PresignedURLResponse(string result)
+    public PresignedURLResponse(string result, uint correlationId)
     {
       this.Url = result;
+      this.CorrelationId = correlationId;
     }
   }
 }

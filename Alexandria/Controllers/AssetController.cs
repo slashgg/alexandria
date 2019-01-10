@@ -14,7 +14,7 @@ namespace Alexandria.Controllers
   [ApiController]
   public class AssetController : ControllerBase
   {
-    private static string ASSET_BUCKET = "slashgg.assets";
+    public static readonly string ASSET_BUCKET = "slashgg.assets";
     private readonly IFileService files;
 
     public AssetController(IFileService files)

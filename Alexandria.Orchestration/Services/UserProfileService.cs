@@ -10,6 +10,7 @@ using Alexandria.Shared.Enums;
 using Alexandria.Shared.Utils;
 using Microsoft.EntityFrameworkCore;
 using Svalbard.Services;
+using Svalbard.Utils;
 
 namespace Alexandria.Orchestration.Services
 {
@@ -17,11 +18,13 @@ namespace Alexandria.Orchestration.Services
   {
     private readonly EF.Context.AlexandriaContext context;
     private readonly IAuthorizationService authorizationService;
+    private readonly IPassportClient passportClient;
 
-    public UserProfileService(AlexandriaContext context, IAuthorizationService authorizationService)
+    public UserProfileService(AlexandriaContext context, IAuthorizationService authorizationService, IPassportClient passportClient)
     {
       this.context = context;
       this.authorizationService = authorizationService;
+      this.passportClient = passportClient;
     }
 
     public async Task<ServiceResult<DTO.UserProfile.Detail>> GetUserProfileDetail(Guid userId)
@@ -163,6 +166,102 @@ namespace Alexandria.Orchestration.Services
 
       result.Succeed();
       return result;
+    }
+
+    public async Task<ServiceResult<string>> UpdateAvatar(Guid value, string presignedUrl)
+    {
+      var result = new ServiceResult<string>();
+      if (string.IsNullOrEmpty(presignedUrl))
+      {
+        result.Error = Shared.ErrorKey.Asset.PresignedUrlInvalid;
+        return result;
+      }
+
+      var parts = presignedUrl.Split('?');
+      if (parts.Length != 2)
+      {
+        result.Error = Shared.ErrorKey.Asset.PresignedUrlInvalid;
+        return result;
+      }
+
+      var oldAvatar = await DangerouslyUpdateProfileAvatarUrl(parts.First(), value);
+
+      result.Succeed(oldAvatar);
+      return result;
+    }
+
+    public async Task<ServiceResult> UpdateSettings(Guid userId, UpdateSettings updateDto)
+    {
+      var result = new ServiceResult();
+
+      if (updateDto == null || string.IsNullOrEmpty(updateDto.Email) || string.IsNullOrEmpty(updateDto.Username))
+      {
+        result.Error = Shared.ErrorKey.UserProfile.InvalidUserSettings;
+        return result;
+      }
+
+      if (updateDto.DateOfBirth.HasValue)
+      {
+        var userAgeInDays = (DateTimeOffset.UtcNow - updateDto.DateOfBirth.Value).TotalDays;
+        if (userAgeInDays > Shared.Configuration.UserProfileValidations.MaxAgeInDays)
+        {
+          result.Error = Shared.ErrorKey.UserProfile.UserTooOld;
+          return result;
+        }
+        else if (userAgeInDays < Shared.Configuration.UserProfileValidations.MinAgeInDays)
+        {
+          result.Error = Shared.ErrorKey.UserProfile.UserTooYoung;
+          return result;
+        }
+      }
+
+      if (!await context.UserProfiles.AnyAsync(up => up.Id.Equals(userId)))
+      {
+        result.Error = Shared.ErrorKey.UserProfile.UserNotFound;
+        return result;
+      }
+
+      if (await context.UserProfiles.AnyAsync(up => !up.Id.Equals(userId) && up.Email.Equals(updateDto.Email, StringComparison.InvariantCultureIgnoreCase)))
+      {
+        result.Error = Shared.ErrorKey.UserProfile.ProfileExists;
+        return result;
+      }
+
+      var passportResult = await passportClient.UpdateProfile(userId, AutoMapper.Mapper.Map<UpdatePassportUser>(updateDto));
+      if (!passportResult.Success)
+      {
+        return passportResult;
+      }
+
+      await DangerouslyUpdateProfileSettings(updateDto, userId);
+
+      result.Succeed();
+      return result;
+    }
+
+    private async Task DangerouslyUpdateProfileSettings(UpdateSettings updateDto, Guid userId)
+    {
+      var profile = await context.UserProfiles.FindAsync(userId);
+      profile.Birthday = updateDto.DateOfBirth;
+      profile.Email = updateDto.Email;
+      profile.UserName = updateDto.Username + $"#{MurmurHash2.ComputeHash(updateDto.Email) % 100000}";
+      profile.DisplayName = updateDto.Username;
+    }
+
+    private async Task<string> DangerouslyUpdateProfileAvatarUrl(string url, Guid profileId)
+    {
+      var profile = await context.UserProfiles.FindAsync(profileId);
+      if (profile == null)
+      {
+        return null;
+      }
+
+      var oldAvatar = profile.AvatarURL;
+      profile.AvatarURL = url;
+
+      context.Entry(profile).State = EntityState.Modified;
+
+      return oldAvatar;
     }
 
     private async Task<ExternalAccount> DangerouslyCreateExternalConnection(CreateConnection dto, Guid profileId)

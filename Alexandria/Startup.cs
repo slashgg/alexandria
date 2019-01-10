@@ -63,11 +63,13 @@ namespace Alexandria
         };
       };
 
+      services.AddMemoryCache();
       services.AddDefaultAWSOptions(new Amazon.Extensions.NETCore.Setup.AWSOptions { Region = RegionEndpoint.USEast1 });
       services.AddHttpContextAccessor();
       services.AddSvalbard();
       services.Configure<Shared.Configuration.Queue>(Configuration.GetSection("Queues"));
       services.Configure<Shared.Configuration.SendGridConfig>(Configuration.GetSection("SendGrid"));
+      services.Configure<Shared.Configuration.PassportClientConfiguration>(Configuration.GetSection("Passport"));
       services.AddScoped<AlexandriaContext>();
       services.AddScoped<SaveChangesFilter>();
       services.AddAWSService<IAmazonSQS>();
@@ -80,6 +82,7 @@ namespace Alexandria
       services.AddScoped<ITournamentService, TournamentService>();
       services.AddScoped<ICompetitionService, CompetitionService>();
       services.AddScoped<IFileService, S3Service>();
+      services.AddScoped<IPassportClient, PassportClient>();
 
       services.AddSingleton<IMailer, SendGridMailer>(provider =>
       {

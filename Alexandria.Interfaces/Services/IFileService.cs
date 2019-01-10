@@ -10,5 +10,7 @@ namespace Alexandria.Interfaces.Services
   public interface IFileService
   {
     Task<ServiceResult<PresignedURLResponse>> CreatePresignedUrl(string bucketName, string filePath, string contentType);
+    ServiceResult<PresignedURLResponse> GetFromCorrelationId(uint correlationId);
+    Task<ServiceResult> DeleteByUrl(string url);
   }
 }
