@@ -167,7 +167,7 @@ namespace Alexandria.Orchestration.Services
       return result;
     }
 
-    private async Task<EF.Models.TournamentApplication> DangerouslyCreateTournamentApplication(Guid teamId, DTO.Tournament.TeamTournamentApplicationRequest teamApplication)
+    private Task<EF.Models.TournamentApplication> DangerouslyCreateTournamentApplication(Guid teamId, DTO.Tournament.TeamTournamentApplicationRequest teamApplication)
     {
       var application = new EF.Models.TournamentApplication(teamId, teamApplication.TournamentId);
 
@@ -180,10 +180,10 @@ namespace Alexandria.Orchestration.Services
       application.Initialize();
       this.alexandriaContext.TournamentApplications.Add(application);
 
-      return application;
+      return Task.FromResult(application);
     }
 
-    private async Task<EF.Models.TournamentApplication> DangerouslyUpdateTournamentApplication(EF.Models.TournamentApplication application, IList<DTO.Tournament.TournamentApplicationQuestionAnswer> answers)
+    private Task<EF.Models.TournamentApplication> DangerouslyUpdateTournamentApplication(EF.Models.TournamentApplication application, IList<DTO.Tournament.TournamentApplicationQuestionAnswer> answers)
     {
       foreach (var answer in answers)
       {
@@ -194,15 +194,15 @@ namespace Alexandria.Orchestration.Services
       application.Mark(Shared.Enums.TournamentApplicationState.Pending, "Updated");
       this.alexandriaContext.TournamentApplications.Update(application);
 
-      return application;
+      return Task.FromResult(application);
     }
 
-    private async Task<EF.Models.TournamentApplication> DangerouslyWithdrawTournamentApplication(EF.Models.TournamentApplication application)
+    private Task<EF.Models.TournamentApplication> DangerouslyWithdrawTournamentApplication(EF.Models.TournamentApplication application)
     {
       application.Mark(Shared.Enums.TournamentApplicationState.Withdrawn, "Withdrawn");
       this.alexandriaContext.TournamentApplications.Update(application);
 
-      return application;
+      return Task.FromResult(application);
     }
   }
 }

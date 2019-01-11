@@ -30,7 +30,6 @@ namespace Alexandria.Controllers.Competition
     /// <summary>
     /// Get the tournaments for this competition
     /// </summary>
-    /// <param name="competitionId">GUID or slug of the competition</param>
     /// <returns></returns>
     [HttpGet]
     [ProducesResponseType(typeof(List<DTO.Competition.Tournament>), 200)]
@@ -51,7 +50,6 @@ namespace Alexandria.Controllers.Competition
     /// <summary>
     /// Get the currently tournaments open for application for this competition
     /// </summary>
-    /// <param name="competitionId">GUID or slug of the competition</param>
     /// <returns></returns>
     [HttpGet("appplications")]
     [ProducesResponseType(typeof(List<DTO.Competition.TournamentApplication>), 200)]

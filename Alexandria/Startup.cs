@@ -17,6 +17,7 @@ using Amazon.SQS;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -83,6 +84,12 @@ namespace Alexandria
       services.AddScoped<ICompetitionService, CompetitionService>();
       services.AddScoped<IFileService, FileService>();
       services.AddScoped<IPassportClient, PassportClient>();
+
+      services.AddSingleton<IMimeMappingService>(provider =>
+      {
+        var staticProvider = new FileExtensionContentTypeProvider();
+        return new MimeMappingService(staticProvider.Mappings);
+      });
 
       services.AddSingleton<IMailer, SendGridMailer>(provider =>
       {

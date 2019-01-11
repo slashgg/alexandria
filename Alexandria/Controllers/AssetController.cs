@@ -16,10 +16,12 @@ namespace Alexandria.Controllers
   {
     public static readonly string ASSET_BUCKET = "slashgg.assets";
     private readonly IFileService files;
+    private readonly IMimeMappingService mimeMapping;
 
-    public AssetController(IFileService files)
+    public AssetController(IFileService files, IMimeMappingService mimeMapping)
     {
       this.files = files;
+      this.mimeMapping = mimeMapping;
     }
 
     /// <summary>
@@ -43,7 +45,7 @@ namespace Alexandria.Controllers
       string extension = string.Empty;
       try
       {
-        extension = MimeTypes.MimeTypeMap.GetExtension(type);
+        extension = mimeMapping.GetExtension(type);
       }
       catch
       {

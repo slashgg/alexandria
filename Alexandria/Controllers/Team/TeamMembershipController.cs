@@ -24,7 +24,6 @@ namespace Alexandria.Controllers.Team
     /// <summary>
     /// Remove a Member from a Team
     /// </summary>
-    /// <param name="teamId">GUID of the Team</param>
     /// <param name="membershipId">GUID of the Membership</param>
     /// <returns></returns>
     [HttpDelete("{membershipId}")]
