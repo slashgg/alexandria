@@ -81,7 +81,7 @@ namespace Alexandria
       services.AddScoped<ITeamService, TeamService>();
       services.AddScoped<ITournamentService, TournamentService>();
       services.AddScoped<ICompetitionService, CompetitionService>();
-      services.AddScoped<IFileService, S3Service>();
+      services.AddScoped<IFileService, FileService>();
       services.AddScoped<IPassportClient, PassportClient>();
 
       services.AddSingleton<IMailer, SendGridMailer>(provider =>

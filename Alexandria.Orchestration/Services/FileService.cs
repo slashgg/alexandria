@@ -10,13 +10,13 @@ using Svalbard.Services;
 
 namespace Alexandria.Orchestration.Services
 {
-  public class S3Service : IFileService
+  public class FileService : IFileService
   {
     private readonly IAmazonS3 client;
     private readonly IMemoryCache cache;
-    private readonly ILogger<S3Service> logger;
+    private readonly ILogger<FileService> logger;
 
-    public S3Service(IAmazonS3 client, IMemoryCache cache, ILogger<S3Service> logger)
+    public FileService(IAmazonS3 client, IMemoryCache cache, ILogger<FileService> logger)
     {
       this.client = client;
       this.cache = cache;

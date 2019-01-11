@@ -57,13 +57,16 @@ namespace Alexandria.Controllers.UserProfile
       var result = await userProfiles.UpdateAvatar(userId.Value, presignedResult.Data.Url);
       if (result.Success)
       {
-        // Try to remove the old url
-        var deleteResult = await fileService.DeleteByUrl(result.Data);
-        if (!deleteResult.Success)
+        if (!string.IsNullOrEmpty(result.Data))
         {
-          // We don't notify the client of this file as it is backend cleanup and they 
-          // can't do anything about it
-          logger.LogError(deleteResult.Error.Key + $", {result.Data}");
+          // Try to remove the old url, if it exists
+          var deleteResult = await fileService.DeleteByUrl(result.Data);
+          if (!deleteResult.Success)
+          {
+            // We don't notify the client of this file as it is backend cleanup and they 
+            // can't do anything about it
+            logger.LogError(deleteResult.Error.Key + $", {result.Data}");
+          }
         }
 
         return new OperationResult(204);
