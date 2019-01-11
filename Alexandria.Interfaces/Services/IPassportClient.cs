@@ -8,5 +8,6 @@ namespace Alexandria.Interfaces.Services
   public interface IPassportClient
   {
     Task<ServiceResult> UpdateProfile(Guid profileId, UpdatePassportUser dto);
+    Task<ServiceResult> ResendEmailVerification(string email);
   }
 }

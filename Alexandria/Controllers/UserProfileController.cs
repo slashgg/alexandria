@@ -96,6 +96,31 @@ namespace Alexandria.Controllers
     }
 
     /// <summary>
+    /// Resends email verification for the logged in user.
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("verification")]
+    [Authorize]
+    [ProducesResponseType(typeof(void), 204)]
+    [ProducesResponseType(typeof(BaseError), 401)]
+    public async Task<OperationResult> ResendEmailVerification()
+    {
+      var userId = HttpContext.GetUserId();
+      if (!userId.HasValue)
+      {
+        return new OperationResult(401);
+      }
+
+      var result = await userProfileService.ResendEmailVerification(userId.Value);
+      if (result.Success)
+      {
+        return new OperationResult(204);
+      }
+
+      return new OperationResult(result.Error);
+    }
+
+    /// <summary>
     /// Get the Permissions for the logged in User
     /// </summary>
     /// <returns></returns>

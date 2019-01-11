@@ -19,5 +19,6 @@ namespace Alexandria.Interfaces.Services
     Task<ServiceResult<ConnectionDetail>> GetConnection(Guid userId, ExternalProvider provider);
     Task<ServiceResult<string>> UpdateAvatar(Guid userId, string presignedUrl);
     Task<ServiceResult> UpdateSettings(Guid userId, UpdateSettings updateDto);
+    Task<ServiceResult> ResendEmailVerification(Guid value);
   }
 }

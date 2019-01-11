@@ -1,5 +1,4 @@
-﻿using Alexandria.Orchestration.Mapper.UserProfile.Converter;
-using AutoMapper;
+﻿using AutoMapper;
 
 namespace Alexandria.Orchestration.Mapper.UserProfile
 {

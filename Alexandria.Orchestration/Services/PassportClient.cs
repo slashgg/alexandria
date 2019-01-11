@@ -31,6 +31,36 @@ namespace Alexandria.Orchestration.Services
     public PassportClientConfiguration Configuration { get; }
     public HttpClient Backchannel => new HttpClient { BaseAddress = new Uri(Configuration.BaseUrl) };
 
+    public async Task<ServiceResult> ResendEmailVerification(string email)
+    {
+      var result = new ServiceResult();
+      var token = await GetBackchannelToken();
+      using (var client = Backchannel)
+      {
+        var request = new HttpRequestMessage(HttpMethod.Get, Configuration.ResendEmailVerificationEndpoint);
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        var dto = new ResendEmailVerification(email);
+        var payload = JsonConvert.SerializeObject(dto);
+        request.Content = new StringContent(payload, Encoding.UTF8, "application/json");
+
+        var response = await client.SendAsync(request);
+        try
+        {
+          response.EnsureSuccessStatusCode();
+        }
+        catch (Exception e)
+        {
+          logger.LogError(e, "Failed to resend the email verification token");
+          result.Error = Shared.ErrorKey.UserProfile.ResendVerificationFailed;
+          return result;
+        }
+      }
+
+      result.Succeed();
+      return result;
+    }
+
     public async Task<ServiceResult> UpdateProfile(Guid userId, UpdatePassportUser dto)
     {
       var result = new ServiceResult();

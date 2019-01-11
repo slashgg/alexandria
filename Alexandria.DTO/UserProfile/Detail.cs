@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Alexandria.DTO.Team;
 using NJsonSchema.Annotations;
 
 namespace Alexandria.DTO.UserProfile

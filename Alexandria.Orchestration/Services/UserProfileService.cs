@@ -190,6 +190,17 @@ namespace Alexandria.Orchestration.Services
       return result;
     }
 
+    public async Task<ServiceResult> ResendEmailVerification(Guid userId)
+    {
+      var user = await context.UserProfiles.FindAsync(userId);
+      if (user == null)
+      {
+        return new ServiceResult(Shared.ErrorKey.UserProfile.UserNotFound);
+      }
+
+      return await passportClient.ResendEmailVerification(user.Email);
+    }
+
     public async Task<ServiceResult> UpdateSettings(Guid userId, UpdateSettings updateDto)
     {
       var result = new ServiceResult();
