@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
+using NJsonSchema.Annotations;
 
 namespace Alexandria.DTO.UserProfile
 {
   [DataContract]
+  [JsonSchema("UserProfileUpdateSettings")]
   public class UpdateSettings
   {
     [DataMember(Name = "username")]

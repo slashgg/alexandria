@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Net;
 using System.Runtime.Serialization;
 using System.Text;
+using NJsonSchema.Annotations;
 
 namespace Alexandria.DTO.Asset
 {
   [DataContract]
+  [JsonSchema("AssetPresignedURLResponse")]
   public class PresignedURLResponse
   {
     [DataMember(Name = "url")]
