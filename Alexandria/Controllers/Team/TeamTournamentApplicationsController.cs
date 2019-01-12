@@ -28,6 +28,7 @@ namespace Alexandria.Controllers.Team
     /// Get a Teams Tournament Application
     /// Required Permissions: `team::{teamId}::tournament--join`
     /// </summary>
+    /// <param name="teamId">Guid of the Team</param>
     /// <param name="tournamentId">Guid of the Tournament</param>
     /// <returns></returns>
     [HttpGet("{tournamentId}")]
@@ -49,6 +50,7 @@ namespace Alexandria.Controllers.Team
     /// Get a Teams Tournament Application
     /// Required Permissions: `team::{teamId}::tournament--join`
     /// </summary>
+    /// <param name="teamId">Guid of the Team</param>
     /// <param name="tournamentSlug">Slug of the tournament</param>
     /// <returns></returns>
     [HttpGet("by-slug/{tournamentSlug}")]
@@ -70,6 +72,7 @@ namespace Alexandria.Controllers.Team
     /// Apply to a Tournament
     /// Required Permissions: `team::{teamId}::tournament--join`
     /// </summary>
+    /// <param name="teamId">GUID of the team</param>
     /// <param name="payload">Creation Object for Team Application</param>
     /// <returns></returns>
     [HttpPost]
@@ -93,6 +96,7 @@ namespace Alexandria.Controllers.Team
     /// Withdraw a tournament application
     /// Required Permissions: `team::{teamId}::tournament--join`
     /// </summary>
+    /// <param name="teamId">Guid of the team</param>
     /// <param name="tournamentId">Guid of the tournament</param>
     /// <returns></returns>
     [HttpDelete("{tournamentId}")]
@@ -115,6 +119,7 @@ namespace Alexandria.Controllers.Team
     /// Withdraw a tournament application
     /// Required Permissions: `team::{teamId}::tournament--join`
     /// </summary>
+    /// <param name="teamId">Guid of the team</param>
     /// <param name="tournamentSlug">Slug of the tournament</param>
     /// <returns></returns>
     [HttpDelete("by-slug/{tournamentSlug}")]

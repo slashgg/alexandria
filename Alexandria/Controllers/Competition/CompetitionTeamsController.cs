@@ -29,6 +29,7 @@ namespace Alexandria.Controllers.Competition
     /// Create a Team for a Competition
     /// </summary>
     /// <param name="payload">Team Payload</param>
+    /// <param name="competitionId">GUID of the competition</param>
     [HttpPost]
     [ProducesResponseType(typeof(void), 201)]
     [ProducesResponseType(typeof(BaseError), 400)]
