@@ -13,7 +13,7 @@ namespace Alexandria.EF.Models
     public string DisplayName { get; set; }
     [Required]
     public string Email { get; set; }
-    public DateTime? Birthday { get; set; }
+    public DateTimeOffset? Birthday { get; set; }
     public string AvatarURL { get; set; }
 
     /* Relations */

@@ -12,10 +12,12 @@ using Alexandria.Orchestration.Mapper;
 using Alexandria.Orchestration.Services;
 using Alexandria.Orchestration.Utils;
 using Amazon;
+using Amazon.S3;
 using Amazon.SQS;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -62,14 +64,17 @@ namespace Alexandria
         };
       };
 
+      services.AddMemoryCache();
       services.AddDefaultAWSOptions(new Amazon.Extensions.NETCore.Setup.AWSOptions { Region = RegionEndpoint.USEast1 });
       services.AddHttpContextAccessor();
       services.AddSvalbard();
       services.Configure<Shared.Configuration.Queue>(Configuration.GetSection("Queues"));
       services.Configure<Shared.Configuration.SendGridConfig>(Configuration.GetSection("SendGrid"));
+      services.Configure<Shared.Configuration.PassportClientConfiguration>(Configuration.GetSection("Passport"));
       services.AddScoped<AlexandriaContext>();
       services.AddScoped<SaveChangesFilter>();
       services.AddAWSService<IAmazonSQS>();
+      services.AddAWSService<IAmazonS3>();
       services.AddSingleton<IBackgroundWorker, SQSBackgroundWorker>();
       services.AddScoped<IUserUtils, UserUtils>();
       services.AddScoped<IAuthorizationService, AuthorizationService>();
@@ -77,6 +82,14 @@ namespace Alexandria
       services.AddScoped<ITeamService, TeamService>();
       services.AddScoped<ITournamentService, TournamentService>();
       services.AddScoped<ICompetitionService, CompetitionService>();
+      services.AddScoped<IFileService, FileService>();
+      services.AddScoped<IPassportClient, PassportClient>();
+
+      services.AddSingleton<IMimeMappingService>(provider =>
+      {
+        var staticProvider = new FileExtensionContentTypeProvider();
+        return new MimeMappingService(staticProvider.Mappings);
+      });
 
       services.AddSingleton<IMailer, SendGridMailer>(provider =>
       {

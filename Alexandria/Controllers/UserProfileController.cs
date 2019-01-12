@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Alexandria.EF.Context;
-using Alexandria.Infrastructure.Filters;
 using Alexandria.Interfaces.Services;
 using Alexandria.Shared.ErrorKey;
 using Alexandria.Shared.Extensions;
@@ -69,6 +65,59 @@ namespace Alexandria.Controllers
       }
 
       return new OperationResult<DTO.UserProfile.Detail>(result.Error);
+    }
+
+    /// <summary>
+    /// Update the profile settings for the logged in user.
+    /// </summary>
+    /// <param name="payload">The settings payload</param>
+    /// <returns></returns>
+    [HttpPut]
+    [Authorize]
+    [ProducesResponseType(typeof(void), 204)]
+    [ProducesResponseType(typeof(BaseError), 400)]
+    [ProducesResponseType(typeof(BaseError), 401)]
+    [ProducesResponseType(typeof(BaseError), 409)]
+    public async Task<OperationResult> UpdateUserProfile([FromBody] DTO.UserProfile.UpdateSettings payload)
+    {
+      var userId = HttpContext.GetUserId();
+      if (!userId.HasValue)
+      {
+        return new OperationResult(401);
+      }
+
+      var result = await userProfileService.UpdateSettings(userId.Value, payload);
+      if (result.Success)
+      {
+        return new OperationResult(204);
+      }
+
+      return new OperationResult(result.Error);
+    }
+
+    /// <summary>
+    /// Resends email verification for the logged in user.
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("verification")]
+    [Authorize]
+    [ProducesResponseType(typeof(void), 204)]
+    [ProducesResponseType(typeof(BaseError), 401)]
+    public async Task<OperationResult> ResendEmailVerification()
+    {
+      var userId = HttpContext.GetUserId();
+      if (!userId.HasValue)
+      {
+        return new OperationResult(401);
+      }
+
+      var result = await userProfileService.ResendEmailVerification(userId.Value);
+      if (result.Success)
+      {
+        return new OperationResult(204);
+      }
+
+      return new OperationResult(result.Error);
     }
 
     /// <summary>

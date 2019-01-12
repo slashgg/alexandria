@@ -22,5 +22,7 @@ namespace Alexandria.DTO.Team
     public string Role { get; set; }
     [DataMember(Name = "memberSince")]
     public DateTime MemberSince { get; set; }
+    [DataMember(Name = "avatarURL")]
+    public string AvatarURL { get; set; }
   }
 }

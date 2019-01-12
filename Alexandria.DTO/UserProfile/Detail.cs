@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Alexandria.DTO.Team;
 using NJsonSchema.Annotations;
 
 namespace Alexandria.DTO.UserProfile
@@ -16,6 +14,8 @@ namespace Alexandria.DTO.UserProfile
     public string Email { get; set; }
     [DataMember(Name ="displayName")]
     public string DisplayName { get; set; }
+    [DataMember(Name = "birthday")]
+    public string Birthday { get; set; }
     [DataMember(Name ="userName")]
     public string UserName { get; set; }
     [DataMember(Name = "avatarURL")]

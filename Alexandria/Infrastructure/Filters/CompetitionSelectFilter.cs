@@ -7,8 +7,9 @@ namespace Alexandria.Infrastructure.Filters
 {
   public class CompetitionSelectFilterAttribute : Attribute, IAsyncActionFilter
   {
-    public async Task OnActionExecuted(ActionExecutedContext context)
+    public Task OnActionExecuted(ActionExecutedContext context)
     {
+      return Task.FromResult<object>(null);
     }
 
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)

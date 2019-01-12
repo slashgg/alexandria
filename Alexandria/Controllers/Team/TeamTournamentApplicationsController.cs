@@ -72,7 +72,7 @@ namespace Alexandria.Controllers.Team
     /// Apply to a Tournament
     /// Required Permissions: `team::{teamId}::tournament--join`
     /// </summary>
-    /// <param name="teamId">GUID of the team</param>"
+    /// <param name="teamId">GUID of the team</param>
     /// <param name="payload">Creation Object for Team Application</param>
     /// <returns></returns>
     [HttpPost]
