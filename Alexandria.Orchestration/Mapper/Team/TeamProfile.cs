@@ -13,6 +13,7 @@ namespace Alexandria.Orchestration.Mapper
       this.CreateMap<EF.Models.TeamMembership, DTO.Team.Membership>()
         .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.TeamRole.Name))
         .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.UserProfile.DisplayName))
+        .ForMember(dest => dest.AvatarURL, opt => opt.MapFrom(src => src.UserProfile.AvatarURL))
         .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserProfileId))
         .ForMember(dest => dest.MemberSince, opt => opt.MapFrom(src => src.CreatedAt));
 
