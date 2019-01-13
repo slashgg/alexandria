@@ -33,7 +33,11 @@ namespace Alexandria.EF.Models
       this.TeamId = teamId;
       this.UserProfileId = userId;
       this.TeamRoleId = roleId;
+    }
 
+    public bool IsLeader()
+    {
+      return this.TeamRole.Permissions.Contains("*");
     }
   }
 }

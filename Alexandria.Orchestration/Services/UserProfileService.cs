@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Alexandria.DTO.UserProfile;
 using Alexandria.EF.Context;
 using Alexandria.EF.Models;
+using Alexandria.Interfaces.Processing;
 using Alexandria.Interfaces.Services;
 using Alexandria.Shared.Enums;
 using Alexandria.Shared.Utils;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Svalbard.Services;
 using Svalbard.Utils;
 
@@ -19,12 +22,16 @@ namespace Alexandria.Orchestration.Services
     private readonly EF.Context.AlexandriaContext context;
     private readonly IAuthorizationService authorizationService;
     private readonly IPassportClient passportClient;
+    private readonly IBackgroundWorker backgroundWorker;
+    private readonly Shared.Configuration.Queue queues;
 
-    public UserProfileService(AlexandriaContext context, IAuthorizationService authorizationService, IPassportClient passportClient)
+    public UserProfileService(AlexandriaContext context, IAuthorizationService authorizationService, IPassportClient passportClient, IBackgroundWorker backgroundWorker, IOptions<Shared.Configuration.Queue> queues)
     {
       this.context = context;
       this.authorizationService = authorizationService;
       this.passportClient = passportClient;
+      this.backgroundWorker = backgroundWorker;
+      this.queues = queues.Value ?? throw new NoNullAllowedException("Queue Options can't be null");
     }
 
     public async Task<ServiceResult<DTO.UserProfile.Detail>> GetUserProfileDetail(Guid userId)
@@ -165,6 +172,8 @@ namespace Alexandria.Orchestration.Services
       await DangerouslyCreateUserProfile(account);
 
       result.Succeed();
+      await this.backgroundWorker.SendMessage(this.queues.Contact, new DTO.Marketing.ContactSync(account.Id, true), 5);
+
       return result;
     }
 
@@ -244,7 +253,9 @@ namespace Alexandria.Orchestration.Services
         return passportResult;
       }
 
+
       await DangerouslyUpdateProfileSettings(updateDto, userId);
+      await this.backgroundWorker.SendMessage(this.queues.Contact, new DTO.Marketing.ContactSync(userId), 5);
 
       result.Succeed();
       return result;

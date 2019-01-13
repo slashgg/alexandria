@@ -97,7 +97,14 @@ namespace Alexandria
         return new SendGridMailer(accessor.Value.ApiKey);
       });
 
+      services.AddSingleton<IContactBook, SendGridMailer>(provider =>
+      {
+        var accessor = provider.GetRequiredService<IOptions<Shared.Configuration.SendGridConfig>>();
+        return new SendGridMailer(accessor.Value.ApiKey);
+      });
+
       services.AddHostedService<TransactionalService>();
+      services.AddHostedService<ContactSyncBackgroundService>();
 
       var connectionString = Configuration.GetConnectionString("Alexandria");
       services.AddDbContext<AlexandriaContext>(options =>
