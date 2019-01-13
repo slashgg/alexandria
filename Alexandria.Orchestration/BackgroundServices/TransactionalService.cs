@@ -27,7 +27,7 @@ namespace Alexandria.Orchestration.BackgroundServices
     {
       while (!stoppingToken.IsCancellationRequested)
       {
-        var messages = await this.backgroundWorker.ReceiveMessages<DTO.EMail.Message<object>>(this.queue, 1, 15);
+        var messages = await this.backgroundWorker.ReceiveMessages<DTO.EMail.Message<object>>(this.queue, 10, 15);
         if (messages != null && messages.Any())
         {
           foreach (var message in messages)

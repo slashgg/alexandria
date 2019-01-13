@@ -448,7 +448,7 @@ namespace Alexandria.Orchestration.Services
       {
         throw new NoNullAllowedException("Role cannot be null");
       }
-
+      await this.backgroundWorker.SendMessage(this.queues.Contact, new DTO.Marketing.ContactSync(ownerId), 5);
       await this.DangerouslyCreateTeamMembership(team, ownerId, creatorRole.Id, "Created Team");
 
       return team;
@@ -470,6 +470,7 @@ namespace Alexandria.Orchestration.Services
 
         await this.authorizationService.AddPermission(userId, membershipPermission);
         await this.authorizationService.AddPermission(userId, permissions);
+        await this.backgroundWorker.SendMessage(this.queues.Contact, new DTO.Marketing.ContactSync(userId), 5);
       }
 
       return membership;
@@ -504,6 +505,7 @@ namespace Alexandria.Orchestration.Services
       context.TeamMemberships.Remove(membership);
       var membershipPermission = AuthorizationHelper.GenerateARN(typeof(TeamMembership), membership.Id.ToString(), Shared.Permissions.TeamMembership.All);
       await this.authorizationService.RemovePermission(userId, membershipPermission);
+      await this.backgroundWorker.SendMessage(this.queues.Contact, new DTO.Marketing.ContactSync(userId), 5);
 
       return membership;
     }
