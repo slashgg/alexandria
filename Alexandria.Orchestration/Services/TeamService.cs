@@ -34,7 +34,7 @@ namespace Alexandria.Orchestration.Services
       this.userUtils = userUtils;
       this.authorizationService = authorizationService;
       this.backgroundWorker = backgroundWorker;
-      this.queues = queues.Value;
+      this.queues = queues.Value ?? throw new NoNullAllowedException("Queue Options can't be null");
     }
 
     public async Task<ServiceResult<DTO.Team.Detail>> GetTeamDetail(Guid teamId)

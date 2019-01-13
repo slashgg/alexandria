@@ -8,5 +8,6 @@ namespace Alexandria.Interfaces.Processing
   {
     Task CreateContacts(IList<DTO.Marketing.Contact> contacts);
     Task UpdateContacts(IList<DTO.Marketing.Contact> contacts);
+    Task DeleteContacts(IList<DTO.Marketing.Contact> contacts);
   }
 }

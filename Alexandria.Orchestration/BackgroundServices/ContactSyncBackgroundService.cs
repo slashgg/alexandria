@@ -35,8 +35,9 @@ namespace Alexandria.Orchestration.BackgroundServices
         var messages = await this.backgroundWorker.ReceiveMessages<DTO.Marketing.ContactSync>(this.queue, 10, 15);
         if (messages != null && messages.Any())
         {
-          var newUsers = messages.Where(p => p.Data.New).ToList();
-          var updateUsers = messages.Where(p => !p.Data.New).ToList();
+          var newUsers = messages.Where(p => p.Data.New && !p.Data.Delete).ToList();
+          var updateUsers = messages.Where(p => !p.Data.New && !p.Data.Delete).ToList();
+          var deleteUsers = messages.Where(p => p.Data.Delete).ToList();
 
           if (newUsers.Any())
           {
@@ -48,6 +49,12 @@ namespace Alexandria.Orchestration.BackgroundServices
           {
             var contacts = await this.GetContacts(updateUsers.Select(u => u.Data).ToList());
             await this.contactBook.UpdateContacts(contacts);
+          }
+
+          if (deleteUsers.Any())
+          {
+            var contacts = await this.GetContacts(updateUsers.Select(u => u.Data).ToList());
+            await this.contactBook.DeleteContacts(contacts);
           }
 
           await this.backgroundWorker.AcknowledgeMessage(this.queue, messages.Select(m => m.Receipt).ToList());

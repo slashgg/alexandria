@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Alexandria.DTO.UserProfile;
@@ -30,7 +31,7 @@ namespace Alexandria.Orchestration.Services
       this.authorizationService = authorizationService;
       this.passportClient = passportClient;
       this.backgroundWorker = backgroundWorker;
-      this.queues = queues.Value;
+      this.queues = queues.Value ?? throw new NoNullAllowedException("Queue Options can't be null");
     }
 
     public async Task<ServiceResult<DTO.UserProfile.Detail>> GetUserProfileDetail(Guid userId)
@@ -252,7 +253,9 @@ namespace Alexandria.Orchestration.Services
         return passportResult;
       }
 
+
       await DangerouslyUpdateProfileSettings(updateDto, userId);
+      await this.backgroundWorker.SendMessage(this.queues.Contact, new DTO.Marketing.ContactSync(userId), 5);
 
       result.Succeed();
       return result;
