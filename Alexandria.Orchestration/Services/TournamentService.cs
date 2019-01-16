@@ -167,6 +167,29 @@ namespace Alexandria.Orchestration.Services
       return result;
     }
 
+    public async Task<ServiceResult<List<DTO.Tournament.TeamParticipation>>> GetTeamParticipations(string tournamentSlug)
+    {
+      var result = new ServiceResult<List<DTO.Tournament.TeamParticipation>>();
+      var tournament = await alexandriaContext.Tournaments.FirstOrDefaultAsync(t => t.Slug == tournamentSlug);
+      if (tournament == null)
+      {
+        result.Error = Shared.ErrorKey.Tournament.NotFound;
+        return result;
+      }
+
+      return await this.GetTeamParticipations(tournament.Id);
+    }
+
+    public async Task<ServiceResult<List<DTO.Tournament.TeamParticipation>>> GetTeamParticipations(Guid tournamentId)
+    {
+      var result = new ServiceResult<List<DTO.Tournament.TeamParticipation>>();
+      var tournamentParticipations = await alexandriaContext.TournamentParticipations.Include(t => t.Team).Where(tp => tp.TournamentId == tournamentId).ToListAsync();
+
+      result.Data = tournamentParticipations.Select(AutoMapper.Mapper.Map<DTO.Tournament.TeamParticipation>).ToList();
+      result.Succeed();
+      return result;
+    }
+
     private Task<EF.Models.TournamentApplication> DangerouslyCreateTournamentApplication(Guid teamId, DTO.Tournament.TeamTournamentApplicationRequest teamApplication)
     {
       var application = new EF.Models.TournamentApplication(teamId, teamApplication.TournamentId);

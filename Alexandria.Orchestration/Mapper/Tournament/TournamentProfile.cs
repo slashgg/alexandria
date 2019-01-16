@@ -13,6 +13,11 @@ namespace Alexandria.Orchestration.Mapper.Tournament
         .ForMember(dest => dest.Answers, opt => opt.MapFrom(src => src.TournamentApplicationQuestionAnswers));
 
       CreateMap<EF.Models.TournamentApplicationQuestionAnswer, DTO.Tournament.TournamentApplicationQuestionAnswer>();
+      CreateMap<EF.Models.TournamentParticipation, DTO.Tournament.TeamParticipation>()
+        .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TeamId))
+        .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Team.Name))
+        .ForMember(dest => dest.LogoURL, opt => opt.MapFrom(src => src.Team.LogoURL))
+        .ForMember(dest => dest.Abbreviation, opt => opt.MapFrom(src => src.Team.Abbreviation));
     }
   }
 }

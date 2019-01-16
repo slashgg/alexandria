@@ -17,5 +17,7 @@ namespace Alexandria.Interfaces.Services
     Task<ServiceResult> WithdrawTeamApplication(Guid tournamentId, Guid teamId);
     Task<ServiceResult> WithdrawTeamApplication(string tournamentSlug, Guid teamId);
     Task<ServiceResult> TeamApplyToTournament(Guid teamId, DTO.Tournament.TeamTournamentApplicationRequest teamApplication);
+    Task<ServiceResult<List<DTO.Tournament.TeamParticipation>>> GetTeamParticipations(Guid tournamentId);
+    Task<ServiceResult<List<DTO.Tournament.TeamParticipation>>> GetTeamParticipations(string tournamentSlug);
   }
 }
