@@ -121,7 +121,7 @@ namespace Alexandria
         options.AddPolicy("Backchannel", AuthorizationPolicies.Backchannel);
       });
 
-      var passportHost = Production ? "https://passport.slash.gg" : "http://localhost:52215";
+      var passportHost = Production ? "https://passport.slash.gg" : "https://passport.slash.gg";
 
       IdentityModelEventSource.ShowPII = true;
       services.AddAuthentication("Bearer")

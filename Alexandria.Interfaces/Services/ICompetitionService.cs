@@ -8,7 +8,7 @@ namespace Alexandria.Interfaces.Services
   public interface ICompetitionService
   {
     Task<ServiceResult<DTO.Competition.Detail>> GetCompetitionDetail(Guid competitionId);
-    Task<ServiceResult<DTO.Competition.Detail>> GetCompetitionBySlug(string name);
+    Task<ServiceResult<DTO.Competition.Detail>> GetCompetitionDetail(string slug);
     Task<ServiceResult<IList<DTO.Competition.Detail>>> GetCompetitionsByGame(Guid gameId);
     Task<ServiceResult<IList<DTO.Competition.Detail>>> GetActiveCompetitions();
     Task<ServiceResult<IList<DTO.Competition.Tournament>>> GetTournaments(Guid competitionId);

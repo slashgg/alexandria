@@ -67,7 +67,7 @@ namespace Alexandria.Controllers
     [ProducesResponseType(typeof(BaseError), 400)]
     public async Task<OperationResult<DTO.Competition.Detail>> GetCompetitionDetailBySlug([FromRoute] string competitionSlug)
     {
-      var result = await this.competitionService.GetCompetitionBySlug(competitionSlug);
+      var result = await this.competitionService.GetCompetitionDetail(competitionSlug);
       if (result.Success)
       {
         

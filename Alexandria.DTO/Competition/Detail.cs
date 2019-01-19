@@ -30,6 +30,10 @@ namespace Alexandria.DTO.Competition
     public string RulesSlug { get; set; }
     [DataMember(Name = "game")]
     public GameData Game { get; set; } = new GameData();
+    [DataMember(Name ="teamCount")]
+    public int TeamCount { get; set; }
+    [DataMember(Name = "playerCount")]
+    public int PlayerCount { get; set; }
 
     [JsonSchema("CompetitionGame")]
     [DataContract]
