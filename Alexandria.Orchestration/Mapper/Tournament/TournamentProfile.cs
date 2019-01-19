@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AutoMapper;
+﻿using AutoMapper;
 
 namespace Alexandria.Orchestration.Mapper.Tournament
 {
@@ -17,6 +14,7 @@ namespace Alexandria.Orchestration.Mapper.Tournament
         .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.TeamId))
         .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Team.Name))
         .ForMember(dest => dest.LogoURL, opt => opt.MapFrom(src => src.Team.LogoURL))
+        .ForMember(dest => dest.Memberships, opt => opt.MapFrom(src => src.Team.TeamMemberships))
         .ForMember(dest => dest.Abbreviation, opt => opt.MapFrom(src => src.Team.Abbreviation));
     }
   }

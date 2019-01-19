@@ -21,5 +21,7 @@ namespace Alexandria.DTO.Tournament
     public string Abbreviation { get; set; }
     [DataMember(Name = "state")]
     public TournamentApplicationState State { get; set; }
+    [DataMember(Name = "members")]
+    public List<Team.Membership> Memberships { get; set; } = new List<Team.Membership>();
   }
 }
