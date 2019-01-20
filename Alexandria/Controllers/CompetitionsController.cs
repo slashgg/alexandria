@@ -21,6 +21,19 @@ namespace Alexandria.Controllers
     }
 
     /// <summary>
+    /// Search Competitions by parameters
+    /// </summary>
+    /// <param name="lookup">Lookup Object in Query</param>
+    /// <returns></returns>
+    [HttpGet]
+    [ProducesResponseType(typeof(IList<DTO.Competition.Detail>), 200)]
+    public async Task<OperationResult<IList<DTO.Competition.Detail>>> Lookup([FromQuery] DTO.Competition.Lookup lookup)
+    {
+      var result = await this.competitionService.SearchCompetitions(lookup);
+      return new OperationResult<IList<DTO.Competition.Detail>>(result.Data);
+    }
+
+    /// <summary>
     /// Get all active Competitions
     /// </summary>
     /// <returns></returns>

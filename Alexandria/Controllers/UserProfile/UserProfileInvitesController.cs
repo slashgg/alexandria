@@ -62,14 +62,14 @@ namespace Alexandria.Controllers.UserProfile
     [ProducesResponseType(typeof(void), 401)]
     [ProducesResponseType(typeof(BaseError), 404)]
     [ProducesResponseType(typeof(BaseError), 422)]
-    public async Task<OperationResult> DeclineInvite([FromRoute] Guid inviteId)
+    public async Task<Svalbard.OperationResult> DeclineInvite([FromRoute] Guid inviteId)
     {
       var result = await this.teamService.DeclineInvite(inviteId);
       if (result.Success)
       {
-        return new OperationResult(204);
+        return new Svalbard.OperationResult(204);
       }
-      return new OperationResult(result.Error);
+      return new Svalbard.OperationResult(result.Error);
     }
 
     /// <summary>
@@ -87,14 +87,14 @@ namespace Alexandria.Controllers.UserProfile
     [ProducesResponseType(typeof(BaseError), 409)]
     [ProducesResponseType(typeof(BaseError), 410)]
     [ProducesResponseType(typeof(BaseError), 422)]
-    public async Task<OperationResult> AcceptInvite([FromRoute] Guid inviteId)
+    public async Task<Svalbard.OperationResult> AcceptInvite([FromRoute] Guid inviteId)
     {
       var result = await this.teamService.AcceptInvite(inviteId);
       if (result.Success)
       {
-        return new OperationResult(204);
+        return new Svalbard.OperationResult(204);
       }
-      return new OperationResult(result.Error);
+      return new Svalbard.OperationResult(result.Error);
     }
   }
 }

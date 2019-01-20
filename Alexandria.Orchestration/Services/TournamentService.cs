@@ -185,7 +185,8 @@ namespace Alexandria.Orchestration.Services
       var result = new ServiceResult<List<DTO.Tournament.TeamParticipation>>();
       var tournamentParticipations = await alexandriaContext.TournamentParticipations.Include(t => t.Team)
                                                                                      .ThenInclude(t => t.TeamMemberships)
-                                                                                     .Where(tp => tp.TournamentId == tournamentId).ToListAsync();
+                                                                                     .Where(tp => tp.TournamentId == tournamentId && tp.State == Shared.Enums.TournamentParticipationState.Participating)
+                                                                                     .ToListAsync();
 
       result.Data = tournamentParticipations.Select(AutoMapper.Mapper.Map<DTO.Tournament.TeamParticipation>).ToList();
       result.Succeed();

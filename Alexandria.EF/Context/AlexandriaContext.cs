@@ -26,6 +26,8 @@ namespace Alexandria.EF.Context
     public DbSet<TournamentApplicationQuestionAnswer> TournamentApplicationQuestionAnswers { get; set; }
     public DbSet<TournamentParticipation> TournamentParticipations { get; set; }
     public DbSet<TournamentParticipationHistory> TournamentParticipationHistories { get; set; }
+    public DbSet<CompetitionLevel> CompetitionLevels { get; set; }
+    public DbSet<FavoriteCompetition> FavoriteCompetitions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

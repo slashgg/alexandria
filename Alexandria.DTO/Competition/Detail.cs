@@ -34,6 +34,8 @@ namespace Alexandria.DTO.Competition
     public int TeamCount { get; set; }
     [DataMember(Name = "playerCount")]
     public int PlayerCount { get; set; }
+    [DataMember(Name = "competitionLevel")]
+    public string CompetitionLevel { get; set; }
 
     [JsonSchema("CompetitionGame")]
     [DataContract]

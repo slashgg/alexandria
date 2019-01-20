@@ -22,7 +22,7 @@ namespace Alexandria.EF.Models
     /* Foreign Keys */
     public Guid GameId { get; set; }
     public Guid? DefaultRoleId { get; set; }
-
+    public Guid CompetitionLevelId { get; set; }
 
 
     /* Relations */
@@ -30,6 +30,8 @@ namespace Alexandria.EF.Models
     public virtual Game Game { get; set; }
     [ForeignKey("DefaultRoleId")]
     public virtual TeamRole DefaultRole { get; set; }
+    [ForeignKey("CompetitionLevelId")]
+    public virtual CompetitionLevel CompetitionLevel { get; set; }
     public virtual ICollection<Tournament> Tournaments { get; set; } = new List<Tournament>();
     public virtual ICollection<Team> Teams { get; set; } = new List<Team>();
     public virtual ICollection<TeamRole> TeamRoles { get; set; } = new List<TeamRole>();

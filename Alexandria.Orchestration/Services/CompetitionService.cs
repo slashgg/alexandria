@@ -31,6 +31,7 @@ namespace Alexandria.Orchestration.Services
         var competitions = await this.alexandriaContext.Competitions.Include(c => c.Game)
                                                             .Include(c => c.Teams)
                                                             .ThenInclude(t => t.TeamMemberships)
+                                                            .Include(c => c.CompetitionLevel)
                                                             .Where(c => c.GameId == gameId)
                                                             .ToListAsync();
 
@@ -67,11 +68,12 @@ namespace Alexandria.Orchestration.Services
         var competition = await this.alexandriaContext.Competitions.Include(c => c.Game)
                                                                    .Include(c => c.Teams)
                                                                    .ThenInclude(t => t.TeamMemberships)
+                                                                   .Include(c => c.CompetitionLevel)
                                                                    .FirstOrDefaultAsync(c => c.Id == competitionId);
 
         if (competition == null)
         {
-          cache.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(0);
+          cache.SetAbsoluteExpiration(DateTimeOffset.UtcNow.AddSeconds(1));
           return null;
         }
 
@@ -83,7 +85,7 @@ namespace Alexandria.Orchestration.Services
       if (competitionDTO == null)
       {
         result.Error = Shared.ErrorKey.Competition.NotFound;
-        return null; ;
+        return result; ;
       }
 
       result.Succeed(competitionDTO);
@@ -99,6 +101,7 @@ namespace Alexandria.Orchestration.Services
         var competitions = await this.alexandriaContext.Competitions.Include(c => c.Game)
                                                             .Include(c => c.Teams)
                                                             .ThenInclude(t => t.TeamMemberships)
+                                                            .Include(c => c.CompetitionLevel)
                                                             .Where(c => c.Active).ToListAsync();
 
         var dtos = competitions.Select(AutoMapper.Mapper.Map<DTO.Competition.Detail>).ToList();
@@ -108,6 +111,69 @@ namespace Alexandria.Orchestration.Services
 
 
       result.Succeed(competitionDTOs);
+      return result;
+    }
+
+    public async Task<ServiceResult<IList<DTO.Competition.Detail>>> SearchCompetitions(DTO.Competition.Lookup lookup)
+    {
+      var result = new ServiceResult<IList<DTO.Competition.Detail>>();
+      var competitions = alexandriaContext.Competitions
+                                          .Include(c => c.Teams)
+                                          .ThenInclude(t => t.TeamMemberships)
+                                          .Include(c => c.Game)
+                                          .Include(c => c.CompetitionLevel)
+                                          .Where(c => c.Active == lookup.Active);
+      if (lookup.CompetitionLevel.HasValue)
+      {
+        competitions = competitions.Where(c => c.CompetitionLevelId == lookup.CompetitionLevel.Value);
+      }
+
+      if (lookup.Game.HasValue)
+      {
+        competitions = competitions.Where(c => c.GameId == lookup.Game.Value);
+      }
+
+      if (lookup.TeamSize.HasValue)
+      {
+        competitions = competitions.Where(c => c.MinTeamSize >= lookup.TeamSize.Value);
+      }
+
+      var finalCompetitions = await competitions.ToListAsync();
+      var competitionDTOs = finalCompetitions.Select(AutoMapper.Mapper.Map<DTO.Competition.Detail>).ToList();
+
+      result.Succeed(competitionDTOs);
+      return result;
+    }
+
+    public async Task<ServiceResult<IList<DTO.Competition.CompetitionLevel>>> GetCompetitionLevels()
+    {
+      var result = new ServiceResult<IList<DTO.Competition.CompetitionLevel>>();
+
+      var competitionLevelDTOs = await this.cache.GetOrCreateAsync(Shared.Cache.Competition.Levels, async (cache) => 
+      {
+        var levels = await alexandriaContext.CompetitionLevels.ToListAsync();
+        var dtos = levels.Select(AutoMapper.Mapper.Map<DTO.Competition.CompetitionLevel>).ToList();
+
+        cache.SetAbsoluteExpiration(DateTimeOffset.UtcNow.AddHours(1));
+        return dtos;
+      });
+
+      result.Succeed(competitionLevelDTOs);
+      return result;
+    }
+
+    public async Task<ServiceResult<IList<DTO.Game.Detail>>> GetSupportedGames()
+    {
+      var result = new ServiceResult<IList<DTO.Game.Detail>>();
+      var gameDTOs = await this.cache.GetOrCreateAsync(Shared.Cache.Game.CompetitionAvailable, async (cache) =>
+      {
+        var games = await alexandriaContext.Competitions.Where(c => c.Active).Select(c => c.Game).Distinct().ToListAsync();
+        var dtos = games.Select(AutoMapper.Mapper.Map<DTO.Game.Detail>).ToList();
+        cache.SetAbsoluteExpiration(DateTimeOffset.UtcNow.AddHours(1));
+        return dtos;
+      });
+
+      result.Succeed(gameDTOs);
       return result;
     }
 
@@ -163,5 +229,6 @@ namespace Alexandria.Orchestration.Services
       result.Data = AutoMapper.Mapper.Map<DTO.Competition.Tournament>(tournament);
       return result;
     }
+
   }
 }

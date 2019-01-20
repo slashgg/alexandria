@@ -4,14 +4,16 @@ using Alexandria.EF.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Alexandria.EF.Migrations
 {
     [DbContext(typeof(AlexandriaContext))]
-    partial class AlexandriaContextModelSnapshot : ModelSnapshot
+    [Migration("20190119234843_AddCompetitionLevel")]
+    partial class AddCompetitionLevel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -107,26 +109,6 @@ namespace Alexandria.EF.Migrations
                     b.HasIndex("UserProfileId");
 
                     b.ToTable("ExternalAccount");
-                });
-
-            modelBuilder.Entity("Alexandria.EF.Models.FavoriteCompetition", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<Guid>("CompetitionId");
-
-                    b.Property<DateTime>("CreatedAt");
-
-                    b.Property<Guid>("UserProfileId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompetitionId");
-
-                    b.HasIndex("UserProfileId");
-
-                    b.ToTable("FavoriteCompetitions");
                 });
 
             modelBuilder.Entity("Alexandria.EF.Models.Game", b =>
@@ -533,19 +515,6 @@ namespace Alexandria.EF.Migrations
                 {
                     b.HasOne("Alexandria.EF.Models.UserProfile", "UserProfile")
                         .WithMany("ExternalAccounts")
-                        .HasForeignKey("UserProfileId")
-                        .OnDelete(DeleteBehavior.Restrict);
-                });
-
-            modelBuilder.Entity("Alexandria.EF.Models.FavoriteCompetition", b =>
-                {
-                    b.HasOne("Alexandria.EF.Models.Competition", "Competition")
-                        .WithMany()
-                        .HasForeignKey("CompetitionId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Alexandria.EF.Models.UserProfile", "UserProfile")
-                        .WithMany("FavoriteCompetitions")
                         .HasForeignKey("UserProfileId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });

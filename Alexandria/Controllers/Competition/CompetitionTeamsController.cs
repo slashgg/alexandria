@@ -35,7 +35,7 @@ namespace Alexandria.Controllers.Competition
     [ProducesResponseType(typeof(BaseError), 400)]
     [ProducesResponseType(typeof(BaseError), 404)]
     [ProducesResponseType(typeof(BaseError), 409)]
-    public async Task<OperationResult> CreateTeam([FromBody] DTO.Team.Create payload)
+    public async Task<Svalbard.OperationResult> CreateTeam([FromBody] DTO.Team.Create payload)
     {
       var result = await this.teamService.CreateTeam(this.resourceId, payload);
       if (result.Success)
@@ -43,7 +43,7 @@ namespace Alexandria.Controllers.Competition
         return Ok();
       }
 
-      return new OperationResult(result.Error);
+      return new Svalbard.OperationResult(result.Error);
     }
   }
 }

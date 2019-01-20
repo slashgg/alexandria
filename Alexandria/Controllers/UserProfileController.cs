@@ -30,14 +30,14 @@ namespace Alexandria.Controllers
     [ProducesResponseType(typeof(void), 201)]
     [ProducesResponseType(typeof(BaseError), 400)]
     [ProducesResponseType(typeof(BaseError), 409)]
-    public async Task<OperationResult> CreateProfile([FromBody] Alexandria.DTO.UserProfile.Create payload)
+    public async Task<Svalbard.OperationResult> CreateProfile([FromBody] Alexandria.DTO.UserProfile.Create payload)
     {
       var result = await userProfileService.CreateAccount(payload);
       if (result.Success)
       {
-        return new OperationResult(201);
+        return new Svalbard.OperationResult(201);
       }
-      return new OperationResult(result.Error);
+      return new Svalbard.OperationResult(result.Error);
     }
 
     /// <summary>
@@ -78,21 +78,21 @@ namespace Alexandria.Controllers
     [ProducesResponseType(typeof(BaseError), 400)]
     [ProducesResponseType(typeof(BaseError), 401)]
     [ProducesResponseType(typeof(BaseError), 409)]
-    public async Task<OperationResult> UpdateUserProfile([FromBody] DTO.UserProfile.UpdateSettings payload)
+    public async Task<Svalbard.OperationResult> UpdateUserProfile([FromBody] DTO.UserProfile.UpdateSettings payload)
     {
       var userId = HttpContext.GetUserId();
       if (!userId.HasValue)
       {
-        return new OperationResult(401);
+        return new Svalbard.OperationResult(401);
       }
 
       var result = await userProfileService.UpdateSettings(userId.Value, payload);
       if (result.Success)
       {
-        return new OperationResult(204);
+        return new Svalbard.OperationResult(204);
       }
 
-      return new OperationResult(result.Error);
+      return new Svalbard.OperationResult(result.Error);
     }
 
     /// <summary>
@@ -103,21 +103,21 @@ namespace Alexandria.Controllers
     [Authorize]
     [ProducesResponseType(typeof(void), 204)]
     [ProducesResponseType(typeof(BaseError), 401)]
-    public async Task<OperationResult> ResendEmailVerification()
+    public async Task<Svalbard.OperationResult> ResendEmailVerification()
     {
       var userId = HttpContext.GetUserId();
       if (!userId.HasValue)
       {
-        return new OperationResult(401);
+        return new Svalbard.OperationResult(401);
       }
 
       var result = await userProfileService.ResendEmailVerification(userId.Value);
       if (result.Success)
       {
-        return new OperationResult(204);
+        return new Svalbard.OperationResult(204);
       }
 
-      return new OperationResult(result.Error);
+      return new Svalbard.OperationResult(result.Error);
     }
 
     /// <summary>
