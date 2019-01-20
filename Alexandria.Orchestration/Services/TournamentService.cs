@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Alexandria.EF.Context;
 using Alexandria.Interfaces.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Svalbard.Services;
 
 namespace Alexandria.Orchestration.Services
@@ -13,10 +14,12 @@ namespace Alexandria.Orchestration.Services
   public class TournamentService : ITournamentService
   {
     private readonly AlexandriaContext alexandriaContext;
+    private readonly IMemoryCache cache;
 
-    public TournamentService(AlexandriaContext alexandriaContext)
+    public TournamentService(AlexandriaContext alexandriaContext, IMemoryCache memoryCache)
     {
       this.alexandriaContext = alexandriaContext;
+      this.cache = memoryCache;
     }
 
     public async Task<ServiceResult<IList<DTO.Competition.TournamentApplication>>> GetOpenTournamentApplications(string competitionSlug)
@@ -183,13 +186,22 @@ namespace Alexandria.Orchestration.Services
     public async Task<ServiceResult<List<DTO.Tournament.TeamParticipation>>> GetTeamParticipations(Guid tournamentId)
     {
       var result = new ServiceResult<List<DTO.Tournament.TeamParticipation>>();
-      var tournamentParticipations = await alexandriaContext.TournamentParticipations.Include(t => t.Team)
-                                                                                     .ThenInclude(t => t.TeamMemberships)
-                                                                                     .Where(tp => tp.TournamentId == tournamentId && tp.State == Shared.Enums.TournamentParticipationState.Participating)
-                                                                                     .ToListAsync();
+      var participationsDTO = await this.cache.GetOrCreateAsync(Shared.Cache.Tournament.Participants(tournamentId), async (cache) =>
+      {
+        var tournamentParticipations = await alexandriaContext.TournamentParticipations.Include(t => t.Team)
+                                                                               .ThenInclude(tt => tt.TeamMemberships)
+                                                                               .ThenInclude(tm => tm.TeamRole)
+                                                                               .Include(t => t.Team)
+                                                                               .ThenInclude(tt => tt.TeamMemberships)
+                                                                               .ThenInclude(m => m.UserProfile)
+                                                                               .Where(tp => tp.TournamentId == tournamentId && tp.State == Shared.Enums.TournamentParticipationState.Participating)
+                                                                               .ToListAsync();
 
-      result.Data = tournamentParticipations.Select(AutoMapper.Mapper.Map<DTO.Tournament.TeamParticipation>).ToList();
-      result.Succeed();
+        var dto = tournamentParticipations.Select(AutoMapper.Mapper.Map<DTO.Tournament.TeamParticipation>).ToList();
+        return dto;
+      });
+
+      result.Succeed(participationsDTO);
       return result;
     }
 
