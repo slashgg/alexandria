@@ -27,16 +27,16 @@ namespace Alexandria.Controllers.UserProfile
     [ProducesResponseType(typeof(BaseError), 404)]
     [ProducesResponseType(typeof(BaseError), 422)]
     [ProducesResponseType(typeof(BaseError), 423)]
-    public async Task<OperationResult> RemoveMembership([FromRoute] Guid membershipId)
+    public async Task<Svalbard.OperationResult> RemoveMembership([FromRoute] Guid membershipId)
     {
       var result = await this.teamService.RemoveMember(membershipId, "Left");
 
       if (result.Success)
       {
-        return new OperationResult(204);
+        return new Svalbard.OperationResult(204);
       }
 
-      return new OperationResult(result.Error);
+      return new Svalbard.OperationResult(result.Error);
     }
   }
 }

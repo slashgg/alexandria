@@ -170,7 +170,6 @@ namespace Alexandria
     {
       if (env.IsDevelopment())
       {
-
         app.UseDeveloperExceptionPage();
       }
       else

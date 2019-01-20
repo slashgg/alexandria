@@ -28,14 +28,14 @@ namespace Alexandria.Controllers
     [ProducesResponseType(typeof(DTO.Team.Detail), 200)]
     [ProducesResponseType(typeof(BaseError), 400)]
     [ProducesResponseType(typeof(BaseError), 404)]
-    public async Task<OperationResult> GetTeamDetail(Guid teamId)
+    public async Task<Svalbard.OperationResult> GetTeamDetail(Guid teamId)
     {
       var result = await this.teamService.GetTeamDetail(teamId);
       if (result.Success)
       {
         return new OperationResult<DTO.Team.Detail>(result.Data);
       }
-      return new OperationResult(result.Error);
+      return new Svalbard.OperationResult(result.Error);
     }
 
     /// <summary>
@@ -49,15 +49,15 @@ namespace Alexandria.Controllers
     [ProducesResponseType(typeof(void), 204)]
     [ProducesResponseType(typeof(BaseError), 400)]
     [ProducesResponseType(typeof(BaseError), 404)]
-    public async Task<OperationResult> DisbandTeam([FromRoute]Guid teamId)
+    public async Task<Svalbard.OperationResult> DisbandTeam([FromRoute]Guid teamId)
     {
       var result = await this.teamService.DisbandTeam(teamId);
       if (result.Success)
       {
-        return new OperationResult(204);
+        return new Svalbard.OperationResult(204);
       }
 
-      return new OperationResult(result.Error);
+      return new Svalbard.OperationResult(result.Error);
     }
   }
 }

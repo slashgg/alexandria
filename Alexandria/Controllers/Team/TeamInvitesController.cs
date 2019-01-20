@@ -52,15 +52,15 @@ namespace Alexandria.Controllers.Team
     [ProducesResponseType(typeof(void), 401)]
     [ProducesResponseType(typeof(BaseError), 409)]
     [ProducesResponseType(typeof(BaseError), 422)]
-    public async Task<OperationResult> SendInvite([FromBody] DTO.Team.InviteRequest payload)
+    public async Task<Svalbard.OperationResult> SendInvite([FromBody] DTO.Team.InviteRequest payload)
     {
       var result = await this.teamService.InviteMember(this.resourceId, payload.Invitee);
       if (result.Success)
       {
-        return new OperationResult(201);
+        return new Svalbard.OperationResult(201);
       }
 
-      return new OperationResult(result.Error);
+      return new Svalbard.OperationResult(result.Error);
     }
 
     /// <summary>
@@ -76,14 +76,14 @@ namespace Alexandria.Controllers.Team
     [ProducesResponseType(typeof(BaseError), 400)]
     [ProducesResponseType(typeof(void), 401)]
     [ProducesResponseType(typeof(BaseError), 404)]
-    public async Task<OperationResult> ResendInvite([FromRoute] Guid inviteId)
+    public async Task<Svalbard.OperationResult> ResendInvite([FromRoute] Guid inviteId)
     {
       var result = await this.teamService.ResendInvite(inviteId);
       if (result.Success)
       {
-        return new OperationResult(204);
+        return new Svalbard.OperationResult(204);
       }
-      return new OperationResult(result.Error);
+      return new Svalbard.OperationResult(result.Error);
     }
 
     /// <summary>
@@ -99,14 +99,14 @@ namespace Alexandria.Controllers.Team
     [ProducesResponseType(typeof(BaseError), 400)]
     [ProducesResponseType(typeof(void), 401)]
     [ProducesResponseType(typeof(void), 404)]
-    public async Task<OperationResult> RevokeInvite([FromRoute] Guid inviteId)
+    public async Task<Svalbard.OperationResult> RevokeInvite([FromRoute] Guid inviteId)
     {
       var result = await this.teamService.RevokeInvite(inviteId);
       if (result.Success)
       {
-        return new OperationResult(204);
+        return new Svalbard.OperationResult(204);
       }
-      return new OperationResult(result.Error);
+      return new Svalbard.OperationResult(result.Error);
     }
   }
 }

@@ -82,14 +82,14 @@ namespace Alexandria.Controllers.Team
     [ProducesResponseType(typeof(void), 401)]
     [ProducesResponseType(typeof(BaseError), 404)]
     [ProducesResponseType(typeof(BaseError), 423)]
-    public async Task<OperationResult> ApplyToTournament([FromBody] DTO.Tournament.TeamTournamentApplicationRequest payload)
+    public async Task<Svalbard.OperationResult> ApplyToTournament([FromBody] DTO.Tournament.TeamTournamentApplicationRequest payload)
     {
       var result = await tournamentService.TeamApplyToTournament(this.resourceId, payload);
       if (result.Success)
       {
-        return new OperationResult(201);
+        return new Svalbard.OperationResult(201);
       }
-      return new OperationResult(result.Error);
+      return new Svalbard.OperationResult(result.Error);
     }
 
     /// <summary>
@@ -105,14 +105,14 @@ namespace Alexandria.Controllers.Team
     [ProducesResponseType(typeof(BaseError), 400)]
     [ProducesResponseType(typeof(void), 401)]
     [ProducesResponseType(typeof(BaseError), 404)]
-    public async Task<OperationResult> WithdrawApplication([FromRoute] Guid tournamentId)
+    public async Task<Svalbard.OperationResult> WithdrawApplication([FromRoute] Guid tournamentId)
     {
       var result = await this.tournamentService.WithdrawTeamApplication(tournamentId, this.resourceId);
       if (result.Success)
       {
-        return new OperationResult(204);
+        return new Svalbard.OperationResult(204);
       }
-      return new OperationResult(result.Error);
+      return new Svalbard.OperationResult(result.Error);
     }
 
     /// <summary>
@@ -128,14 +128,14 @@ namespace Alexandria.Controllers.Team
     [ProducesResponseType(typeof(BaseError), 400)]
     [ProducesResponseType(typeof(void), 401)]
     [ProducesResponseType(typeof(BaseError), 404)]
-    public async Task<OperationResult> WithdrawApplication([FromRoute] string tournamentSlug)
+    public async Task<Svalbard.OperationResult> WithdrawApplication([FromRoute] string tournamentSlug)
     {
       var result = await this.tournamentService.WithdrawTeamApplication(tournamentSlug, this.resourceId);
       if (result.Success)
       {
-        return new OperationResult(204);
+        return new Svalbard.OperationResult(204);
       }
-      return new OperationResult(result.Error);
+      return new Svalbard.OperationResult(result.Error);
     }
   }
 }

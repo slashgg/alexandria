@@ -15,6 +15,9 @@ namespace Alexandria.Interfaces.Services
     Task<ServiceResult<IList<DTO.Competition.Tournament>>> GetTournaments(string competitionSlug);
     Task<ServiceResult<DTO.Competition.Tournament>> GetTournament(Guid tournamentId);
     Task<ServiceResult<DTO.Competition.Tournament>> GetTournament(string slug);
+    Task<ServiceResult<IList<DTO.Competition.Detail>>> SearchCompetitions(DTO.Competition.Lookup lookup);
+    Task<ServiceResult<IList<DTO.Competition.CompetitionLevel>>> GetCompetitionLevels();
+    Task<ServiceResult<IList<DTO.Game.Detail>>> GetSupportedGames();
 
   }
 }

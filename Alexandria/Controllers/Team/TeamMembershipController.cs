@@ -35,7 +35,7 @@ namespace Alexandria.Controllers.Team
     [ProducesResponseType(typeof(BaseError), 404)]
     [ProducesResponseType(typeof(BaseError), 422)]
     [ProducesResponseType(typeof(BaseError), 423)]
-    public async Task<OperationResult> RemoveMember([FromRoute]Guid membershipId)
+    public async Task<Svalbard.OperationResult> RemoveMember([FromRoute]Guid membershipId)
     {
       var result = await this.teamService.RemoveMember(membershipId, "Remove");
       if (result.Success)
@@ -43,7 +43,7 @@ namespace Alexandria.Controllers.Team
         return new NoContentResult();
       }
 
-      return new OperationResult(result.Error);
+      return new Svalbard.OperationResult(result.Error);
     }
   }
 }

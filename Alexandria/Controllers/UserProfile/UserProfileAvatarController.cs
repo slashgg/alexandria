@@ -35,23 +35,23 @@ namespace Alexandria.Controllers.UserProfile
     [ProducesResponseType(typeof(void), 204)]
     [ProducesResponseType(typeof(void), 401)]
     [ProducesResponseType(typeof(BaseError), 400)]
-    public async Task<OperationResult> UpdateAvatar([FromBody] UpdateAvatar data)
+    public async Task<Svalbard.OperationResult> UpdateAvatar([FromBody] UpdateAvatar data)
     {
       if (data == null)
       {
-        return new OperationResult(400);
+        return new Svalbard.OperationResult(400);
       }
 
       var userId = HttpContext.GetUserId();
       if (!userId.HasValue)
       {
-        return new OperationResult(401);
+        return new Svalbard.OperationResult(401);
       }
 
       var presignedResult = fileService.GetFromCorrelationId(data.PresignedUrlCorrelationId);
       if (!presignedResult.Success)
       {
-        return new OperationResult(presignedResult.Error);
+        return new Svalbard.OperationResult(presignedResult.Error);
       }
 
       var result = await userProfiles.UpdateAvatar(userId.Value, presignedResult.Data.Url);
@@ -69,10 +69,10 @@ namespace Alexandria.Controllers.UserProfile
           }
         }
 
-        return new OperationResult(204);
+        return new Svalbard.OperationResult(204);
       }
 
-      return new OperationResult(result.Error);
+      return new Svalbard.OperationResult(result.Error);
     }
   }
 }

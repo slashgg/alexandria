@@ -102,21 +102,21 @@ namespace Alexandria.Controllers.UserProfile
     [PermissionsRequired("external-account::{connectionId}::delete")]
     [ProducesResponseType(typeof(void), 204)]
     [ProducesResponseType(typeof(void), 401)]
-    public async Task<OperationResult> DeleteConnection(string connectionId)
+    public async Task<Svalbard.OperationResult> DeleteConnection(string connectionId)
     {
       var userId = HttpContext.GetUserId();
       if (!userId.HasValue)
       {
-        return new OperationResult(204);
+        return new Svalbard.OperationResult(204);
       }
 
       var result = await profileService.DeleteConnection(connectionId);
       if (result.Success)
       {
-        return new OperationResult(204);
+        return new Svalbard.OperationResult(204);
       }
 
-      return new OperationResult(result.Error);
+      return new Svalbard.OperationResult(result.Error);
     }
 
     /// <summary>
@@ -129,15 +129,15 @@ namespace Alexandria.Controllers.UserProfile
     [ProducesResponseType(typeof(void), 201)]
     [ProducesResponseType(typeof(void), 401)]
     [ProducesResponseType(typeof(BaseError), 400)]
-    public async Task<OperationResult> CreateConnection(DTO.UserProfile.CreateConnection createDto)
+    public async Task<Svalbard.OperationResult> CreateConnection(DTO.UserProfile.CreateConnection createDto)
     {
       var result = await profileService.CreateConnection(createDto);
       if (result.Success)
       {
-        return new OperationResult(201);
+        return new Svalbard.OperationResult(201);
       }
 
-      return new OperationResult(result.Error);
+      return new Svalbard.OperationResult(result.Error);
     }
   }
 }
