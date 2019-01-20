@@ -387,6 +387,23 @@ namespace Alexandria.Orchestration.Services
 
       return result;
     }
+    
+    public async Task<ServiceResult> UpdateTeamLogo(Guid teamId, string logoURL)
+    {
+      var result = new ServiceResult();
+      var team = await this.context.Teams.FirstOrDefaultAsync(t => t.Id == teamId);
+      if (team == null)
+      {
+        result.Error = Shared.ErrorKey.Team.TeamNotFound;
+        return result;
+      }
+
+      await DangerouslyUpdateTeamLogo(teamId, logoURL);
+
+      result.Succeed();
+
+      return result;
+    }
 
     private async Task<TeamInvite> DangerouslyCreateInvite(Guid teamId, string invitee)
     {
@@ -538,6 +555,17 @@ namespace Alexandria.Orchestration.Services
         await this.authorizationService.RemovePermission(invite.UserProfileId.Value, AuthorizationHelper.GenerateARN(typeof(TeamInvite), invite.Id.ToString(), Shared.Permissions.TeamInvite.All));
       }
       return invite;
+    }
+
+    private async Task DangerouslyUpdateTeamLogo(Guid teamId, string logoURL)
+    {
+      var team = await context.Teams.FirstOrDefaultAsync(t => t.Id == teamId);
+      if (team == null)
+      {
+        return;
+      }
+
+      team.LogoURL = logoURL;
     }
   }
 }

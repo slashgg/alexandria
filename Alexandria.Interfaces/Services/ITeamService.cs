@@ -17,5 +17,6 @@ namespace Alexandria.Interfaces.Services
     Task<ServiceResult> RevokeInvite(Guid inviteId);
     Task<ServiceResult> AcceptInvite(Guid inviteId);
     Task<ServiceResult> DeclineInvite(Guid inviteId);
+    Task<ServiceResult> UpdateTeamLogo(Guid teamId, string logoURL);
   }
 }
