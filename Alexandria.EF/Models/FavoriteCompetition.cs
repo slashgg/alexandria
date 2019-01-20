@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using Alexandria.Shared.Utils;
 
 namespace Alexandria.EF.Models
 {
+  [ProtectedResource("favorite-competition")]
   public class FavoriteCompetition : BaseEntity
   {
     /* Foreign Key */
@@ -14,5 +16,12 @@ namespace Alexandria.EF.Models
     public virtual Competition Competition { get; set; }
     [ForeignKey("UserProfileId")]
     public virtual UserProfile UserProfile { get; set; }
+
+    public FavoriteCompetition() { }
+    public FavoriteCompetition(Guid userId, Guid competitionId)
+    {
+      this.UserProfileId = userId;
+      this.CompetitionId = competitionId;
+    }
   }
 }

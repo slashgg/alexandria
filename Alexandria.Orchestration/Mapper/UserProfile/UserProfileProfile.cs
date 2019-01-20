@@ -24,6 +24,9 @@ namespace Alexandria.Orchestration.Mapper.UserProfile
 
       this.CreateMap<EF.Models.Competition, DTO.UserProfile.TeamMembership.CompetitionData>();
       this.CreateMap<EF.Models.ExternalAccount, DTO.UserProfile.ConnectionDetail>();
+
+      this.CreateMap<EF.Models.FavoriteCompetition, DTO.UserProfile.FavoriteCompetition>()
+        .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Competition.Name));
     }
   }
 }

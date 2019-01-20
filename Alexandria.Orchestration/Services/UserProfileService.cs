@@ -261,6 +261,59 @@ namespace Alexandria.Orchestration.Services
       return result;
     }
 
+    public async Task<ServiceResult<IList<DTO.UserProfile.FavoriteCompetition>>> GetFavoriteCompetitions(Guid userId)
+    {
+      var result = new ServiceResult<IList<DTO.UserProfile.FavoriteCompetition>>();
+      var favorites = await context.FavoriteCompetitions.Include(fc => fc.Competition).Where(f => f.UserProfileId == userId).ToListAsync();
+      var favoriteDTOs = favorites.Select(AutoMapper.Mapper.Map<DTO.UserProfile.FavoriteCompetition>).ToList();
+      result.Succeed(favoriteDTOs);
+      return result;
+    }
+
+    public async Task<ServiceResult> AddFavoriteCompetition(Guid userId, Guid competitionId)
+    {
+      var result = new ServiceResult();
+      var userExists = await context.UserProfiles.AnyAsync(u => u.Id == userId);
+      if (!userExists)
+      {
+        result.Error = Shared.ErrorKey.UserProfile.UserNotFound;
+        return result;
+      }
+
+      var competitionExists = await context.Competitions.AnyAsync(c => c.Id == competitionId);
+      if (!competitionExists)
+      {
+        result.Error = Shared.ErrorKey.Competition.NotFound;
+        return result;
+      }
+
+      var favoriteCompetitionExists = await context.FavoriteCompetitions.AnyAsync(fc => fc.CompetitionId == competitionId && fc.UserProfileId == userId);
+      if (favoriteCompetitionExists)
+      {
+        result.Error = Shared.ErrorKey.FavoriteCompetition.AlreadyExists;
+        return result;
+      }
+
+      await this.DangerouslyCreateFavoriteCompetition(userId, competitionId);
+      result.Succeed();
+      return result;
+    }
+
+    public async Task<ServiceResult> DeleteFavoriteCompetition(Guid favoriteId)
+    {
+      var result = new ServiceResult();
+      var favoriteExists = await this.context.FavoriteCompetitions.AnyAsync(fc => fc.Id == favoriteId);
+      if (!favoriteExists)
+      {
+        result.Error = Shared.ErrorKey.FavoriteCompetition.NotFound;
+        return result;
+      }
+
+      await DangerouslyDeleteFavoriteCompetition(favoriteId);
+      result.Succeed();
+      return result;
+    }
+
     private async Task DangerouslyUpdateProfileSettings(UpdateSettings updateDto, Guid userId)
     {
       var profile = await context.UserProfiles.FindAsync(userId);
@@ -320,6 +373,20 @@ namespace Alexandria.Orchestration.Services
         context.TeamInvites.UpdateRange(pendingInvites);
       }
       return userAccount;
+    }
+
+    private async Task DangerouslyCreateFavoriteCompetition(Guid userId, Guid competitionId)
+    {
+      var favorite = new EF.Models.FavoriteCompetition(userId, competitionId);
+      await authorizationService.AddPermission(userId, AuthorizationHelper.GenerateARN(typeof(EF.Models.FavoriteCompetition), favorite.Id.ToString(), Shared.Permissions.FavoriteCompetition.All));
+      context.FavoriteCompetitions.Add(favorite);
+    }
+
+    private async Task DangerouslyDeleteFavoriteCompetition(Guid favoriteId)
+    {
+      var favorite = await context.FavoriteCompetitions.FirstOrDefaultAsync(fc => fc.Id == favoriteId);
+      await authorizationService.RemovePermission(favorite.UserProfileId, AuthorizationHelper.GenerateARN(typeof(EF.Models.FavoriteCompetition), favorite.Id.ToString(), Shared.Permissions.FavoriteCompetition.All));
+      context.FavoriteCompetitions.Remove(favorite);
     }
   }
 }
