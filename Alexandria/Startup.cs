@@ -2,6 +2,7 @@
 using Alexandria.EF.Context;
 using Alexandria.ExternalServices.BackgroundWorker;
 using Alexandria.ExternalServices.Mailer;
+using Alexandria.ExternalServices.Slack;
 using Alexandria.Infrastructure.Authorization;
 using Alexandria.Infrastructure.Filters;
 using Alexandria.Interfaces;
@@ -71,6 +72,7 @@ namespace Alexandria
       services.Configure<Shared.Configuration.Queue>(Configuration.GetSection("Queues"));
       services.Configure<Shared.Configuration.SendGridConfig>(Configuration.GetSection("SendGrid"));
       services.Configure<Shared.Configuration.PassportClientConfiguration>(Configuration.GetSection("Passport"));
+      services.Configure<Shared.Configuration.Slack>(Configuration.GetSection("Slack"));
       services.AddScoped<AlexandriaContext>();
       services.AddScoped<SaveChangesFilter>();
       services.AddAWSService<IAmazonSQS>();
@@ -84,6 +86,8 @@ namespace Alexandria
       services.AddScoped<ICompetitionService, CompetitionService>();
       services.AddScoped<IFileService, FileService>();
       services.AddScoped<IPassportClient, PassportClient>();
+      services.AddScoped<IProfanityValidator, ProfanityValidator>();
+      services.AddScoped<SlackClient>();
 
       services.AddSingleton<IMimeMappingService>(provider =>
       {

@@ -3,6 +3,7 @@ using Alexandria.Orchestration.Mapper.Game;
 using Alexandria.Orchestration.Mapper.Marketing;
 using Alexandria.Orchestration.Mapper.Tournament;
 using Alexandria.Orchestration.Mapper.UserProfile;
+using Alexandria.Orchestration.Mapper.Utility;
 
 namespace Alexandria.Orchestration.Mapper
 {
@@ -18,6 +19,7 @@ namespace Alexandria.Orchestration.Mapper
         cfg.AddProfile<TournamentProfile>();
         cfg.AddProfile<MarketingProfile>();
         cfg.AddProfile<GameProfile>();
+        cfg.AddProfile<UtilityProfile>();
       });
     }
   }

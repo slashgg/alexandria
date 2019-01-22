@@ -22,6 +22,7 @@ namespace Alexandria
               var prod = hosting.HostingEnvironment.IsProduction();
               var secrets = new List<string>();
               secrets.Add("SendGrid");
+              secrets.Add("Slack");
               if (hosting.HostingEnvironment.IsProduction())
               {
                 secrets.Add("ConnectionStrings");

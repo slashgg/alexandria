@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Alexandria.DTO.UserProfile;
 using Alexandria.EF.Context;
 using Alexandria.EF.Models;
+using Alexandria.ExternalServices.Slack;
 using Alexandria.Interfaces.Processing;
 using Alexandria.Interfaces.Services;
 using Alexandria.Shared.Enums;
@@ -24,14 +25,24 @@ namespace Alexandria.Orchestration.Services
     private readonly IPassportClient passportClient;
     private readonly IBackgroundWorker backgroundWorker;
     private readonly Shared.Configuration.Queue queues;
+    private readonly SlackClient slackClient;
+    private readonly IProfanityValidator profanityValidator;
 
-    public UserProfileService(AlexandriaContext context, IAuthorizationService authorizationService, IPassportClient passportClient, IBackgroundWorker backgroundWorker, IOptions<Shared.Configuration.Queue> queues)
+    public UserProfileService(AlexandriaContext context, 
+                              IAuthorizationService authorizationService, 
+                              IPassportClient passportClient, 
+                              IBackgroundWorker backgroundWorker, 
+                              IOptions<Shared.Configuration.Queue> queues,
+                              SlackClient slackClient,
+                              IProfanityValidator profanityValidator)
     {
       this.context = context;
       this.authorizationService = authorizationService;
       this.passportClient = passportClient;
       this.backgroundWorker = backgroundWorker;
       this.queues = queues.Value ?? throw new NoNullAllowedException("Queue Options can't be null");
+      this.slackClient = slackClient;
+      this.profanityValidator = profanityValidator;
     }
 
     public async Task<ServiceResult<DTO.UserProfile.Detail>> GetUserProfileDetail(Guid userId)
@@ -174,6 +185,12 @@ namespace Alexandria.Orchestration.Services
       result.Succeed();
       await this.backgroundWorker.SendMessage(this.queues.Contact, new DTO.Marketing.ContactSync(account.Id, true), 5);
 
+
+      var profanityCheck = await this.profanityValidator.Check(account.DisplayName);
+      if (profanityCheck.Severity == ProfanityFilterSeverity.Blacklist || profanityCheck.Severity == ProfanityFilterSeverity.Suspicious)
+      {
+        this.slackClient.SendMessage($"[SEVERITY {(int)profanityCheck.Severity}] User {account.DisplayName} ({account.Id}) has been created", Shared.ExternalResources.Slack.ProfanityFilterChannel);
+      }
       return result;
     }
 

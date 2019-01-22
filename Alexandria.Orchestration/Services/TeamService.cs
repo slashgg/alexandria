@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Alexandria.EF.Context;
 using Alexandria.EF.Models;
+using Alexandria.ExternalServices.Slack;
 using Alexandria.Interfaces;
 using Alexandria.Interfaces.Processing;
 using Alexandria.Interfaces.Services;
@@ -26,8 +27,17 @@ namespace Alexandria.Orchestration.Services
     private readonly IAuthorizationService authorizationService;
     private readonly IBackgroundWorker backgroundWorker;
     private readonly Shared.Configuration.Queue queues;
+    private readonly IProfanityValidator profanityValidator;
+    private readonly SlackClient slackClient;
 
-    public TeamService(IHttpContextAccessor httpContext, AlexandriaContext context, IUserUtils userUtils, IAuthorizationService authorizationService, IBackgroundWorker backgroundWorker, IOptions<Shared.Configuration.Queue> queues)
+    public TeamService(IHttpContextAccessor httpContext, 
+                       AlexandriaContext context, 
+                       IUserUtils userUtils, 
+                       IAuthorizationService authorizationService, 
+                       IBackgroundWorker backgroundWorker, 
+                       IOptions<Shared.Configuration.Queue> queues, 
+                       IProfanityValidator profanityValidator,
+                       SlackClient slackClient)
     {
       this.httpContext = httpContext.HttpContext;
       this.context = context;
@@ -35,6 +45,8 @@ namespace Alexandria.Orchestration.Services
       this.authorizationService = authorizationService;
       this.backgroundWorker = backgroundWorker;
       this.queues = queues.Value ?? throw new NoNullAllowedException("Queue Options can't be null");
+      this.profanityValidator = profanityValidator;
+      this.slackClient = slackClient;
     }
 
     public async Task<ServiceResult<DTO.Team.Detail>> GetTeamDetail(Guid teamId)
@@ -90,6 +102,7 @@ namespace Alexandria.Orchestration.Services
     {
       var result = new ServiceResult();
 
+
       var competition = await this.context.Competitions.FirstOrDefaultAsync(t => t.Id == competitionId);
       if (competition == null)
       {
@@ -117,6 +130,20 @@ namespace Alexandria.Orchestration.Services
         result.Error = Shared.ErrorKey.UserProfile.AlreadyInCompetitionTeam;
         return result;
       }
+
+      var profanityCheck = await this.profanityValidator.Check(teamData.Name);
+      if (profanityCheck.Severity == ProfanityFilterSeverity.Blacklist)
+      {
+        this.slackClient.SendMessage($"[SEVERITY 1] User {user.UserName} ({userId}) tried to create a Team called {teamData.Name} in Competition {competition.Name} ({competition.Id}), we blocked this action", Shared.ExternalResources.Slack.ProfanityFilterChannel);
+
+        result.Error = Shared.ErrorKey.ProfanityFilter.BlacklistedWord;
+        return result;
+      }
+      else if (profanityCheck.Severity == ProfanityFilterSeverity.Suspicious)
+      {
+        this.slackClient.SendMessage($"[SEVERITY 2] User {user.UserName} ({userId}) attempts to create a Team called {teamData.Name} in Competition {competition.Name} ({competition.Id})", Shared.ExternalResources.Slack.ProfanityFilterChannel);
+      }
+
 
       var team = await this.DangerouslyCreateTeam(competitionId, teamData, user.Id);
 
