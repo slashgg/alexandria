@@ -141,7 +141,7 @@ namespace Alexandria.Orchestration.Services
       }
       else if (profanityCheck.Severity == ProfanityFilterSeverity.Suspicious)
       {
-        this.slackClient.SendMessage($"[SEVERITY 2] User {user.UserName} ({userId}) attempts to create a Team called {teamData.Name} in Competition {competition.Name} ({competition.Id})", Shared.ExternalResources.Slack.ProfanityFilterChannel);
+        this.slackClient.SendMessage($"[SEVERITY 2] User {user.UserName} ({userId}) created a Team called {teamData.Name} in Competition {competition.Name} ({competition.Id})", Shared.ExternalResources.Slack.ProfanityFilterChannel);
       }
 
 
