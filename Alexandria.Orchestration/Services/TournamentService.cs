@@ -196,6 +196,7 @@ namespace Alexandria.Orchestration.Services
                                                                                .ThenInclude(m => m.UserProfile)
                                                                                .Where(tp => tp.TournamentId == tournamentId && tp.State == Shared.Enums.TournamentParticipationState.Participating)
                                                                                .ToListAsync();
+        cache.SetAbsoluteExpiration(DateTimeOffset.UtcNow.AddHours(1));
 
         var dto = tournamentParticipations.Select(AutoMapper.Mapper.Map<DTO.Tournament.TeamParticipation>).ToList();
         return dto;
