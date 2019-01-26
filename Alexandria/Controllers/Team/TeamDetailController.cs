@@ -30,6 +30,7 @@ namespace Alexandria.Controllers.Team
     /// <param name="payload">URL of Team Logo</param>
     /// <returns></returns>
     [HttpPost("logo")]
+    [PermissionsRequired("team::{teamId}::logo")]
     [ProducesResponseType(204)]
     [ProducesResponseType(typeof(BaseError), 404)]
     public async Task<OperationResult> UpdateTeamAvatar([FromBody] DTO.Team.UpdateLogo payload)

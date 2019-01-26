@@ -11,6 +11,7 @@ namespace Alexandria.Shared.Permissions
     public const string SendInvite = "invite--send";
     public const string RevokeInvite = "invite--revoke";
     public const string RemoveMember = "member--remove";
+    public const string LogoUpload = "logo";
     public const string MemberSetRole = "member--set-role";
     public const string JoinTournament = "tournament--join";
   }
@@ -35,5 +36,7 @@ namespace Alexandria.Shared.Permissions
     MemberSetRole,
     [EnumMember(Value = "tournament--join")]
     JoinTournament,
+    [EnumMember(Value = "logo")]
+    LogoUpload,
   }
 }
