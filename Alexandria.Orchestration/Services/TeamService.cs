@@ -386,7 +386,7 @@ namespace Alexandria.Orchestration.Services
       }
 
       var competition = invite.Team.Competition;
-      if (competition != null)
+      if (competition == null)
       {
         result.Error = Shared.ErrorKey.Competition.NotFound;
         return result;
