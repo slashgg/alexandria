@@ -193,6 +193,19 @@ namespace Alexandria.Orchestration.Services
         return result;
       }
 
+      var competition = team.Competition;
+      if (competition == null)
+      {
+        result.Error = Shared.ErrorKey.Competition.NotFound;
+        return result;
+      }
+
+      if (!team.HasOpenSpots())
+      {
+        result.Error = Shared.ErrorKey.Competition.MaxTeamSize;
+        return result;
+      }
+
       var invite = await this.DangerouslyCreateInvite(teamId, invitee);
       if (invite == null)
       {
@@ -311,6 +324,8 @@ namespace Alexandria.Orchestration.Services
                                                  .ThenInclude(t => t.TeamMemberships)
                                                  .Include(i => i.UserProfile)
                                                  .ThenInclude(u => u.TeamMemberships)
+                                                 .Include(i => i.Team)
+                                                 .ThenInclude(t => t.Competition)
                                                  .FirstOrDefaultAsync(i => i.Id == inviteId);
       // Check if User is null;
       if (invite == null)
@@ -367,6 +382,19 @@ namespace Alexandria.Orchestration.Services
       if (team.TeamState == TeamState.Disbanded)
       {
         result.Error = Shared.ErrorKey.Team.Disbanded;
+        return result;
+      }
+
+      var competition = invite.Team.Competition;
+      if (competition != null)
+      {
+        result.Error = Shared.ErrorKey.Competition.NotFound;
+        return result;
+      }
+
+      if (!team.HasOpenSpots())
+      {
+        result.Error = Shared.ErrorKey.Competition.MaxTeamSize;
         return result;
       }
 

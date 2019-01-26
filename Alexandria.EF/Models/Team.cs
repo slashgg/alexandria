@@ -85,5 +85,20 @@ namespace Alexandria.EF.Models
       this.TeamMemberships.Remove(membership);
       this.TeamMembershipHistories.Add(new TeamMembershipHistory(userId, notes));
     }
+
+    public bool HasOpenSpots()
+    {
+      if (this.Competition == null)
+      {
+        return false;
+      }
+
+      if (this.Competition.MaxTeamSize.HasValue && this.TeamMemberships.Count() >= this.Competition.MaxTeamSize.Value)
+      {
+        return false;
+      }
+
+      return true;
+    }
   }
 }
