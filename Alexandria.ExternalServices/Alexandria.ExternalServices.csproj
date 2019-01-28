@@ -1,11 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RuntimeFrameworkVersion>2.2.1</RuntimeFrameworkVersion>
+  </PropertyGroup>
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.SQS" Version="3.3.3.50" />
+    <PackageReference Include="AWSSDK.SQS" Version="3.3.3.53" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="Sendgrid" Version="9.10.0" />
     <PackageReference Include="SlackAPI" Version="1.0.7" />

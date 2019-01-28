@@ -13,6 +13,8 @@ COPY Alexandria.EF/Alexandria.EF.csproj Alexandria.EF/
 COPY Alexandria.Interfaces/Alexandria.Interfaces.csproj Alexandria.Interfaces/
 COPY Alexandria.Orchestration/Alexandria.Orchestration.csproj Alexandria.Orchestration/
 COPY Alexandria.ExternalServices/Alexandria.ExternalServices.csproj Alexandria.ExternalServices/
+COPY Alexandria.Games.HeroesOfTheStorm.csproj Alexandria.Games.HeroesOfTheStorm/
+COPY Alexandria.Consumer.Shared.csproj Alexandria.Consumer.Shared/
 
 RUN dotnet restore Alexandria/Alexandria.csproj
 COPY . .

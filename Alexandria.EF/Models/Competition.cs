@@ -35,5 +35,6 @@ namespace Alexandria.EF.Models
     public virtual ICollection<Tournament> Tournaments { get; set; } = new List<Tournament>();
     public virtual ICollection<Team> Teams { get; set; } = new List<Team>();
     public virtual ICollection<TeamRole> TeamRoles { get; set; } = new List<TeamRole>();
+    public virtual ICollection<CompetitionRankingGroupMembership> CompetitionRankingGroupMemberships { get; set; } = new List<CompetitionRankingGroupMembership>();
   }
 }

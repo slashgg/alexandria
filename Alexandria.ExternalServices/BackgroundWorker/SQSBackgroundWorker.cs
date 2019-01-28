@@ -48,6 +48,7 @@ namespace Alexandria.ExternalServices.BackgroundWorker
 
       var messages = result.Messages.Select(sqsMessage =>
       {
+
         var data = JsonConvert.DeserializeObject<T>(sqsMessage.Body);
         var message = new BackgroundMessage<T>(sqsMessage.ReceiptHandle, data);
         return message;

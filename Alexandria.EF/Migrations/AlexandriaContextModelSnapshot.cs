@@ -15,7 +15,7 @@ namespace Alexandria.EF.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.0-rtm-35687")
+                .HasAnnotation("ProductVersion", "2.2.1-servicing-10028")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -83,6 +83,26 @@ namespace Alexandria.EF.Migrations
                     b.ToTable("CompetitionLevels");
                 });
 
+            modelBuilder.Entity("Alexandria.EF.Models.CompetitionRankingGroupMembership", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid>("CompetitionId");
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<Guid>("PlayerRankingGroupId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompetitionId");
+
+                    b.HasIndex("PlayerRankingGroupId");
+
+                    b.ToTable("competitionRankingGroupMemberships");
+                });
+
             modelBuilder.Entity("Alexandria.EF.Models.ExternalAccount", b =>
                 {
                     b.Property<Guid>("Id")
@@ -136,8 +156,12 @@ namespace Alexandria.EF.Migrations
 
                     b.Property<DateTime>("CreatedAt");
 
+                    b.Property<string>("InternalIdentifier");
+
                     b.Property<string>("Name")
                         .HasMaxLength(500);
+
+                    b.Property<string>("Slug");
 
                     b.HasKey("Id");
 
@@ -161,6 +185,51 @@ namespace Alexandria.EF.Migrations
                     b.HasIndex("UserProfileId");
 
                     b.ToTable("Permissions");
+                });
+
+            modelBuilder.Entity("Alexandria.EF.Models.PlayerRanking", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<Guid>("GameId");
+
+                    b.Property<decimal>("MMR")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("PlayerRankingGroupId");
+
+                    b.Property<Guid>("UserProfileId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameId");
+
+                    b.HasIndex("PlayerRankingGroupId");
+
+                    b.HasIndex("UserProfileId");
+
+                    b.ToTable("PlayerRankings");
+                });
+
+            modelBuilder.Entity("Alexandria.EF.Models.PlayerRankingGroup", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<Guid>("GameId");
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameId");
+
+                    b.ToTable("playerRankingGroups");
                 });
 
             modelBuilder.Entity("Alexandria.EF.Models.ProfanityFilter", b =>
@@ -545,6 +614,19 @@ namespace Alexandria.EF.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
+            modelBuilder.Entity("Alexandria.EF.Models.CompetitionRankingGroupMembership", b =>
+                {
+                    b.HasOne("Alexandria.EF.Models.Competition", "Competition")
+                        .WithMany("CompetitionRankingGroupMemberships")
+                        .HasForeignKey("CompetitionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Alexandria.EF.Models.PlayerRankingGroup", "PlayerRankingGroup")
+                        .WithMany("CompetitionRankingGroupMemberships")
+                        .HasForeignKey("PlayerRankingGroupId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
             modelBuilder.Entity("Alexandria.EF.Models.ExternalAccount", b =>
                 {
                     b.HasOne("Alexandria.EF.Models.UserProfile", "UserProfile")
@@ -571,6 +653,32 @@ namespace Alexandria.EF.Migrations
                     b.HasOne("Alexandria.EF.Models.UserProfile", "UserProfile")
                         .WithMany("Permissions")
                         .HasForeignKey("UserProfileId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Alexandria.EF.Models.PlayerRanking", b =>
+                {
+                    b.HasOne("Alexandria.EF.Models.Game", "Game")
+                        .WithMany("PlayerRankings")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Alexandria.EF.Models.PlayerRankingGroup", "PlayerRankingGroup")
+                        .WithMany("PlayerRankings")
+                        .HasForeignKey("PlayerRankingGroupId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Alexandria.EF.Models.UserProfile", "UserProfile")
+                        .WithMany("PlayerRankings")
+                        .HasForeignKey("UserProfileId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Alexandria.EF.Models.PlayerRankingGroup", b =>
+                {
+                    b.HasOne("Alexandria.EF.Models.Game", "Game")
+                        .WithMany("PlayerRankingGroups")
+                        .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 

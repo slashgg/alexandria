@@ -23,6 +23,7 @@ namespace Alexandria.EF.Models
     public virtual ICollection<Permission> Permissions { get; set; } = new List<Permission>();
     public virtual ICollection<TeamInvite> TeamInvites { get; set; } = new List<TeamInvite>();
     public virtual ICollection<FavoriteCompetition> FavoriteCompetitions { get; set; } = new List<FavoriteCompetition>();
+    public virtual ICollection<PlayerRanking> PlayerRankings { get; set; } = new List<PlayerRanking>();
 
     public UserProfile(Guid id, string userName, string email)
     {

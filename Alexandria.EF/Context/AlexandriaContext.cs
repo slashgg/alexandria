@@ -29,6 +29,9 @@ namespace Alexandria.EF.Context
     public DbSet<CompetitionLevel> CompetitionLevels { get; set; }
     public DbSet<FavoriteCompetition> FavoriteCompetitions { get; set; }
     public DbSet<ProfanityFilter> ProfanityFilters { get; set; }
+    public DbSet<PlayerRanking> PlayerRankings { get; set; }
+    public DbSet<PlayerRankingGroup> playerRankingGroups { get; set; }
+    public DbSet<CompetitionRankingGroupMembership> competitionRankingGroupMemberships { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
