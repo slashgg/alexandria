@@ -34,17 +34,24 @@ namespace Alexandria.Games.HeroesOfTheStorm.Orchestration.BackgroundServices
     }
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-      if (!stoppingToken.IsCancellationRequested)
+      while (!stoppingToken.IsCancellationRequested)
       {
         var messages = await this.backgroundWorker.ReceiveMessages<DTO.Jobs.HOTSLogsUpdate>(this.jobQueue, 10, 15);
         if (messages != null && messages.Any())
         {
-          foreach (var message in messages)
+          try
           {
-            await this.UpdateUser(message.Data.UserProfileId, message.Data.Region);
+            foreach (var message in messages)
+            {
+              await this.UpdateUser(message.Data.UserProfileId, message.Data.Region);
+            }
+          } catch (Exception ex)
+          {
+            Sentry.SentrySdk.CaptureException(ex);
           }
 
-          //await this.backgroundWorker.AcknowledgeMessage(this.jobQueue, messages.Select(m => m.Receipt).ToList());
+
+          await this.backgroundWorker.AcknowledgeMessage(this.jobQueue, messages.Select(m => m.Receipt).ToList());
         }
 
         Thread.Sleep(10 * 1000);
@@ -73,9 +80,12 @@ namespace Alexandria.Games.HeroesOfTheStorm.Orchestration.BackgroundServices
 
         var result = await this.hotslogsClient.GetPlayerRankings(battleNet.Name, (int)region);
 
-        var rankings = result.Select((r) => AutoMapper.Mapper.Map<EF.Models.ExternalRanking>(r, opts => opts.Items["UserProfileId"] = userProfileId)).ToList();
-        return;
-        //var result = await this.hotslogsClient.GetPlayerRankings()
+        var rankings = result.Select((r) => AutoMapper.Mapper.Map<EF.Models.ExternalRanking>(r, opts => {
+          opts.Items["UserProfileId"] = userProfileId;
+          opts.Items["Region"] = region;
+        })).ToList();
+        heroesOfTheStormContext.ExternalRankings.AddRange(rankings);
+        await heroesOfTheStormContext.SaveChangesAsync();
       }
     }
   }

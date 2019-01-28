@@ -13,7 +13,7 @@ namespace Alexandria.Orchestration.Mapper.Games
         .ForMember(dest => dest.Ranking, opt => opt.MapFrom(src => src.CurrentMMR))
         .ForMember(dest => dest.GameMode, opt => opt.MapFrom(src => src.GameMode))
         .ForMember(dest => dest.MMRSource, opt => opt.MapFrom(src => Shared.Enums.MMRSource.HOTSLogs))
-        .ForMember(dest => dest.BattleNetRegion, opt => opt.MapFrom(src => src.LeagueId))
+        .ForMember(dest => dest.BattleNetRegion, opt => opt.MapFrom((src, dest, destMember, ctx) => ctx.Items["Region"]))
         .ForMember(dest => dest.UserProfileId, opt => opt.MapFrom((src, dest, destMember, ctx) => ctx.Items["UserProfileId"]));
     }
   }
