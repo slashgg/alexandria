@@ -29,6 +29,7 @@ namespace Alexandria.Orchestration.Services
     private readonly Shared.Configuration.Queue queues;
     private readonly IProfanityValidator profanityValidator;
     private readonly SlackClient slackClient;
+    private readonly ICacheBreaker cacheBreaker;
 
     public TeamService(IHttpContextAccessor httpContext, 
                        AlexandriaContext context, 
@@ -37,7 +38,8 @@ namespace Alexandria.Orchestration.Services
                        IBackgroundWorker backgroundWorker, 
                        IOptions<Shared.Configuration.Queue> queues, 
                        IProfanityValidator profanityValidator,
-                       SlackClient slackClient)
+                       SlackClient slackClient,
+                       ICacheBreaker cacheBreaker)
     {
       this.httpContext = httpContext.HttpContext;
       this.context = context;
@@ -47,6 +49,7 @@ namespace Alexandria.Orchestration.Services
       this.queues = queues.Value ?? throw new NoNullAllowedException("Queue Options can't be null");
       this.profanityValidator = profanityValidator;
       this.slackClient = slackClient;
+      this.cacheBreaker = cacheBreaker;
     }
 
     public async Task<ServiceResult<DTO.Team.Detail>> GetTeamDetail(Guid teamId)
@@ -154,6 +157,7 @@ namespace Alexandria.Orchestration.Services
         await this.backgroundWorker.SendMessage(this.queues.Email, message);
       }
 
+      this.cacheBreaker.Break(Shared.Cache.Competition.Detail(competition.Id));
       result.Succeed();
 
       return result;
@@ -277,6 +281,8 @@ namespace Alexandria.Orchestration.Services
       this.context.Teams.Update(team);
 
       result.Succeed();
+      this.cacheBreaker.Break(Shared.Cache.Competition.Detail(team.CompetitionId));
+
       return result;
     }
 
@@ -313,6 +319,7 @@ namespace Alexandria.Orchestration.Services
       this.context.Teams.Update(team);
 
       result.Succeed();
+
       return result;
     }
 
@@ -456,6 +463,7 @@ namespace Alexandria.Orchestration.Services
       await DangerouslyUpdateTeamLogo(teamId, logoURL);
 
       result.Succeed();
+
 
       return result;
     }

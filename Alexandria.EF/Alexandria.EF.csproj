@@ -1,5 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RuntimeFrameworkVersion>2.2.1</RuntimeFrameworkVersion>
+  </PropertyGroup>
+  
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
@@ -12,6 +15,7 @@
     <Compile Remove="Migrations\20181221052827_AddGameAndTournamentStructure.cs" />
     <Compile Remove="Migrations\20181221055642_AddGameAndTournamentStructure.cs" />
     <Compile Remove="Migrations\20181229221310_AddTournamentQuestionsAndTeamSize.cs" />
+    <Compile Remove="Migrations\20190128024959_AddPlayerRankings.cs" />
   </ItemGroup>
 
   <ItemGroup>

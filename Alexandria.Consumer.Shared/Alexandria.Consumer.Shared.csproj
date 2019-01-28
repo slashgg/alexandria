@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RuntimeFrameworkVersion>2.2.1</RuntimeFrameworkVersion>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Alexandria.Games.HeroesOfTheStorm\Alexandria.Games.HeroesOfTheStorm.csproj" />
+    <ProjectReference Include="..\Alexandria.Orchestration\Alexandria.Orchestration.csproj" />
+  </ItemGroup>
+
+</Project>

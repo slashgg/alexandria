@@ -1,13 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RuntimeFrameworkVersion>2.2.1</RuntimeFrameworkVersion>
+  </PropertyGroup>
+  
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="8.0.0" />
-    <PackageReference Include="AWSSDK.Core" Version="3.3.31.3" />
-    <PackageReference Include="AWSSDK.S3" Version="3.3.31.11" />
+    <PackageReference Include="AWSSDK.Core" Version="3.3.31.6" />
+    <PackageReference Include="AWSSDK.S3" Version="3.3.31.14" />
     <PackageReference Include="IdentityModel" Version="3.10.5" />
     <PackageReference Include="Svalbard" Version="1.4.2" />
   </ItemGroup>

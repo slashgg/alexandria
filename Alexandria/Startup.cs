@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
+using Alexandria.Consumer.Shared.AutoMapper;
 using Alexandria.EF.Context;
 using Alexandria.ExternalServices.BackgroundWorker;
 using Alexandria.ExternalServices.Mailer;
 using Alexandria.ExternalServices.Slack;
+using Alexandria.Games.HeroesOfTheStorm.EF.Context;
 using Alexandria.Infrastructure.Authorization;
 using Alexandria.Infrastructure.Filters;
 using Alexandria.Interfaces;
 using Alexandria.Interfaces.Processing;
 using Alexandria.Interfaces.Services;
 using Alexandria.Orchestration.BackgroundServices;
-using Alexandria.Orchestration.Mapper;
 using Alexandria.Orchestration.Services;
 using Alexandria.Orchestration.Utils;
 using Amazon;
@@ -46,6 +47,7 @@ namespace Alexandria
     {
 
       AutoMapperConfig.Initialize();
+
       services.AddMvc(options =>
       {
         options.Filters.Add<SaveChangesFilter>();
@@ -88,6 +90,7 @@ namespace Alexandria
       services.AddScoped<IPassportClient, PassportClient>();
       services.AddScoped<IProfanityValidator, ProfanityValidator>();
       services.AddScoped<SlackClient>();
+      services.AddScoped<ICacheBreaker, MemoryCacheBreaker>();
 
       services.AddSingleton<IMimeMappingService>(provider =>
       {
@@ -118,6 +121,15 @@ namespace Alexandria
           builder.MigrationsAssembly(typeof(AlexandriaContext).Assembly.FullName);
         });
       });
+
+      //services.AddDbContext<HeroesOfTheStormContext>(options =>
+      //{
+      //  options.UseSqlServer(connectionString, (builder) =>
+      //  {
+      //    builder.MigrationsAssembly(typeof(HeroesOfTheStormContext).Assembly.FullName);
+      //    builder.MigrationsHistoryTable("_EF_heroes_of_the_storm_migrations", "heroesofthestorm");
+      //  });
+      //});
 
       services.AddAuthorization(options =>
       {

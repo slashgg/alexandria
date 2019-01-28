@@ -7,8 +7,13 @@ namespace Alexandria.EF.Models
   {
     [MaxLength(500)]
     public string Name { get; set; }
+    public string Slug { get; set; }
+    public string InternalIdentifier { get; set; }
+
 
     /* Relations */
     public virtual ICollection<Competition> Competitions { get; set; } = new List<Competition>();
+    public virtual ICollection<PlayerRanking> PlayerRankings { get; set; } = new List<PlayerRanking>();
+    public virtual ICollection<PlayerRankingGroup> PlayerRankingGroups { get; set; } = new List<PlayerRankingGroup>();
   }
 }
