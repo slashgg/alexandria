@@ -122,6 +122,7 @@ namespace Alexandria
         });
       });
 
+      #region NeededForMigration
       //services.AddDbContext<HeroesOfTheStormContext>(options =>
       //{
       //  options.UseSqlServer(connectionString, (builder) =>
@@ -130,6 +131,7 @@ namespace Alexandria
       //    builder.MigrationsHistoryTable("_EF_heroes_of_the_storm_migrations", "heroesofthestorm");
       //  });
       //});
+      #endregion
 
       services.AddAuthorization(options =>
       {
