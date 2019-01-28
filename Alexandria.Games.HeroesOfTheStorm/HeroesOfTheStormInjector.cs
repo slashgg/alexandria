@@ -24,7 +24,11 @@ namespace Alexandria.Games.HeroesOfTheStorm
         var prod = builderCtx.HostingEnvironment.IsProduction();
         var secrets = new List<string>();
 
-        config.AddJsonFile($"Alexandria.Games.HeroesOfTheStorm/appsettings.{builderCtx.HostingEnvironment.EnvironmentName}.json");
+        if (prod)
+        {
+          secrets.Add("HeroesOfTheStormQueues");
+        }
+        config.AddJsonFile($"Alexandria.Games.HeroesOfTheStorm/appsettings.{builderCtx.HostingEnvironment.EnvironmentName}.json", optional: true);
         if (secrets.Any())
         {
           config.AddAWSSecrets(options =>
@@ -33,7 +37,6 @@ namespace Alexandria.Games.HeroesOfTheStorm
             options.Secrets = secrets.ToArray();
           });
         }
-        
       });
       //builder.UseStartup<HeroesOfTheStormStartup>();
       builder.ConfigureServices((builderCtx, services) =>
