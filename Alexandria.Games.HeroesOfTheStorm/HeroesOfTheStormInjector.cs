@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Alexandria.ExternalServices.HOTSLogs;
@@ -28,7 +29,10 @@ namespace Alexandria.Games.HeroesOfTheStorm
         {
           secrets.Add("HeroesOfTheStormQueues");
         }
-        config.AddJsonFile($"Alexandria.Games.HeroesOfTheStorm/appsettings.{builderCtx.HostingEnvironment.EnvironmentName}.json", optional: true);
+        var envConfigPath = Directory.GetParent(builderCtx.HostingEnvironment.ContentRootPath).FullName;
+        var envConfigFile = Path.Combine(envConfigPath, "Alexandria.Games.HeroesOfTheStorm", $"appsettings.{builderCtx.HostingEnvironment.EnvironmentName}.json");
+
+        config.AddJsonFile(envConfigFile);
         if (secrets.Any())
         {
           config.AddAWSSecrets(options =>

@@ -28,9 +28,10 @@ namespace Alexandria
                 secrets.Add("ConnectionStrings");
                 secrets.Add("Queues");
               }
-              config.SetBasePath(Directory.GetParent(hosting.HostingEnvironment.ContentRootPath).FullName);
-              config.AddJsonFile("Alexandria/appsettings.json");
-              config.AddJsonFile($"Alexandria/appsettings.{hosting.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: false);
+              var basePath = hosting.HostingEnvironment.ContentRootPath;
+              config.SetBasePath(basePath);
+              config.AddJsonFile("appsettings.json");
+              config.AddJsonFile($"appsettings.{hosting.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: false);
               config.AddAWSSecrets(options =>
               {
                 options.Region = "us-east-1";
