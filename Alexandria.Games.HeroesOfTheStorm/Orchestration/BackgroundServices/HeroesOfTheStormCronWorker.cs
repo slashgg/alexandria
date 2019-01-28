@@ -64,8 +64,8 @@ namespace Alexandria.Games.HeroesOfTheStorm.Orchestration.BackgroundServices
             await this.backgroundWorker.AcknowledgeMessage(this.cronQueue, messages.FirstOrDefault().Receipt);
           }
 
-          Thread.Sleep(180 * 1000);
         }
+        Thread.Sleep(180 * 1000);
       }
     }
 

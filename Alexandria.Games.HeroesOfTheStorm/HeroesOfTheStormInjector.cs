@@ -32,7 +32,7 @@ namespace Alexandria.Games.HeroesOfTheStorm
         var envConfigPath = Directory.GetParent(builderCtx.HostingEnvironment.ContentRootPath).FullName;
         var envConfigFile = Path.Combine(envConfigPath, "Alexandria.Games.HeroesOfTheStorm", $"appsettings.{builderCtx.HostingEnvironment.EnvironmentName}.json");
 
-        config.AddJsonFile(envConfigFile);
+        config.AddJsonFile(envConfigFile, optional: true);
         if (secrets.Any())
         {
           config.AddAWSSecrets(options =>
