@@ -39,6 +39,11 @@ namespace Alexandria.Controllers
       return new OperationResult<DTO.Tournament.Detail>(result.Error);
     }
 
+    /// <summary>
+    /// Retrieves the played rounds of the tournament. NON RECURSIVE
+    /// </summary>
+    /// <param name="tournamentId"></param>
+    /// <returns></returns>
     [HttpGet("{tournamentId}/rounds")]
     [ProducesResponseType(typeof(IList<DTO.Tournament.RoundDetail>), 200)]
     public async Task<OperationResult<IList<DTO.Tournament.RoundDetail>>> GetTournamentRounds(Guid tournamentId)
@@ -47,6 +52,11 @@ namespace Alexandria.Controllers
       return new OperationResult<IList<DTO.Tournament.RoundDetail>>(result.Data);
     }
 
+    /// <summary>
+    /// Gets the schedule of the tournament. NON RECURSIVE
+    /// </summary>
+    /// <param name="tournamentId"></param>
+    /// <returns></returns>
     [HttpGet("{tournamentId}/schedule")]
     [ProducesResponseType(typeof(DTO.Tournament.Schedule), 200)]
     [ProducesResponseType(typeof(BaseError), 404)]
