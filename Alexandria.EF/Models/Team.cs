@@ -28,6 +28,7 @@ namespace Alexandria.EF.Models
     public virtual ICollection<TeamMembershipHistory> TeamMembershipHistories { get; set; } = new List<TeamMembershipHistory>();
     public virtual ICollection<TournamentParticipation> TournamentParticipations { get; set; } = new List<TournamentParticipation>();
     public virtual ICollection<TournamentParticipationHistory> TournamentParticipationHistories { get; set; } = new List<TournamentParticipationHistory>();
+    public virtual ICollection<MatchParticipant> MatchParticipations { get; set; } = new List<MatchParticipant>();
 
 
     public Team(string name)

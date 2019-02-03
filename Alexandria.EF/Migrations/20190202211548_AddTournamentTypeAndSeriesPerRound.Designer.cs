@@ -4,14 +4,16 @@ using Alexandria.EF.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Alexandria.EF.Migrations
 {
     [DbContext(typeof(AlexandriaContext))]
-    partial class AlexandriaContextModelSnapshot : ModelSnapshot
+    [Migration("20190202211548_AddTournamentTypeAndSeriesPerRound")]
+    partial class AddTournamentTypeAndSeriesPerRound
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -174,8 +176,6 @@ namespace Alexandria.EF.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("CreatedAt");
-
-                    b.Property<int>("MatchOrder");
 
                     b.Property<Guid>("MatchSeriesId");
 

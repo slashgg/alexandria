@@ -8,6 +8,8 @@ namespace Alexandria.Interfaces.Services
 {
   public interface ITournamentService
   {
+    Task<ServiceResult<DTO.Tournament.Detail>> GetTournamentDetail(string slug);
+    Task<ServiceResult<DTO.Tournament.Detail>> GetTournamentDetail(Guid tournamentId);
     Task<ServiceResult<IList<DTO.Competition.TournamentApplication>>> GetOpenTournamentApplications(string competitionSlug);
     Task<ServiceResult<IList<DTO.Competition.TournamentApplication>>> GetOpenTournamentApplications(Guid competitionId);
     Task<ServiceResult<DTO.Competition.TournamentApplication>> GetTournamentApplication(string tournamentSlug);
@@ -19,5 +21,7 @@ namespace Alexandria.Interfaces.Services
     Task<ServiceResult> TeamApplyToTournament(Guid teamId, DTO.Tournament.TeamTournamentApplicationRequest teamApplication);
     Task<ServiceResult<List<DTO.Tournament.TeamParticipation>>> GetTeamParticipations(Guid tournamentId);
     Task<ServiceResult<List<DTO.Tournament.TeamParticipation>>> GetTeamParticipations(string tournamentSlug);
+    Task<ServiceResult<IList<DTO.Tournament.RoundDetail>>> GetTournamentRounds(Guid tournamentId);
+    Task<ServiceResult<DTO.Tournament.Schedule>> GetSchedule(Guid tournamentId);
   }
 }

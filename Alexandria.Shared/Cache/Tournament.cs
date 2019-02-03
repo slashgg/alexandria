@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Alexandria.Shared.Cache
 {
   public static class Tournament
@@ -9,6 +6,11 @@ namespace Alexandria.Shared.Cache
     public static string Participants(Guid tournamentId)
     {
       return $"tournament::{tournamentId}::participants";
+    }
+
+    public static string Rounds(Guid tournamentId)
+    {
+      return $"tournament::{tournamentId}::rounds";
     }
   }
 }

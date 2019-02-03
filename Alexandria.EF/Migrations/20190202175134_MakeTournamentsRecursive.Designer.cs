@@ -4,14 +4,16 @@ using Alexandria.EF.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Alexandria.EF.Migrations
 {
     [DbContext(typeof(AlexandriaContext))]
-    partial class AlexandriaContextModelSnapshot : ModelSnapshot
+    [Migration("20190202175134_MakeTournamentsRecursive")]
+    partial class MakeTournamentsRecursive
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -174,8 +176,6 @@ namespace Alexandria.EF.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("CreatedAt");
-
-                    b.Property<int>("MatchOrder");
 
                     b.Property<Guid>("MatchSeriesId");
 
@@ -491,8 +491,6 @@ namespace Alexandria.EF.Migrations
 
                     b.Property<string>("TokenImageURL");
 
-                    b.Property<int>("Type");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CompetitionId");
@@ -673,8 +671,6 @@ namespace Alexandria.EF.Migrations
                     b.Property<string>("Name");
 
                     b.Property<int>("SeriesGameCount");
-
-                    b.Property<int>("SeriesPerRound");
 
                     b.Property<string>("Slug");
 

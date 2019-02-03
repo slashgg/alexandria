@@ -7,6 +7,7 @@ namespace Alexandria.Orchestration.Mapper.Game
     public GameProfile()
     {
       CreateMap<EF.Models.Game, DTO.Game.Detail>();
+      CreateMap<EF.Models.Game, DTO.Game.Info>();
     }
   }
 }

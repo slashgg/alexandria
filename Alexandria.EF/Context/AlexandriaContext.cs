@@ -31,7 +31,12 @@ namespace Alexandria.EF.Context
     public DbSet<ProfanityFilter> ProfanityFilters { get; set; }
     public DbSet<PlayerRanking> PlayerRankings { get; set; }
     public DbSet<PlayerRankingGroup> playerRankingGroups { get; set; }
-    public DbSet<CompetitionRankingGroupMembership> competitionRankingGroupMemberships { get; set; }
+    public DbSet<CompetitionRankingGroupMembership> CompetitionRankingGroupMemberships { get; set; }
+    public DbSet<TournamentRound> TournamentRounds { get; set; }
+    public DbSet<MatchSeries> MatchSeries { get; set; }
+    public DbSet<Match> Matches { get; set; }
+    public DbSet<MatchParticipant> MatchParticipants { get; set; }
+    public DbSet<MatchParticipantResult> MatchParticipantResults { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -56,9 +61,9 @@ namespace Alexandria.EF.Context
                                    .HasForeignKey(tr => tr.CompetitionId);
 
 
-
       builder.Entity<Team>().HasIndex(b => b.Slug);
       builder.Entity<Tournament>().HasIndex(b => b.Slug);
+      builder.Entity<Tournament>().HasMany(t => t.Tournaments).WithOne(t1 => t1.ParentTournament).HasForeignKey(t1 => t1.ParentTournamentId);
 
       var foreignKeys = builder.Model.GetEntityTypes().SelectMany(t => t.GetForeignKeys());
 

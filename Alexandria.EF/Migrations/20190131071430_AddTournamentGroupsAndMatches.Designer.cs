@@ -4,14 +4,16 @@ using Alexandria.EF.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Alexandria.EF.Migrations
 {
     [DbContext(typeof(AlexandriaContext))]
-    partial class AlexandriaContextModelSnapshot : ModelSnapshot
+    [Migration("20190131071430_AddTournamentGroupsAndMatches")]
+    partial class AddTournamentGroupsAndMatches
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -174,8 +176,6 @@ namespace Alexandria.EF.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("CreatedAt");
-
-                    b.Property<int>("MatchOrder");
 
                     b.Property<Guid>("MatchSeriesId");
 
@@ -477,8 +477,6 @@ namespace Alexandria.EF.Migrations
                     b.Property<string>("Name")
                         .HasMaxLength(100);
 
-                    b.Property<Guid?>("ParentTournamentId");
-
                     b.Property<DateTimeOffset?>("SignupCloseDate");
 
                     b.Property<DateTimeOffset?>("SignupOpenDate");
@@ -491,13 +489,9 @@ namespace Alexandria.EF.Migrations
 
                     b.Property<string>("TokenImageURL");
 
-                    b.Property<int>("Type");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CompetitionId");
-
-                    b.HasIndex("ParentTournamentId");
 
                     b.HasIndex("Slug");
 
@@ -594,6 +588,48 @@ namespace Alexandria.EF.Migrations
                     b.ToTable("TournamentApplicationQuestionAnswers");
                 });
 
+            modelBuilder.Entity("Alexandria.EF.Models.TournamentGroup", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<bool>("Active");
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("Slug");
+
+                    b.Property<Guid>("TournamentId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TournamentId");
+
+                    b.ToTable("TournamentGroups");
+                });
+
+            modelBuilder.Entity("Alexandria.EF.Models.TournamentGroupMembership", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("CreatedAt");
+
+                    b.Property<Guid>("TeamId");
+
+                    b.Property<Guid>("TournamentGroupId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TeamId");
+
+                    b.HasIndex("TournamentGroupId");
+
+                    b.ToTable("TournamentGroupMemberships");
+                });
+
             modelBuilder.Entity("Alexandria.EF.Models.TournamentHistory", b =>
                 {
                     b.Property<Guid>("Id")
@@ -674,15 +710,17 @@ namespace Alexandria.EF.Migrations
 
                     b.Property<int>("SeriesGameCount");
 
-                    b.Property<int>("SeriesPerRound");
-
                     b.Property<string>("Slug");
 
                     b.Property<DateTimeOffset?>("StartDate");
 
+                    b.Property<Guid?>("TournamentGroupId");
+
                     b.Property<Guid>("TournamentId");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TournamentGroupId");
 
                     b.HasIndex("TournamentId");
 
@@ -813,7 +851,7 @@ namespace Alexandria.EF.Migrations
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Alexandria.EF.Models.TournamentRound")
+                    b.HasOne("Alexandria.EF.Models.TournamentRound", "TournamentRound")
                         .WithMany("MatchSeries")
                         .HasForeignKey("TournamentRoundId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -919,11 +957,6 @@ namespace Alexandria.EF.Migrations
                         .WithMany("Tournaments")
                         .HasForeignKey("CompetitionId")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Alexandria.EF.Models.Tournament", "ParentTournament")
-                        .WithMany("Tournaments")
-                        .HasForeignKey("ParentTournamentId")
-                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Alexandria.EF.Models.TournamentApplication", b =>
@@ -968,6 +1001,27 @@ namespace Alexandria.EF.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
+            modelBuilder.Entity("Alexandria.EF.Models.TournamentGroup", b =>
+                {
+                    b.HasOne("Alexandria.EF.Models.Tournament", "Tournament")
+                        .WithMany("TournamentGroups")
+                        .HasForeignKey("TournamentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Alexandria.EF.Models.TournamentGroupMembership", b =>
+                {
+                    b.HasOne("Alexandria.EF.Models.Team", "Team")
+                        .WithMany("TournamentGroupMemberships")
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Alexandria.EF.Models.TournamentGroup", "TournamentGroup")
+                        .WithMany("TournamentGroupMemberships")
+                        .HasForeignKey("TournamentGroupId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
             modelBuilder.Entity("Alexandria.EF.Models.TournamentHistory", b =>
                 {
                     b.HasOne("Alexandria.EF.Models.Tournament", "Tournament")
@@ -1004,6 +1058,11 @@ namespace Alexandria.EF.Migrations
 
             modelBuilder.Entity("Alexandria.EF.Models.TournamentRound", b =>
                 {
+                    b.HasOne("Alexandria.EF.Models.TournamentGroup", "TournamentGroup")
+                        .WithMany("TournamentRounds")
+                        .HasForeignKey("TournamentGroupId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Alexandria.EF.Models.Tournament", "Tournament")
                         .WithMany()
                         .HasForeignKey("TournamentId")

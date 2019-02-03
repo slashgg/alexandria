@@ -29,5 +29,9 @@ namespace Alexandria.DTO.Competition
     public string TokenImageURL { get; set; }
     [DataMember(Name = "state")]
     public TournamentState State { get; set; }
+    [DataMember(Name = "type")]
+    public TournamentType Type { get; set; }
+    [DataMember(Name = "parentTournamentId")]
+    public Guid? ParentTournamentId { get; set; }
   }
 }

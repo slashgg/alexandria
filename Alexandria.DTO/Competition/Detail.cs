@@ -29,22 +29,12 @@ namespace Alexandria.DTO.Competition
     [DataMember(Name = "rulesSlug")]
     public string RulesSlug { get; set; }
     [DataMember(Name = "game")]
-    public GameData Game { get; set; } = new GameData();
+    public Game.Info Game { get; set; } = new Game.Info();
     [DataMember(Name ="teamCount")]
     public int TeamCount { get; set; }
     [DataMember(Name = "playerCount")]
     public int PlayerCount { get; set; }
     [DataMember(Name = "competitionLevel")]
     public string CompetitionLevel { get; set; }
-
-    [JsonSchema("CompetitionGame")]
-    [DataContract]
-    public class GameData
-    {
-      [DataMember(Name = "id")]
-      public Guid Id { get; set; }
-      [DataMember(Name = "name")]
-      public string Name { get; set; }
-    }
   }
 }

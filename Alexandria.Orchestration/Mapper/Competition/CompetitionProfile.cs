@@ -14,7 +14,6 @@ namespace Alexandria.Orchestration.Mapper.Competition
         .ForMember(dest => dest.CompetitionLevel, opt => opt.MapFrom(src => src.CompetitionLevel.Name))
         .ForMember(dest => dest.Game, opt => opt.MapFrom(src => src.Game));
 
-      CreateMap<EF.Models.Game, DTO.Competition.Detail.GameData>();
       CreateMap<EF.Models.Tournament, DTO.Competition.Tournament>();
       CreateMap<EF.Models.CompetitionLevel, DTO.Competition.CompetitionLevel>();
 

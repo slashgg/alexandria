@@ -63,7 +63,7 @@ namespace Alexandria
       {
         return new JsonSerializerSettings
         {
-          Converters = new List<JsonConverter> { new Newtonsoft.Json.Converters.StringEnumConverter() }
+          Converters = new List<JsonConverter> { new Newtonsoft.Json.Converters.StringEnumConverter() },
         };
       };
 

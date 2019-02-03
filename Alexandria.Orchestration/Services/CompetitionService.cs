@@ -182,7 +182,7 @@ namespace Alexandria.Orchestration.Services
     {
       var result = new ServiceResult<IList<DTO.Competition.Tournament>>();
 
-      var tournaments = await alexandriaContext.Tournaments.Where(t => t.CompetitionId == competitionId).ToListAsync();
+      var tournaments = await alexandriaContext.Tournaments.Where(t => t.CompetitionId == competitionId && t.ParentTournamentId == null).ToListAsync();
       var tournamentDTOs = tournaments.Select(AutoMapper.Mapper.Map<DTO.Competition.Tournament>).ToList();
 
       result.Succeed(tournamentDTOs);
@@ -193,7 +193,7 @@ namespace Alexandria.Orchestration.Services
     {
       var result = new ServiceResult<IList<DTO.Competition.Tournament>>();
 
-      var tournaments = await alexandriaContext.Tournaments.Include(t => t.Competition).Where(t => t.Competition.Slug == competitionSlug).ToListAsync();
+      var tournaments = await alexandriaContext.Tournaments.Include(t => t.Competition).Where(t => t.Competition.Slug == competitionSlug && t.ParentTournamentId == null).ToListAsync();
       var tournamentDTOs = tournaments.Select(AutoMapper.Mapper.Map<DTO.Competition.Tournament>).ToList();
 
       result.Succeed(tournamentDTOs);

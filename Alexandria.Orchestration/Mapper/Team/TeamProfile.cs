@@ -6,6 +6,7 @@ namespace Alexandria.Orchestration.Mapper
   {
     public TeamProfile()
     {
+      this.CreateMap<EF.Models.Team, DTO.Team.Info>();
       this.CreateMap<EF.Models.Team, DTO.Team.Detail>()
         .ForMember(dest => dest.Competition, opt => opt.MapFrom(src => src.Competition))
         .ForMember(dest => dest.Members, opt => opt.MapFrom(src => src.TeamMemberships));
