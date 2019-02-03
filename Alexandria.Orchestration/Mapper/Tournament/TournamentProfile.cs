@@ -25,8 +25,7 @@ namespace Alexandria.Orchestration.Mapper.Tournament
 
 
       CreateMap<EF.Models.MatchSeries, DTO.Tournament.MatchSeries>()
-        //.ForMember(dest => dest.Participants, opt => opt.MapFrom(src => src.MatchParticipants));
-        .ForMember(dest => dest.Participants, opt => opt.MapFrom((src, dest, destMember, ctx) => src.MatchParticipants.Select(mp => ctx.Mapper.Map<DTO.Tournament.MatchSeriesParticipant>(mp, nCtx => nCtx.Items.Add("RecordVault", ctx.Items["RecordVault"])))));
+        .ForMember(dest => dest.Participants, opt => opt.MapFrom(src => src.MatchParticipants));
 
       CreateMap<EF.Models.MatchParticipant, DTO.Tournament.MatchSeriesParticipant>()
         .IncludeBase<EF.Models.MatchParticipant, DTO.MatchSeries.MatchSeriesParticipant>()

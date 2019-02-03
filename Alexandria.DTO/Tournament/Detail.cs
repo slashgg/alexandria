@@ -12,6 +12,6 @@ namespace Alexandria.DTO.Tournament
   public class Detail : DTO.Competition.Tournament
   {
     [DataMember(Name = "children")]
-    public List<Competition.Tournament> Children { get; set; } = new List<Competition.Tournament>();
+    public List<Detail> Children { get; set; } = new List<Detail>();
   }
 }
