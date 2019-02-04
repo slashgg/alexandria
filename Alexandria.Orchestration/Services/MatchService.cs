@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Alexandria.EF.Context;
+using Alexandria.Interfaces.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Svalbard.Services;
 
 namespace Alexandria.Orchestration.Services
 {
-  public class MatchService
+  public class MatchService : IMatchService
   {
     private IMemoryCache cache;
     private AlexandriaContext alexandriaContext;
