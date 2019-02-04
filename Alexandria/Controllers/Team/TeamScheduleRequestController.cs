@@ -71,7 +71,7 @@ namespace Alexandria.Controllers.Team
       return new OperationResult(result.Error);
     }
 
-    [HttpPut("{scheduleRequestId")]
+    [HttpPut("{scheduleRequestId}")]
     [PermissionsRequired("team::{teamId}::match--schedule")]
     [ProducesResponseType(typeof(void), 204)]
     [ProducesResponseType(typeof(void), 401)]
@@ -87,7 +87,7 @@ namespace Alexandria.Controllers.Team
       return new OperationResult(result.Error);
     }
 
-    [HttpDelete("{scheduleRequestId")]
+    [HttpDelete("{scheduleRequestId}")]
     [PermissionsRequired("team::{teamId}::match--schedule")]
     [ProducesResponseType(typeof(void), 204)]
     [ProducesResponseType(typeof(void), 401)]
