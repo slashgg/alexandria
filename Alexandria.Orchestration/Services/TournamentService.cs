@@ -295,6 +295,8 @@ namespace Alexandria.Orchestration.Services
           recordVault.TryAdd(teamId, record);
         }
 
+        cache.SetAbsoluteExpiration(DateTimeOffset.UtcNow.AddMinutes(30));
+
         var scheduleDTO = AutoMapper.Mapper.Map<DTO.Tournament.Schedule>(tournament, ctx => ctx.Items.Add("RecordVault", recordVault));
         return scheduleDTO;
       });
