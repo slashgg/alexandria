@@ -37,6 +37,7 @@ namespace Alexandria.EF.Context
     public DbSet<Match> Matches { get; set; }
     public DbSet<MatchParticipant> MatchParticipants { get; set; }
     public DbSet<MatchParticipantResult> MatchParticipantResults { get; set; }
+    public DbSet<MatchSeriesScheduleRequest> MatchSeriesScheduleRequests { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -62,8 +63,14 @@ namespace Alexandria.EF.Context
 
 
       builder.Entity<Team>().HasIndex(b => b.Slug);
+      builder.Entity<Team>().HasMany(t => t.OriginatingScheduleRequests).WithOne(osr => osr.OriginTeam).HasForeignKey(osr => osr.OriginTeamId);
+      builder.Entity<Team>().HasMany(t => t.TargetedScheduleRequests).WithOne(tsr => tsr.TargetTeam).HasForeignKey(tsr => tsr.TargetTeamId);
+
       builder.Entity<Tournament>().HasIndex(b => b.Slug);
       builder.Entity<Tournament>().HasMany(t => t.Tournaments).WithOne(t1 => t1.ParentTournament).HasForeignKey(t1 => t1.ParentTournamentId);
+
+      builder.Entity<MatchSeries>().HasMany(ms => ms.ScheduleRequests).WithOne(sr => sr.MatchSeries).HasForeignKey(sr => sr.MatchSeriesId);
+
 
       var foreignKeys = builder.Model.GetEntityTypes().SelectMany(t => t.GetForeignKeys());
 

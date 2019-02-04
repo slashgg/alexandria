@@ -265,35 +265,71 @@ namespace Alexandria.Orchestration.Services
     public async Task<ServiceResult<DTO.Tournament.Schedule>> GetSchedule(Guid tournamentId)
     {
       var result = new ServiceResult<DTO.Tournament.Schedule>();
-
-      var tournament = await this.alexandriaContext.Tournaments.Include(t => t.TournamentRounds)
-                                                               .ThenInclude(tr => tr.MatchSeries)
-                                                               .ThenInclude(tm => tm.MatchParticipants)
-                                                               .ThenInclude(mp => mp.Team)
-                                                               .Include(t => t.TournamentRounds)
-                                                               .ThenInclude(tr => tr.MatchSeries)
-                                                               .ThenInclude(ms => ms.Matches)
-                                                               .ThenInclude(m => m.Results)
-                                                               .FirstOrDefaultAsync(t => t.Id == tournamentId);
-
-      if (tournament == null)
+      var tournamentExists = await this.alexandriaContext.Tournaments.AnyAsync(t => t.Id == tournamentId);
+      if (!tournamentExists)
       {
         result.Error = Shared.ErrorKey.Tournament.NotFound;
         return result;
       }
 
-      var matchSeries = tournament.TournamentRounds.SelectMany(tr => tr.MatchSeries);
-      var participants = matchSeries.SelectMany(ms => ms.MatchParticipants).Select(mp => mp.TeamId).Distinct();
-      var recordVault = new Dictionary<Guid, DTO.Tournament.TournamentRecord>();
-      foreach (var teamId in participants)
+      var schedule = await this.cache.GetOrCreateAsync(Shared.Cache.Tournament.Schedule(tournamentId), async (cache) =>
       {
-        var record = await this.GetTournamentRecordForTeam(teamId, tournamentId);
+        var tournament = await this.alexandriaContext.Tournaments.Include(t => t.TournamentRounds)
+                                                         .ThenInclude(tr => tr.MatchSeries)
+                                                         .ThenInclude(tm => tm.MatchParticipants)
+                                                         .ThenInclude(mp => mp.Team)
+                                                         .Include(t => t.TournamentRounds)
+                                                         .ThenInclude(tr => tr.MatchSeries)
+                                                         .ThenInclude(ms => ms.Matches)
+                                                         .ThenInclude(m => m.Results)
+                                                         .FirstOrDefaultAsync(t => t.Id == tournamentId);
+
+
+
+        var matchSeries = tournament.TournamentRounds.SelectMany(tr => tr.MatchSeries);
+        var participants = matchSeries.SelectMany(ms => ms.MatchParticipants).Select(mp => mp.TeamId).Distinct();
+        var recordVault = new Dictionary<Guid, DTO.Tournament.TournamentRecord>();
+        foreach (var teamId in participants)
+        {
+          var record = await this.GetTournamentRecordForTeam(teamId, tournamentId);
+          recordVault.TryAdd(teamId, record);
+        }
+
+        var scheduleDTO = AutoMapper.Mapper.Map<DTO.Tournament.Schedule>(tournament, ctx => ctx.Items.Add("RecordVault", recordVault));
+        return scheduleDTO;
+      });
+
+      result.Succeed(schedule);
+
+      return result;
+    }
+
+    public async Task<ServiceResult<IList<DTO.Tournament.MatchSeries>>> GetMatchesForTeamInTournament(Guid teamId, Guid tournamentId)
+    {
+      var result = new ServiceResult<IList<DTO.Tournament.MatchSeries>>();
+
+      var matches = await this.alexandriaContext.MatchSeries.Include(ms => ms.TournamentRound)
+                                                            .ThenInclude(tr => tr.MatchSeries)
+                                                            .ThenInclude(trms => trms.MatchParticipants)
+                                                            .Include(ms => ms.MatchParticipants)
+                                                            .ThenInclude(mp => mp.Team)
+                                                            .Include(ms => ms.Matches)
+                                                            .ThenInclude(m => m.Results)
+                                                            .Where(ms => ms.TournamentRound.TournamentId == tournamentId)
+                                                            .Where(ms => ms.MatchParticipants.Any(mp => mp.TeamId == teamId))
+                                                            .ToListAsync();
+
+      var participants = matches.SelectMany(ms => ms.MatchParticipants).Select(mp => mp.TeamId).Distinct();
+      var recordVault = new Dictionary<Guid, DTO.Tournament.TournamentRecord>();
+      foreach (var participantTeamId in participants)
+      {
+        var record = await this.GetTournamentRecordForTeam(participantTeamId, tournamentId);
         recordVault.TryAdd(teamId, record);
       }
 
-      var scheduleDTO = AutoMapper.Mapper.Map<DTO.Tournament.Schedule>(tournament, ctx => ctx.Items.Add("RecordVault", recordVault));
-      var json = JsonConvert.SerializeObject(scheduleDTO);
-      result.Succeed(scheduleDTO);
+      var tournamentMatchDTOs = matches.Select(ms => AutoMapper.Mapper.Map<DTO.Tournament.MatchSeries>(ms, ctx => ctx.Items.Add("RecordVault", recordVault))).ToList();
+      result.Succeed(tournamentMatchDTOs);
+
 
       return result;
     }
@@ -382,7 +418,7 @@ namespace Alexandria.Orchestration.Services
                                                    .FirstOrDefaultAsync(t => t.Id == teamId);
 
 
-      var tournamentMatches = team.MatchParticipations.Where(mp => mp.MatchSeries.TournamentRound.TournamentId == tournamentId).Select(mp => mp.MatchSeries);
+      var tournamentMatches = team.MatchParticipations.Where(mp => mp.MatchSeries.TournamentRound.TournamentId == tournamentId).Select(mp => mp.MatchSeries).Where(ms => ms.State != Shared.Enums.MatchState.Pending);
       var wins = tournamentMatches.Where(m => m.Winner != null).Select(ms => ms.Winner).Where(mp => mp.TeamId == teamId).Count();
       var losses = tournamentMatches.Where(m => m.Loser != null).Select(ms => ms.Loser).Where(mp => mp.TeamId == teamId).Count();
       var draws = tournamentMatches.Count() - (wins + losses);

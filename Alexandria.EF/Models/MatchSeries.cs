@@ -24,6 +24,7 @@ namespace Alexandria.EF.Models
     public virtual TournamentRound TournamentRound { get; set; }
     public virtual ICollection<MatchParticipant> MatchParticipants { get; set; } = new List<MatchParticipant>();
     public virtual ICollection<Match> Matches { get; set; } = new List<Match>();
+    public virtual ICollection<MatchSeriesScheduleRequest> ScheduleRequests { get; set; }
 
     [NotMapped]
     public MatchParticipant Winner

@@ -16,6 +16,7 @@
     <Compile Remove="Migrations\20181221055642_AddGameAndTournamentStructure.cs" />
     <Compile Remove="Migrations\20181229221310_AddTournamentQuestionsAndTeamSize.cs" />
     <Compile Remove="Migrations\20190128024959_AddPlayerRankings.cs" />
+    <Compile Remove="Migrations\20190203214401_AddScheduleRequest.cs" />
   </ItemGroup>
 
   <ItemGroup>

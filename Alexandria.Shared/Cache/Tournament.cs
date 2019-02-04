@@ -12,5 +12,10 @@ namespace Alexandria.Shared.Cache
     {
       return $"tournament::{tournamentId}::rounds";
     }
+
+    public static string Schedule(Guid tournamentId)
+    {
+      return $"tournament::{tournamentId}::schedule";
+    }
   }
 }
