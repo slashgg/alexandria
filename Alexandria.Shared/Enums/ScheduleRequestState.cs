@@ -9,6 +9,8 @@ namespace Alexandria.Shared.Enums
     [EnumMember(Value = "accepted")]
     Accepted = 2,
     [EnumMember(Value = "decliend")]
-    Declined = 3
+    Declined = 3,
+    [EnumMember(Value = "rescinded")]
+    Rescinded = 4,
   }
 }

@@ -30,7 +30,7 @@ namespace Alexandria.Controllers.Team
     /// <returns></returns>
     [HttpGet]
     [PermissionsRequired("team::{teamId}::match--schedule")]
-    [ProducesResponseType(typeof(IList<DTO.MatchSeries.ScheduleRequest>), 200)]
+    [ProducesResponseType(typeof(DTO.MatchSeries.PendingScheduleRequests), 200)]
     [ProducesResponseType(typeof(BaseError), 404)]
     public async Task<OperationResult<DTO.MatchSeries.PendingScheduleRequests>> GetPendingScheduleRequests()
     {
@@ -110,6 +110,27 @@ namespace Alexandria.Controllers.Team
     public async Task<OperationResult> DeclineScheduleRequest(Guid scheduleRequestId)
     {
       var result = await this.matchService.DeclineScheduleRequest(scheduleRequestId);
+      if (result.Success)
+      {
+        return new OperationResult(204);
+      }
+
+      return new OperationResult(result.Error);
+    }
+
+    /// <summary>
+    /// Rescind the sent schedule request
+    /// </summary>
+    /// <param name="scheduleRequestId"></param>
+    /// <returns></returns>
+    [HttpDelete("{scheduleRequestId}/rescind")]
+    [PermissionsRequired("team::{teamId}::match--schedule")]
+    [ProducesResponseType(typeof(void), 204)]
+    [ProducesResponseType(typeof(void), 401)]
+    [ProducesResponseType(typeof(BaseError), 404)]
+    public async Task<OperationResult> RescindSCheduleRequest(Guid scheduleRequestId)
+    {
+      var result = await this.matchService.RescindSCheduleRequest(scheduleRequestId);
       if (result.Success)
       {
         return new OperationResult(204);

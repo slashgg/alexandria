@@ -12,5 +12,6 @@ namespace Alexandria.Interfaces.Services
     Task<ServiceResult<DTO.MatchSeries.PendingScheduleRequests>> GetPendingSchedulingRequests(Guid teamId);
     Task<ServiceResult> AcceptScheduleRequest(Guid scheduleRequestId);
     Task<ServiceResult> DeclineScheduleRequest(Guid scheduleRequestId);
+    Task<ServiceResult> RescindSCheduleRequest(Guid scheduleRequestId);
   }
 }

@@ -41,5 +41,10 @@ namespace Alexandria.EF.Models
     {
       this.State = ScheduleRequestState.Declined;
     }
+
+    public void Rescind()
+    {
+      this.State = ScheduleRequestState.Rescinded;
+    }
   }
 }

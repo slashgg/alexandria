@@ -145,6 +145,22 @@ namespace Alexandria.Orchestration.Services
       return result;
     }
 
+    public async Task<ServiceResult> RescindSCheduleRequest(Guid scheduleRequestId)
+    {
+      var result = new ServiceResult();
+      var scheduleRequest = await this.alexandriaContext.MatchSeriesScheduleRequests.Include(mssr => mssr.MatchSeries).FirstOrDefaultAsync(mssr => mssr.Id == scheduleRequestId);
+      if (scheduleRequest == null)
+      {
+        result.Error = Shared.ErrorKey.ScheduleRequest.NotFound;
+        return result;
+      }
+
+      this.DangerouslyRescindScheduleRequest(scheduleRequest);
+
+      result.Succeed();
+      return result;
+    }
+
 
     private EF.Models.MatchSeriesScheduleRequest DangerouslyCreateScheduleRequest(Guid originTeamId, DTO.MatchSeries.CreateScheduleRequest payload)
     {
@@ -189,6 +205,12 @@ namespace Alexandria.Orchestration.Services
     private void DangerouslyDeclineScheduleRequest(EF.Models.MatchSeriesScheduleRequest scheduleRequest)
     {
       scheduleRequest.Decline();
+      alexandriaContext.MatchSeriesScheduleRequests.Update(scheduleRequest);
+    }
+
+    private void DangerouslyRescindScheduleRequest(EF.Models.MatchSeriesScheduleRequest scheduleRequest)
+    {
+      scheduleRequest.Rescind();
       alexandriaContext.MatchSeriesScheduleRequests.Update(scheduleRequest);
     }
   }
