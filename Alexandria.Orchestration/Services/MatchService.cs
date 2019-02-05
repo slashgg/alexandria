@@ -28,6 +28,23 @@ namespace Alexandria.Orchestration.Services
       this.tournamentUtils = tournamentUtils;
     }
 
+    public async Task<ServiceResult<IList<DTO.MatchSeries.Detail>>> GetPendingMatchesForTeam(Guid teamId)
+    {
+      var result = new ServiceResult<IList<DTO.MatchSeries.Detail>>();
+      var matches = await this.alexandriaContext.MatchSeries.Include(ms => ms.Matches)
+                                                            .ThenInclude(m => m.Results)
+                                                            .Include(ms => ms.MatchParticipants)
+                                                            .ThenInclude(mp => mp.Team)
+                                                            .Where(mssr => mssr.State == Shared.Enums.MatchState.Pending)
+                                                            .Where(mssr => mssr.MatchParticipants.Any(mp => mp.TeamId.Equals(teamId)))
+                                                            .ToListAsync();
+
+      var matchDTOs = matches.Select(AutoMapper.Mapper.Map<DTO.MatchSeries.Detail>).ToList();
+      result.Succeed(matchDTOs);
+
+      return result;
+    }
+
     public async Task<ServiceResult<DTO.MatchSeries.PendingScheduleRequests>> GetPendingSchedulingRequests(Guid teamId)
     {
       var result = new ServiceResult<DTO.MatchSeries.PendingScheduleRequests>();
