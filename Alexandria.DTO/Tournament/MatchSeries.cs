@@ -10,6 +10,9 @@ namespace Alexandria.DTO.Tournament
   [JsonSchema("TournamentMatchSeries")]
   public class MatchSeries : DTO.MatchSeries.Detail
   {
+    [DataMember(Name = "round")]
+    public RoundDetail Round { get; set; }
+
     [DataMember(Name = "participants")]
     public new List<MatchSeriesParticipant> Participants { get; set; } = new List<MatchSeriesParticipant>();
   }
