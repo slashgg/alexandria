@@ -16,6 +16,8 @@ namespace Alexandria.Orchestration.Mapper.MatchSeries
         .ForMember(dest => dest.Wins, opt => opt.MapFrom(src => src.Wins.Count()))
         .ForMember(dest => dest.Losses, opt => opt.MapFrom(src => src.Losses.Count()))
         .ForMember(dest => dest.Draws, opt => opt.MapFrom(src => src.Draws.Count()));
+
+      CreateMap<EF.Models.MatchSeriesScheduleRequest, DTO.MatchSeries.ScheduleRequest>();
     }
   }
 }

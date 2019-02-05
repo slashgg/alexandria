@@ -32,6 +32,7 @@ namespace Alexandria.Orchestration.Services
     {
       var result = new ServiceResult<DTO.MatchSeries.PendingScheduleRequests>();
       var pendingTargetRequests = await this.alexandriaContext.MatchSeriesScheduleRequests.Include(mssr => mssr.OriginTeam)
+                                                                                    .Include(mssr => mssr.TargetTeam)
                                                                                     .Include(mssr => mssr.MatchSeries)
                                                                                     .ThenInclude(ms => ms.Matches)
                                                                                     .ThenInclude(m => m.Results)
@@ -43,6 +44,7 @@ namespace Alexandria.Orchestration.Services
                                                                                     .ToListAsync();
 
       var pendingOriginRequests = await this.alexandriaContext.MatchSeriesScheduleRequests.Include(mssr => mssr.OriginTeam)
+                                                                                    .Include(mssr => mssr.TargetTeam)
                                                                                     .Include(mssr => mssr.MatchSeries)
                                                                                     .ThenInclude(ms => ms.Matches)
                                                                                     .ThenInclude(m => m.Results)

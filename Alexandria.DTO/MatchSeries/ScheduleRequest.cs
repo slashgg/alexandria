@@ -17,6 +17,8 @@ namespace Alexandria.DTO.MatchSeries
     public DateTimeOffset ProposedTimeSlot { get; set; }
     [DataMember(Name = "originTeam")]
     public Team.Info OriginTeam { get; set; }
+    [DataMember(Name = "targetTeam")]
+    public Team.Info TargetTeam { get; set; }
     [DataMember(Name = "match")]
     public MatchSeries.Detail Match { get; set; }
     [DataMember(Name = "matchType")]
