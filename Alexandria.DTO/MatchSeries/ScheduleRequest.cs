@@ -19,8 +19,8 @@ namespace Alexandria.DTO.MatchSeries
     public Team.Info OriginTeam { get; set; }
     [DataMember(Name = "targetTeam")]
     public Team.Info TargetTeam { get; set; }
-    [DataMember(Name = "match")]
-    public MatchSeries.Detail Match { get; set; }
+    [DataMember(Name = "matchSeries")]
+    public MatchSeries.Detail MatchSeries { get; set; }
     [DataMember(Name = "matchType")]
     public MatchSeriesType MatchType { get; set; }
   }
