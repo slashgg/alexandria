@@ -9,6 +9,8 @@ namespace Alexandria.Orchestration.Mapper.Tournament
   {
     public TournamentProfile()
     {
+      CreateMap<EF.Models.Tournament, DTO.Tournament.Info>();
+
       CreateMap<EF.Models.TournamentApplication, DTO.Tournament.TournamentApplication>()
         .ForMember(dest => dest.Answers, opt => opt.MapFrom(src => src.TournamentApplicationQuestionAnswers));
 

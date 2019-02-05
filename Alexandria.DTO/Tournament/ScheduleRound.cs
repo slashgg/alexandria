@@ -20,5 +20,7 @@ namespace Alexandria.DTO.Tournament
     public DateTimeOffset? EndDate { get; set; }
     [DataMember(Name = "series")]
     public List<DTO.Tournament.MatchSeries> MatchSeries { get; set; } = new List<MatchSeries>();
+    [DataMember(Name = "tournament")]
+    public Tournament.Info Tournament { get; set; }
   }
 }

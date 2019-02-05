@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Alexandria.EF.Context;
 using Alexandria.Interfaces.Services;
+using Alexandria.Orchestration.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
@@ -16,11 +17,13 @@ namespace Alexandria.Orchestration.Services
   {
     private readonly AlexandriaContext alexandriaContext;
     private readonly IMemoryCache cache;
+    private readonly TournamentUtils tournamentUtils;
 
-    public TournamentService(AlexandriaContext alexandriaContext, IMemoryCache memoryCache)
+    public TournamentService(AlexandriaContext alexandriaContext, IMemoryCache memoryCache, TournamentUtils tournamentUtils)
     {
       this.alexandriaContext = alexandriaContext;
       this.cache = memoryCache;
+      this.tournamentUtils = tournamentUtils;
     }
 
     public async Task<ServiceResult<DTO.Tournament.Detail>> GetTournamentDetail(string slug)
@@ -222,7 +225,7 @@ namespace Alexandria.Orchestration.Services
       var result = new ServiceResult<List<DTO.Tournament.TeamParticipation>>();
       var participationsDTO = await this.cache.GetOrCreateAsync(Shared.Cache.Tournament.Participants(tournamentId), async (cache) =>
       {
-        var tournaments = await GetTournamentTree(tournamentId);
+        var tournaments = await this.tournamentUtils.GetTournamentTree(tournamentId);
         var tournamentIds = tournaments.Select(t => t.Id);
 
 
@@ -262,7 +265,7 @@ namespace Alexandria.Orchestration.Services
       return result;
     }
 
-    public async Task<ServiceResult<DTO.Tournament.Schedule>> GetSchedule(Guid tournamentId)
+    public async Task<ServiceResult<DTO.Tournament.Schedule>> GetSchedule(Guid tournamentId, int? tournamentSteps = null)
     {
       var result = new ServiceResult<DTO.Tournament.Schedule>();
       var tournamentExists = await this.alexandriaContext.Tournaments.AnyAsync(t => t.Id == tournamentId);
@@ -272,36 +275,15 @@ namespace Alexandria.Orchestration.Services
         return result;
       }
 
-      var schedule = await this.cache.GetOrCreateAsync(Shared.Cache.Tournament.Schedule(tournamentId), async (cache) =>
+      var tournaments = (await this.tournamentUtils.GetTournamentTree(tournamentId, tournamentSteps, 0)).Select(t => t.Id);
+      var matchRounds = new List<DTO.Tournament.ScheduleRound>();
+      foreach (var recursiveTournamentId in tournaments)
       {
-        var tournament = await this.alexandriaContext.Tournaments.Include(t => t.TournamentRounds)
-                                                         .ThenInclude(tr => tr.MatchSeries)
-                                                         .ThenInclude(tm => tm.MatchParticipants)
-                                                         .ThenInclude(mp => mp.Team)
-                                                         .Include(t => t.TournamentRounds)
-                                                         .ThenInclude(tr => tr.MatchSeries)
-                                                         .ThenInclude(ms => ms.Matches)
-                                                         .ThenInclude(m => m.Results)
-                                                         .FirstOrDefaultAsync(t => t.Id == tournamentId);
+        var rounds = await this.LoadTournamentSchedule(recursiveTournamentId);
+        matchRounds.AddRange(rounds);
+      }
 
-
-
-        var matchSeries = tournament.TournamentRounds.SelectMany(tr => tr.MatchSeries);
-        var participants = matchSeries.SelectMany(ms => ms.MatchParticipants).Select(mp => mp.TeamId).Distinct();
-        var recordVault = new Dictionary<Guid, DTO.Tournament.TournamentRecord>();
-        foreach (var teamId in participants)
-        {
-          var record = await this.GetTournamentRecordForTeam(teamId, tournamentId);
-          recordVault.TryAdd(teamId, record);
-        }
-
-        cache.SetAbsoluteExpiration(DateTimeOffset.UtcNow.AddMinutes(30));
-
-        var scheduleDTO = AutoMapper.Mapper.Map<DTO.Tournament.Schedule>(tournament, ctx => ctx.Items.Add("RecordVault", recordVault));
-        return scheduleDTO;
-      });
-
-      result.Succeed(schedule);
+      result.Succeed(new DTO.Tournament.Schedule { Rounds = matchRounds });
 
       return result;
     }
@@ -325,7 +307,7 @@ namespace Alexandria.Orchestration.Services
       var recordVault = new Dictionary<Guid, DTO.Tournament.TournamentRecord>();
       foreach (var participantTeamId in participants)
       {
-        var record = await this.GetTournamentRecordForTeam(participantTeamId, tournamentId);
+        var record = await this.tournamentUtils.GetTournamentRecordForTeam(participantTeamId, tournamentId);
         recordVault.TryAdd(teamId, record);
       }
 
@@ -334,6 +316,39 @@ namespace Alexandria.Orchestration.Services
 
 
       return result;
+    }
+
+    private async Task<IList<DTO.Tournament.ScheduleRound>> LoadTournamentSchedule(Guid tournamentId)
+    {
+      var tournamentRoundsSchedule = await this.cache.GetOrCreateAsync(Shared.Cache.Tournament.Schedule(tournamentId), async (cache) =>
+      {
+
+        var tournamentRounds = await this.alexandriaContext.TournamentRounds.Include(tr => tr.MatchSeries)
+                                                                            .ThenInclude(ms => ms.MatchParticipants)
+                                                                            .ThenInclude(mp => mp.Team)
+                                                                            .Include(tr => tr.MatchSeries)
+                                                                            .ThenInclude(ms => ms.Matches)
+                                                                            .ThenInclude(m => m.Results)
+                                                                            .Where(tr => tr.TournamentId == tournamentId)
+                                                                            .ToListAsync();
+
+
+
+        var matchSeries = tournamentRounds.SelectMany(tr => tr.MatchSeries);
+        var participants = matchSeries.SelectMany(ms => ms.MatchParticipants).Select(mp => mp.TeamId).Distinct();
+        var recordVault = new Dictionary<Guid, DTO.Tournament.TournamentRecord>();
+        foreach (var teamId in participants)
+        {
+          var record = await this.tournamentUtils.GetTournamentRecordForTeam(teamId, tournamentId);
+          recordVault.TryAdd(teamId, record);
+        }
+
+        cache.SetAbsoluteExpiration(DateTimeOffset.UtcNow.AddMinutes(30));
+        var rounds = tournamentRounds.Select(r => AutoMapper.Mapper.Map<DTO.Tournament.ScheduleRound>(r, ctx => ctx.Items.Add("RecordVault", recordVault))).ToList();
+        return rounds;
+      });
+
+      return tournamentRoundsSchedule;
     }
 
     private Task<EF.Models.TournamentApplication> DangerouslyCreateTournamentApplication(Guid teamId, DTO.Tournament.TeamTournamentApplicationRequest teamApplication)
@@ -372,61 +387,6 @@ namespace Alexandria.Orchestration.Services
       this.alexandriaContext.TournamentApplications.Update(application);
 
       return Task.FromResult(application);
-    }
-
-    private async Task<IList<EF.Models.Tournament>> GetTournamentTree(Guid tournamentId)
-    {
-      var list = new List<EF.Models.Tournament>();
-      var tournament = await alexandriaContext.Tournaments.Include(t => t.Tournaments).ThenInclude(t => t.Tournaments).FirstOrDefaultAsync(t => t.Id == tournamentId);
-
-      if (tournament == null)
-      {
-        return new List<EF.Models.Tournament>();
-      }
-
-      if (tournament.Tournaments.Any())
-      {
-        foreach (var childTournament in tournament.Tournaments.ToList())
-        {
-          if (childTournament.Tournaments.Any())
-          {
-            list.AddRange(await GetTournamentTree(childTournament.Id));
-          } else
-          {
-            list.Add(childTournament);
-          }
-        }
-      } else
-      {
-        list.Add(tournament);
-      }
-
-      return list;
-    }
-
-    private async Task<DTO.Tournament.TournamentRecord> GetTournamentRecordForTeam(Guid teamId, Guid tournamentId)
-    {
-      var team = await this.alexandriaContext.Teams.Include(t => t.MatchParticipations)
-                                                   .ThenInclude(mp => mp.MatchSeries)
-                                                   .ThenInclude(ms => ms.MatchParticipants)
-                                                   .Include(t => t.MatchParticipations)
-                                                   .ThenInclude(mp => mp.MatchSeries)
-                                                   .ThenInclude(ms => ms.Matches)
-                                                   .ThenInclude(m => m.Results)
-                                                   .Include(t => t.MatchParticipations)
-                                                   .ThenInclude(mp => mp.MatchSeries)
-                                                   .ThenInclude(ms => ms.TournamentRound)
-                                                   .ThenInclude(tr => tr.Tournament)
-                                                   .FirstOrDefaultAsync(t => t.Id == teamId);
-
-
-      var tournamentMatches = team.MatchParticipations.Where(mp => mp.MatchSeries.TournamentRound.TournamentId == tournamentId).Select(mp => mp.MatchSeries).Where(ms => ms.State != Shared.Enums.MatchState.Pending);
-      var wins = tournamentMatches.Where(m => m.Winner != null).Select(ms => ms.Winner).Where(mp => mp.TeamId == teamId).Count();
-      var losses = tournamentMatches.Where(m => m.Loser != null).Select(ms => ms.Loser).Where(mp => mp.TeamId == teamId).Count();
-      var draws = tournamentMatches.Count() - (wins + losses);
-
-      return new DTO.Tournament.TournamentRecord(wins, losses, draws);
-
     }
   }
 }

@@ -49,6 +49,11 @@ namespace Alexandria.Controllers.Team
       return new OperationResult<IList<DTO.MatchSeries.ScheduleRequest>>(result.Error);
     }
 
+    /// <summary>
+    /// Submits a schedule requests for a match
+    /// </summary>
+    /// <param name="payload"></param>
+    /// <returns></returns>
     [HttpPost]
     [PermissionsRequired("team::{teamId}::match--schedule")]
     [ProducesResponseType(typeof(void), 201)]
@@ -71,6 +76,11 @@ namespace Alexandria.Controllers.Team
       return new OperationResult(result.Error);
     }
 
+    /// <summary>
+    /// Accepts the specified schedule request
+    /// </summary>
+    /// <param name="scheduleRequestId"></param>
+    /// <returns></returns>
     [HttpPut("{scheduleRequestId}")]
     [PermissionsRequired("team::{teamId}::match--schedule")]
     [ProducesResponseType(typeof(void), 204)]
@@ -87,6 +97,11 @@ namespace Alexandria.Controllers.Team
       return new OperationResult(result.Error);
     }
 
+    /// <summary>
+    /// Decline the schedule request
+    /// </summary>
+    /// <param name="scheduleRequestId"></param>
+    /// <returns></returns>
     [HttpDelete("{scheduleRequestId}")]
     [PermissionsRequired("team::{teamId}::match--schedule")]
     [ProducesResponseType(typeof(void), 204)]

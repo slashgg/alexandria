@@ -22,7 +22,7 @@ namespace Alexandria.Interfaces.Services
     Task<ServiceResult<List<DTO.Tournament.TeamParticipation>>> GetTeamParticipations(Guid tournamentId);
     Task<ServiceResult<List<DTO.Tournament.TeamParticipation>>> GetTeamParticipations(string tournamentSlug);
     Task<ServiceResult<IList<DTO.Tournament.RoundDetail>>> GetTournamentRounds(Guid tournamentId);
-    Task<ServiceResult<DTO.Tournament.Schedule>> GetSchedule(Guid tournamentId);
+    Task<ServiceResult<DTO.Tournament.Schedule>> GetSchedule(Guid tournamentId, int? tournamentSteps = null);
     Task<ServiceResult<IList<DTO.Tournament.MatchSeries>>> GetMatchesForTeamInTournament(Guid teamId, Guid tournamentId);
   }
 }

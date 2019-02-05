@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Alexandria.EF.Context;
+using Alexandria.Interfaces.Processing;
 using Alexandria.Interfaces.Services;
+using Alexandria.Orchestration.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Svalbard.Services;
@@ -15,11 +17,15 @@ namespace Alexandria.Orchestration.Services
   {
     private IMemoryCache cache;
     private AlexandriaContext alexandriaContext;
+    private ICacheBreaker cacheBreaker;
+    private TournamentUtils tournamentUtils;
 
-    public MatchService(AlexandriaContext alexandriaContext, IMemoryCache cache)
+    public MatchService(AlexandriaContext alexandriaContext, IMemoryCache cache, ICacheBreaker cacheBreaker, TournamentUtils tournamentUtils)
     {
       this.alexandriaContext = alexandriaContext;
       this.cache = cache;
+      this.cacheBreaker = cacheBreaker;
+      this.tournamentUtils = tournamentUtils;
     }
 
     public async Task<ServiceResult<IList<DTO.MatchSeries.ScheduleRequest>>> GetPendingSchedulingRequests(Guid teamId)
@@ -146,7 +152,12 @@ namespace Alexandria.Orchestration.Services
           var tournamentId = (await alexandriaContext.Tournaments.FirstOrDefaultAsync(t => t.TournamentRounds.Any(tr => tr.Id == matchSeries.TournamentRoundId.Value)))?.Id;
           if (tournamentId.HasValue)
           {
-            this.cache.Remove(Shared.Cache.Tournament.Schedule(tournamentId.Value));
+            var tournaments = (await this.tournamentUtils.GetTournamentParents(tournamentId.Value)).Select(t => t.Id);
+
+            foreach (var cacheBreakTournament in tournaments)
+            {
+              this.cacheBreaker.Break(Shared.Cache.Tournament.Schedule(cacheBreakTournament));
+            }
           }
         }
       }

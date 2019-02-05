@@ -81,6 +81,7 @@ namespace Alexandria
       services.AddAWSService<IAmazonS3>();
       services.AddSingleton<IBackgroundWorker, SQSBackgroundWorker>();
       services.AddScoped<IUserUtils, UserUtils>();
+      services.AddScoped<TournamentUtils>();
       services.AddScoped<IAuthorizationService, AuthorizationService>();
       services.AddScoped<IUserProfileService, UserProfileService>();
       services.AddScoped<ITeamService, TeamService>();
