@@ -28,10 +28,10 @@ namespace Alexandria.Orchestration.Services
       this.tournamentUtils = tournamentUtils;
     }
 
-    public async Task<ServiceResult<IList<DTO.MatchSeries.ScheduleRequest>>> GetPendingSchedulingRequests(Guid teamId)
+    public async Task<ServiceResult<DTO.MatchSeries.PendingScheduleRequests>> GetPendingSchedulingRequests(Guid teamId)
     {
-      var result = new ServiceResult<IList<DTO.MatchSeries.ScheduleRequest>>();
-      var pendingRequests = await this.alexandriaContext.MatchSeriesScheduleRequests.Include(mssr => mssr.OriginTeam)
+      var result = new ServiceResult<DTO.MatchSeries.PendingScheduleRequests>();
+      var pendingTargetRequests = await this.alexandriaContext.MatchSeriesScheduleRequests.Include(mssr => mssr.OriginTeam)
                                                                                     .Include(mssr => mssr.MatchSeries)
                                                                                     .ThenInclude(ms => ms.Matches)
                                                                                     .ThenInclude(m => m.Results)
@@ -42,8 +42,21 @@ namespace Alexandria.Orchestration.Services
                                                                                     .Where(mssr => mssr.State == Shared.Enums.ScheduleRequestState.Pending)
                                                                                     .ToListAsync();
 
-      var dtos = pendingRequests.Select(AutoMapper.Mapper.Map<DTO.MatchSeries.ScheduleRequest>).ToList();
-      result.Succeed(dtos);
+      var pendingOriginRequests = await this.alexandriaContext.MatchSeriesScheduleRequests.Include(mssr => mssr.OriginTeam)
+                                                                                    .Include(mssr => mssr.MatchSeries)
+                                                                                    .ThenInclude(ms => ms.Matches)
+                                                                                    .ThenInclude(m => m.Results)
+                                                                                    .Include(mssr => mssr.MatchSeries)
+                                                                                    .ThenInclude(ms => ms.MatchParticipants)
+                                                                                    .ThenInclude(mp => mp.Team)
+                                                                                    .Where(mssr => mssr.OriginTeamId == teamId)
+                                                                                    .Where(mssr => mssr.State == Shared.Enums.ScheduleRequestState.Pending)
+                                                                                    .ToListAsync();
+
+      var targetDTOs = pendingTargetRequests.Select(AutoMapper.Mapper.Map<DTO.MatchSeries.ScheduleRequest>).ToList();
+      var originDTOs = pendingOriginRequests.Select(AutoMapper.Mapper.Map<DTO.MatchSeries.ScheduleRequest>).ToList();
+
+      result.Succeed(new DTO.MatchSeries.PendingScheduleRequests(originDTOs, targetDTOs));
 
       return result;
     }

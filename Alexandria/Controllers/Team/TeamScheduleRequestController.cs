@@ -32,21 +32,21 @@ namespace Alexandria.Controllers.Team
     [PermissionsRequired("team::{teamId}::match--schedule")]
     [ProducesResponseType(typeof(IList<DTO.MatchSeries.ScheduleRequest>), 200)]
     [ProducesResponseType(typeof(BaseError), 404)]
-    public async Task<OperationResult<IList<DTO.MatchSeries.ScheduleRequest>>> GetPendingScheduleRequests()
+    public async Task<OperationResult<DTO.MatchSeries.PendingScheduleRequests>> GetPendingScheduleRequests()
     {
       if (this.resourceId == Guid.Empty)
       {
-        return new OperationResult<IList<DTO.MatchSeries.ScheduleRequest>>(404);
+        return new OperationResult<DTO.MatchSeries.PendingScheduleRequests>(404);
       }
 
       var result = await this.matchService.GetPendingSchedulingRequests(this.resourceId);
 
       if (result.Success)
       {
-        return new OperationResult<IList<DTO.MatchSeries.ScheduleRequest>>(result.Data);
+        return new OperationResult<DTO.MatchSeries.PendingScheduleRequests>(result.Data);
       }
 
-      return new OperationResult<IList<DTO.MatchSeries.ScheduleRequest>>(result.Error);
+      return new OperationResult<DTO.MatchSeries.PendingScheduleRequests>(result.Error);
     }
 
     /// <summary>
@@ -83,7 +83,7 @@ namespace Alexandria.Controllers.Team
     /// <returns></returns>
     [HttpPut("{scheduleRequestId}")]
     [PermissionsRequired("team::{teamId}::match--schedule")]
-    [ProducesResponseType(typeof(void), 204)]
+    [ProducesResponseType(typeof(void), 204)] 
     [ProducesResponseType(typeof(void), 401)]
     [ProducesResponseType(typeof(BaseError), 404)]
     public async Task<OperationResult> AcceptScheduleRequest(Guid scheduleRequestId)
