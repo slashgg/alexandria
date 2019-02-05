@@ -11,6 +11,7 @@ namespace Alexandria.Orchestration.Mapper.MatchSeries
     public MatchSeriesProfile()
     {
       CreateMap<EF.Models.MatchParticipantResult, DTO.MatchSeries.MatchResult>();
+      CreateMap<EF.Models.MatchSeries, DTO.MatchSeries.Detail>();
       CreateMap<EF.Models.MatchParticipant, DTO.MatchSeries.MatchSeriesParticipant>()
         .ForMember(dest => dest.MatchResults, opt => opt.MapFrom(src => src.Results))
         .ForMember(dest => dest.Wins, opt => opt.MapFrom(src => src.Wins.Count()))
