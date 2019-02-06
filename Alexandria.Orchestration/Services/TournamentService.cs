@@ -292,6 +292,7 @@ namespace Alexandria.Orchestration.Services
     {
       var result = new ServiceResult<IList<DTO.Tournament.MatchSeries>>();
 
+      var tournaments = (await this.tournamentUtils.GetTournamentTree(tournamentId, null, 0)).Select(t => t.Id);
       var matches = await this.alexandriaContext.MatchSeries.Include(ms => ms.TournamentRound)
                                                             .ThenInclude(tr => tr.MatchSeries)
                                                             .ThenInclude(trms => trms.MatchParticipants)
@@ -299,8 +300,8 @@ namespace Alexandria.Orchestration.Services
                                                             .ThenInclude(mp => mp.Team)
                                                             .Include(ms => ms.Matches)
                                                             .ThenInclude(m => m.Results)
-                                                            .Where(ms => ms.TournamentRound.TournamentId == tournamentId)
                                                             .Where(ms => ms.MatchParticipants.Any(mp => mp.TeamId == teamId))
+                                                            .Where(ms => tournaments.Any(t => ms.TournamentRound.TournamentId == t))
                                                             .ToListAsync();
 
       var participants = matches.SelectMany(ms => ms.MatchParticipants).Select(mp => mp.TeamId).Distinct();
@@ -308,7 +309,7 @@ namespace Alexandria.Orchestration.Services
       foreach (var participantTeamId in participants)
       {
         var record = await this.tournamentUtils.GetTournamentRecordForTeam(participantTeamId, tournamentId);
-        recordVault.TryAdd(teamId, record);
+        recordVault.TryAdd(participantTeamId, record);
       }
 
       var tournamentMatchDTOs = matches.Select(ms => AutoMapper.Mapper.Map<DTO.Tournament.MatchSeries>(ms, ctx => ctx.Items.Add("RecordVault", recordVault))).ToList();

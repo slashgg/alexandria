@@ -27,6 +27,7 @@ namespace Alexandria.Orchestration.Mapper.Tournament
 
 
       CreateMap<EF.Models.MatchSeries, DTO.Tournament.MatchSeries>()
+        .ForMember(dest => dest.Round, opt => opt.MapFrom(src => src.TournamentRound))
         .ForMember(dest => dest.Participants, opt => opt.MapFrom(src => src.MatchParticipants));
 
       CreateMap<EF.Models.MatchParticipant, DTO.Tournament.MatchSeriesParticipant>()
