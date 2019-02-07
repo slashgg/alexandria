@@ -234,7 +234,13 @@ namespace Alexandria.Orchestration.Services
                                                                                .ThenInclude(tm => tm.TeamRole)
                                                                                .Include(t => t.Team)
                                                                                .ThenInclude(tt => tt.TeamMemberships)
+                                                                               .ThenInclude(tm => tm.UserProfile)
+                                                                               .ThenInclude(up => up.ExternalUserNames)
+                                                                               .Include(t => t.Team)
+                                                                               .ThenInclude(tt => tt.TeamMemberships)
                                                                                .ThenInclude(m => m.UserProfile)
+                                                                               .Include(t => t.Team)
+                                                                               .ThenInclude(t => t.Competition)
                                                                                .Where(tp => tournamentIds.Contains(tp.TournamentId) && tp.State == Shared.Enums.TournamentParticipationState.Participating)
                                                                                .ToListAsync();
         cache.SetAbsoluteExpiration(DateTimeOffset.UtcNow.AddHours(1));

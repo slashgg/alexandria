@@ -4,14 +4,16 @@ using Alexandria.EF.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Alexandria.EF.Migrations
 {
     [DbContext(typeof(AlexandriaContext))]
-    partial class AlexandriaContextModelSnapshot : ModelSnapshot
+    [Migration("20190207050057_AddServiceANdURLFieldsToExternalUserName")]
+    partial class AddServiceANdURLFieldsToExternalUserName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -155,25 +157,6 @@ namespace Alexandria.EF.Migrations
                     b.ToTable("ExternalUserName");
                 });
 
-            modelBuilder.Entity("Alexandria.EF.Models.ExternalUserNameGenerator", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("CreatedAt");
-
-                    b.Property<string>("LogoURL");
-
-                    b.Property<string>("Name");
-
-                    b.Property<string>("Type")
-                        .IsRequired();
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ExternalUserNameGenerators");
-                });
-
             modelBuilder.Entity("Alexandria.EF.Models.FavoriteCompetition", b =>
                 {
                     b.Property<Guid>("Id")
@@ -211,27 +194,6 @@ namespace Alexandria.EF.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Games");
-                });
-
-            modelBuilder.Entity("Alexandria.EF.Models.GameExternalUserNameGenerator", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<DateTime>("CreatedAt");
-
-                    b.Property<Guid>("ExternalUserNameGeneratorId");
-
-                    b.Property<Guid>("GameId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExternalUserNameGeneratorId");
-
-                    b.HasIndex("GameId")
-                        .IsUnique();
-
-                    b.ToTable("GameUserNameGenerators");
                 });
 
             modelBuilder.Entity("Alexandria.EF.Models.Match", b =>
@@ -858,7 +820,7 @@ namespace Alexandria.EF.Migrations
             modelBuilder.Entity("Alexandria.EF.Models.ExternalUserName", b =>
                 {
                     b.HasOne("Alexandria.EF.Models.Game", "Game")
-                        .WithMany("ExternalUserNames")
+                        .WithMany("ExtrnalUserNames")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Restrict);
 
@@ -878,19 +840,6 @@ namespace Alexandria.EF.Migrations
                     b.HasOne("Alexandria.EF.Models.UserProfile", "UserProfile")
                         .WithMany("FavoriteCompetitions")
                         .HasForeignKey("UserProfileId")
-                        .OnDelete(DeleteBehavior.Restrict);
-                });
-
-            modelBuilder.Entity("Alexandria.EF.Models.GameExternalUserNameGenerator", b =>
-                {
-                    b.HasOne("Alexandria.EF.Models.ExternalUserNameGenerator", "ExternalUserNameGenerator")
-                        .WithMany("GameExternalUserNameGenerators")
-                        .HasForeignKey("ExternalUserNameGeneratorId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Alexandria.EF.Models.Game", "Game")
-                        .WithOne("GameExternalUserNameGenerator")
-                        .HasForeignKey("Alexandria.EF.Models.GameExternalUserNameGenerator", "GameId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 

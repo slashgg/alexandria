@@ -553,6 +553,17 @@ namespace Alexandria.Orchestration.Services
         await this.backgroundWorker.SendMessage(this.queues.Contact, new DTO.Marketing.ContactSync(userId), 5);
       }
 
+      var gameId = team.Competition?.GameId;
+      if (!gameId.HasValue)
+      {
+        gameId = (await context.Competitions.Include(c => c.Game).FirstOrDefaultAsync(c => c.Id.Equals(team.CompetitionId)))?.GameId;
+      }
+
+      if (gameId.HasValue)
+      {
+        await this.userUtils.GenerateExternalUserName(userId, gameId.Value);
+      }
+
       return membership;
     }
 

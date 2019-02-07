@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Alexandria.EF.Context;
 using Alexandria.EF.Models;
 using Alexandria.Interfaces;
+using Alexandria.Interfaces.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace Alexandria.Orchestration.Utils
@@ -52,6 +53,35 @@ namespace Alexandria.Orchestration.Utils
     {
       var email = await this.context.UserProfiles.Where(u => u.UserName == userName).Select(u => u.Email).FirstOrDefaultAsync();
       return email;
+    }
+
+    public async Task GenerateExternalUserName(Guid userProfileId, Guid gameId)
+    {
+      var user = await this.context.UserProfiles.Include(up => up.ExternalUserNames).FirstOrDefaultAsync(up => up.Id == userProfileId);
+      if (user.HasExternalUserName(gameId))
+      {
+        return;
+      }
+
+      var game = await this.context.Games.Include(g => g.GameExternalUserNameGenerator).ThenInclude(geung => geung.ExternalUserNameGenerator).FirstOrDefaultAsync(g => g.Id == gameId);
+      var generator = game.GameExternalUserNameGenerator?.ExternalUserNameGenerator;
+      if (generator == null)
+      {
+        return;
+      }
+
+      try
+      {
+        var userNameGenerator = Activator.CreateInstance(Type.GetType(generator.Type), this.context) as IExternalUserNameGenerator;
+        var userName = await userNameGenerator.Create(userProfileId);
+        var externalUserName = new EF.Models.ExternalUserName(userName.UserName, userName.LogoURL, userName.ServiceName, gameId);
+        user.ExternalUserNames.Add(externalUserName);
+        this.context.UserProfiles.Update(user);
+      }
+      catch (Exception ex)
+      {
+        Sentry.SentrySdk.CaptureException(ex);
+      }
     }
   }
 }

@@ -40,6 +40,11 @@ namespace Alexandria.Orchestration.Mapper.Tournament
       CreateMap<EF.Models.TournamentRound, DTO.Tournament.ScheduleRound>();
       CreateMap<EF.Models.Tournament, DTO.Tournament.Schedule>()
         .ForMember(src => src.Rounds, opt => opt.MapFrom(src => src.TournamentRounds));
+
+
+      CreateMap<EF.Models.TeamMembership, DTO.Tournament.TeamMembership>()
+        .IncludeBase<EF.Models.TeamMembership, DTO.Team.Membership>()
+        .ForMember(dest => dest.ExternalUserName, opt => opt.MapFrom(src => src.UserProfile.GetUserNameForGame(src.Team.Competition.GameId)));
     }
   }
 }

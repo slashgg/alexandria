@@ -22,6 +22,6 @@ namespace Alexandria.DTO.Tournament
     [DataMember(Name = "state")]
     public TournamentApplicationState State { get; set; }
     [DataMember(Name = "members")]
-    public List<Team.Membership> Memberships { get; set; } = new List<Team.Membership>();
+    public List<Tournament.TeamMembership> Memberships { get; set; } = new List<Tournament.TeamMembership>();
   }
 }

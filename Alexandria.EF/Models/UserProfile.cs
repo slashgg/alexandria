@@ -24,6 +24,7 @@ namespace Alexandria.EF.Models
     public virtual ICollection<TeamInvite> TeamInvites { get; set; } = new List<TeamInvite>();
     public virtual ICollection<FavoriteCompetition> FavoriteCompetitions { get; set; } = new List<FavoriteCompetition>();
     public virtual ICollection<PlayerRanking> PlayerRankings { get; set; } = new List<PlayerRanking>();
+    public virtual ICollection<ExternalUserName> ExternalUserNames { get; set; } = new List<ExternalUserName>();
 
     public UserProfile(Guid id, string userName, string email)
     {
@@ -45,6 +46,26 @@ namespace Alexandria.EF.Models
     public bool HasPermission(string ARN)
     {
       return this.Permissions.Any(c => c.ARN == ARN);
+    }
+
+    public bool HasExternalUserName(Game game)
+    {
+      return this.ExternalUserNames.Any(eun => eun.Game.Id == game.Id);
+    }
+
+    public bool HasExternalUserName(Guid gameId)
+    {
+      return this.ExternalUserNames.Any(eun => eun.GameId == gameId);
+    }
+
+    public ExternalUserName GetUserNameForGame(Game game)
+    {
+      return this.ExternalUserNames.FirstOrDefault(eun => eun.GameId == game.Id);
+    }
+
+    public ExternalUserName GetUserNameForGame(Guid gameId)
+    {
+      return this.ExternalUserNames.FirstOrDefault(eun => eun.GameId == gameId);
     }
   }
 }
