@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using Alexandria.EF.Context;
 using Alexandria.EF.Models;
 using Alexandria.Interfaces;
+using Alexandria.Interfaces.Services;
 using Alexandria.Interfaces.Utils;
+using Alexandria.Shared.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace Alexandria.Orchestration.Utils
@@ -14,10 +16,12 @@ namespace Alexandria.Orchestration.Utils
   public class UserUtils : IUserUtils
   {
     private readonly AlexandriaContext context;
+    private readonly IAuthorizationService authorizationService;
 
-    public UserUtils(AlexandriaContext context)
+    public UserUtils(AlexandriaContext context, IAuthorizationService authorizationService)
     {
       this.context = context;
+      this.authorizationService = authorizationService;
     }
 
     public async Task<string> GetEmail(Guid userId)
@@ -74,7 +78,12 @@ namespace Alexandria.Orchestration.Utils
       {
         var userNameGenerator = Activator.CreateInstance(Type.GetType(generator.Type), this.context) as IExternalUserNameGenerator;
         var userName = await userNameGenerator.Create(userProfileId);
+        if (userName == null)
+        {
+          return;
+        }
         var externalUserName = new EF.Models.ExternalUserName(userName.UserName, userName.LogoURL, userName.ServiceName, gameId);
+        await this.authorizationService.AddPermission(userProfileId, AuthorizationHelper.GenerateARN(typeof(ExternalUserName), externalUserName.Id.ToString(), Shared.Permissions.ExternalUserName.All));
         user.ExternalUserNames.Add(externalUserName);
         this.context.UserProfiles.Update(user);
       }

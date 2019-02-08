@@ -114,6 +114,7 @@ namespace Alexandria
 
       services.AddHostedService<TransactionalService>();
       services.AddHostedService<ContactSyncBackgroundService>();
+      services.AddHostedService<CronService>();
 
       var connectionString = Configuration.GetConnectionString("Alexandria");
       services.AddDbContext<AlexandriaContext>(options =>
