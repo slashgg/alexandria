@@ -1,13 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using Alexandria.Infrastructure;
+﻿using System.Threading.Tasks;
 using Alexandria.Infrastructure.Filters;
 using Alexandria.Interfaces.Services;
 using Alexandria.Shared.ErrorKey;
+using Alexandria.Shared.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NJsonSchema.Annotations;
-using Svalbard;
 
 namespace Alexandria.Controllers.Competition
 {

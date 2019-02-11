@@ -20,6 +20,13 @@ namespace Alexandria.Orchestration.Mapper.MatchSeries
 
       CreateMap<EF.Models.MatchSeriesScheduleRequest, DTO.MatchSeries.ScheduleRequest>()
         .ForMember(dest => dest.MatchSeries, opt => opt.MapFrom(src => src.MatchSeries));
+
+      CreateMap<EF.Models.MatchSeries, DTO.MatchSeries.MatchReportMetaData>()
+        .ForMember(dest => dest.Game, opt => opt.MapFrom(src => src.Game.InternalIdentifier))
+        .ForMember(dest => dest.Participants, opt => opt.MapFrom(src => src.MatchParticipants.Select(mp => mp.Team)));
+
+      CreateMap<EF.Models.Match, DTO.MatchSeries.MatchInfo>()
+        .ForMember(dest => dest.Order, opt => opt.MapFrom(src => src.MatchOrder));
     }
   }
 }

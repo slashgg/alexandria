@@ -1,4 +1,5 @@
 ﻿using System;
+using Alexandria.Shared.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Alexandria.Infrastructure.Filters

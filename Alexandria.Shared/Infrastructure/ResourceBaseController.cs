@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Alexandria.Infrastructure
+namespace Alexandria.Shared.Infrastructure
 {
   [ApiController]
   public class ResourceBaseController : ControllerBase

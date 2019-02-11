@@ -6,6 +6,6 @@ namespace Alexandria.Shared.GlobalAssosications
 {
   public static class Game
   {
-    public static string HeroesOfTheStorm = "heroesofthestorm";
+    public readonly static string HeroesOfTheStorm = "heroes-of-the-storm";
   }
 }

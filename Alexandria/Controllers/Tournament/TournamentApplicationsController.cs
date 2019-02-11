@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Alexandria.Infrastructure;
+using Alexandria.Shared.Infrastructure;
 using Alexandria.Infrastructure.Filters;
 using Alexandria.Interfaces.Services;
 using Alexandria.Shared.ErrorKey;

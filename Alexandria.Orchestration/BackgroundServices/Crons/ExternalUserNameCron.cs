@@ -51,6 +51,8 @@ namespace Alexandria.Orchestration.BackgroundServices.Crons
             await userUtils.GenerateExternalUserName(userId, game.Id);
           }
         }
+
+        await alexandriaContext.SaveChangesAsync();
       }
     }
   }

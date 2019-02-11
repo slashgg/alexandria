@@ -6,6 +6,7 @@ using System.Text;
 using Alexandria.ExternalServices.HOTSLogs;
 using Alexandria.Games.HeroesOfTheStorm.EF.Context;
 using Alexandria.Games.HeroesOfTheStorm.Orchestration.BackgroundServices;
+using Alexandria.Games.HeroesOfTheStorm.Orchestration.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -57,6 +58,7 @@ namespace Alexandria.Games.HeroesOfTheStorm
 
         services.Configure<Configuration.Queue>(builderCtx.Configuration.GetSection("HeroesOfTheStormQueues"));
         services.AddSingleton<HOTSLogsClient>();
+        services.AddScoped<HeroesOfTheStormMatchService>();
         services.AddHostedService<HeroesOfTheStormCronWorker>();
         services.AddHostedService<HOTSLogsMMRPullBackgroundService>();
       });

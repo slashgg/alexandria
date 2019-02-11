@@ -82,6 +82,7 @@ namespace Alexandria
       services.AddSingleton<IBackgroundWorker, SQSBackgroundWorker>();
       services.AddScoped<IUserUtils, UserUtils>();
       services.AddScoped<TournamentUtils>();
+      services.AddScoped<MatchSeriesUtils>();
       services.AddScoped<IAuthorizationService, AuthorizationService>();
       services.AddScoped<IUserProfileService, UserProfileService>();
       services.AddScoped<ITeamService, TeamService>();
@@ -126,14 +127,14 @@ namespace Alexandria
       });
 
       #region NeededForMigration
-      //services.AddDbContext<HeroesOfTheStormContext>(options =>
-      //{
-      //  options.UseSqlServer(connectionString, (builder) =>
-      //  {
-      //    builder.MigrationsAssembly(typeof(HeroesOfTheStormContext).Assembly.FullName);
-      //    builder.MigrationsHistoryTable("_EF_heroes_of_the_storm_migrations", "heroesofthestorm");
-      //  });
-      //});
+      services.AddDbContext<HeroesOfTheStormContext>(options =>
+      {
+        options.UseSqlServer(connectionString, (builder) =>
+        {
+          builder.MigrationsAssembly(typeof(HeroesOfTheStormContext).Assembly.FullName);
+          builder.MigrationsHistoryTable("_EF_heroes_of_the_storm_migrations", "heroesofthestorm");
+        });
+      });
       #endregion
 
       services.AddAuthorization(options =>

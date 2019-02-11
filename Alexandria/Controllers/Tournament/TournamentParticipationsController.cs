@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Alexandria.Infrastructure;
+using Alexandria.Shared.Infrastructure;
 using Alexandria.Infrastructure.Filters;
 using Alexandria.Interfaces.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Svalbard;
 

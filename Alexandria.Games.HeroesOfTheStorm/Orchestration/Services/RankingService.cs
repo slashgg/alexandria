@@ -22,7 +22,6 @@ namespace Alexandria.Games.HeroesOfTheStorm.Orchestration.Services
     public async Task AcquireHOTSLogsUpdate(Guid userId)
     {
       var user = this.alexandriaContext.UserProfiles.Include(u => u.ExternalAccounts);
-                                                    
     }
   }
 }

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Alexandria.Infrastructure;
+using Alexandria.Shared.Infrastructure;
 using Alexandria.Infrastructure.Filters;
 using Alexandria.Interfaces.Services;
 using Alexandria.Shared.ErrorKey;
 using Microsoft.AspNetCore.Mvc;
-using Svalbard;
 
 namespace Alexandria.Controllers.Team
 {

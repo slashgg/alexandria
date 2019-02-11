@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="EF\Migrations\20190210202135_AddTournamentMetaDataAndMatchReports.cs" />
     <Compile Remove="Migrations\20190126224935_AddHeroesOfTheStorm.cs" />
   </ItemGroup>
 
@@ -32,6 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Alexandria.DTO\Alexandria.DTO.csproj" />
     <ProjectReference Include="..\Alexandria.EF\Alexandria.EF.csproj" />
     <ProjectReference Include="..\Alexandria.Interfaces\Alexandria.Interfaces.csproj" />
     <ProjectReference Include="..\Alexandria.Shared\Alexandria.Shared.csproj" />

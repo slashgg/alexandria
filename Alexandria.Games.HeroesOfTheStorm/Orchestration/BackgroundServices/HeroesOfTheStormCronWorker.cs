@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Alexandria.ExternalServices.HOTSLogs;
 using Alexandria.Games.HeroesOfTheStorm.EF.Context;
 using Alexandria.Interfaces.Processing;
+using Alexandria.Shared.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;

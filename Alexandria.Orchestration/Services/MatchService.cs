@@ -162,6 +162,26 @@ namespace Alexandria.Orchestration.Services
       return result;
     }
 
+    public async Task<ServiceResult<DTO.MatchSeries.MatchReportMetaData>> GetResultSubmitMetaData(Guid matchSeriesId)
+    {
+      var result = new ServiceResult<DTO.MatchSeries.MatchReportMetaData>();
+      var matchSeries = await this.alexandriaContext.MatchSeries.Include(ms => ms.MatchParticipants)
+                                                                .ThenInclude(mp => mp.Team)
+                                                                .Include(ms => ms.Matches)
+                                                                .Include(ms => ms.Game)
+                                                                .FirstOrDefaultAsync(ms => ms.Id == matchSeriesId);
+      if (matchSeries == null)
+      {
+        result.Error = Shared.ErrorKey.MatchSeries.NotFound;
+        return result;
+      }
+
+      var resultMetaData = AutoMapper.Mapper.Map<DTO.MatchSeries.MatchReportMetaData>(matchSeries);
+      result.Succeed(resultMetaData);
+
+      return result;
+    }
+
     public async Task<ServiceResult> RescindSCheduleRequest(Guid scheduleRequestId)
     {
       var result = new ServiceResult();
