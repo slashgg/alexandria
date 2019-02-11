@@ -22,6 +22,12 @@ namespace Alexandria.Games.HeroesOfTheStorm.Controllers.MatchSeries
       this.matchService = matchService;
     }
 
+    [HttpPost]
+    public async Task<OperationResult> ReportMatch()
+    {
+      return Ok();
+    }
+
     [HttpGet("meta")]
     [ProducesResponseType(typeof(DTO.MatchSeries.HeroesOfTheStormMatchReportMetaData), 200)]
     [ProducesResponseType(typeof(void), 404)]

@@ -9,7 +9,8 @@ namespace Alexandria.Games.HeroesOfTheStorm.Orchestration.Mapping.MatchSeries
   {
     public MatchProfile()
     {
-      this.CreateMap<Alexandria.DTO.MatchSeries.MatchReportMetaData, DTO.MatchSeries.HeroesOfTheStormMatchReportMetaData>();
+      this.CreateMap<Alexandria.DTO.MatchSeries.MatchReportMetaData, DTO.MatchSeries.HeroesOfTheStormMatchReportMetaData>()
+        .AfterMap((src, dest) => dest.SubmitURL = dest.CreateSubmitURL());
       this.CreateMap<EF.Models.TournamentSettings, DTO.Tournament.ResultMetaData>()
         .ForMember(dest => dest.MapPool, opt => opt.MapFrom(src => src.TournamentMaps));
       this.CreateMap<EF.Models.TournamentMap, DTO.Map.Info>()

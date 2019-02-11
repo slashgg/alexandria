@@ -20,6 +20,14 @@ namespace Alexandria.DTO.MatchSeries
     public virtual TournamentMatchResultMetaData Tournament { get; set; }
     [DataMember(Name = "game")]
     public string Game { get; set; }
+    [DataMember(Name = "submitURL")]
+    public string SubmitURL { get; set; }
+
+
+    public virtual string CreateSubmitURL()
+    {
+      return $"/match=series/{this.Id}/reporting";
+    }
   }
 
   [DataContract]

@@ -14,6 +14,11 @@ namespace Alexandria.Games.HeroesOfTheStorm.DTO.MatchSeries
     public new HeroesOfTheStormTournamentMatchResultMetaData Tournament { get; set; }
     [DataMember(Name = "game")]
     public new string Game { get; } = "heroes-of-the-storm";
+
+    public override string CreateSubmitURL()
+    {
+      return $"/heroes-of-the-storm/match-series/{this.Id}/reporting";
+    }
   }
 
   [DataContract]
