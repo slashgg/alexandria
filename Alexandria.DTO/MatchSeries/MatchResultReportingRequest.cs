@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
 using Alexandria.Shared.Enums;
+using NJsonSchema.Annotations;
 
 namespace Alexandria.DTO.MatchSeries
 {
   [DataContract]
+  [JsonSchema("MatchSeriesResultReportingRequest")]
   public class MatchResultReportingRequest
   {
     [DataMember(Name = "outcome")]
