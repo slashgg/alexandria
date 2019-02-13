@@ -10,7 +10,7 @@ namespace Alexandria.Games.HeroesOfTheStorm.EF.Models
   {
     public Guid MatchId { get; set; }
     public string ReplayURL { get; set; }
-    public bool ReplayParsed { get; set; }
+    public bool ReplayParsed { get; set; } = false;
     public DateTimeOffset? ReplayedParsedAt { get; set; }
 
 
@@ -20,5 +20,25 @@ namespace Alexandria.Games.HeroesOfTheStorm.EF.Models
     /* Relationships */
     [ForeignKey("MapId")]
     public virtual Map Map { get; set; }
+
+    public MatchReport() { }
+
+    public MatchReport(Guid matchId)
+    {
+      this.MatchId = matchId;
+    }
+
+    public MatchReport(Guid matchId, Guid mapId)
+    {
+      this.MatchId = matchId;
+      this.MapId = mapId;
+    }
+
+    public MatchReport(Guid matchId, Guid mapId, string replayURL)
+    {
+      this.MatchId = matchId;
+      this.MapId = mapId;
+      this.ReplayURL = replayURL;
+    }
   }
 }

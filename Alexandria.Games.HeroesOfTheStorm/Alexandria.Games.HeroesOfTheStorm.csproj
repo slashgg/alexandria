@@ -36,6 +36,7 @@
     <ProjectReference Include="..\Alexandria.DTO\Alexandria.DTO.csproj" />
     <ProjectReference Include="..\Alexandria.EF\Alexandria.EF.csproj" />
     <ProjectReference Include="..\Alexandria.Interfaces\Alexandria.Interfaces.csproj" />
+    <ProjectReference Include="..\Alexandria.Orchestration\Alexandria.Orchestration.csproj" />
     <ProjectReference Include="..\Alexandria.Shared\Alexandria.Shared.csproj" />
   </ItemGroup>
 

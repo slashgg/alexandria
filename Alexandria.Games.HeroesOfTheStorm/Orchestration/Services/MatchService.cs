@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Alexandria.EF.Context;
@@ -47,6 +48,28 @@ namespace Alexandria.Games.HeroesOfTheStorm.Orchestration.Services
       }
 
       result.Succeed(heroesMetaData);
+      return result;
+    }
+
+    public async Task<ServiceResult> ReportMatchSeries(Guid matchSeriesId, IList<DTO.MatchSeries.HeroesOfTheStormMatchResultReportingRequest> matchResults)
+    {
+      var result = new ServiceResult();
+
+      var existingMatches = matchResults.Where(mr => mr.MatchId.HasValue);
+
+      var reportingResult = await this.matchService.ReportMatchSeriesResult(matchSeriesId, existingMatches);
+      if (!reportingResult.Success)
+      {
+        return reportingResult;
+      }
+
+      var reportableMatches = existingMatches.Where(em => em.MapId.HasValue);
+      foreach (var matchResult in reportableMatches)
+      {
+        var matchReport = new EF.Models.MatchReport(matchResult.MatchId.Value, matchResult.MapId.Value, matchResult.ReplayURL);
+        this.heroesOfTheStormContext.MatchReports.Add(matchReport);
+      }
+
       return result;
     }
   }

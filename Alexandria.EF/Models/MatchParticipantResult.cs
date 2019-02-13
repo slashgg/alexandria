@@ -16,5 +16,14 @@ namespace Alexandria.EF.Models
     public virtual MatchParticipant MatchParticipant { get; set; }
     [ForeignKey("MatchId")]
     public virtual Match Match { get; set; }
+
+    public MatchParticipantResult() { }
+
+    public MatchParticipantResult(Guid matchId, Guid participantId, MatchOutcome outcome)
+    {
+      this.MatchId = matchId;
+      this.MatchParticipantId = participantId;
+      this.MatchOutcome = outcome;
+    }
   }
 }

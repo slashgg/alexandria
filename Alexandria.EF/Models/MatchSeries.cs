@@ -61,5 +61,15 @@ namespace Alexandria.EF.Models
         return loser;
       }
     }
+
+    public bool IsParticipant(Guid teamId)
+    {
+      return this.MatchParticipants.Any(mp => mp.TeamId.Equals(teamId));
+    }
+
+    public MatchParticipant GetParticipant(Guid teamId)
+    {
+      return this.MatchParticipants.FirstOrDefault(mp => mp.TeamId.Equals(teamId));
+    }
   }
 }

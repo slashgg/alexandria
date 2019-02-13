@@ -15,5 +15,7 @@ namespace Alexandria.Interfaces.Services
     Task<ServiceResult> DeclineScheduleRequest(Guid scheduleRequestId);
     Task<ServiceResult> RescindSCheduleRequest(Guid scheduleRequestId);
     Task<ServiceResult<DTO.MatchSeries.MatchReportMetaData>> GetResultSubmitMetaData(Guid matchSeriesId);
+    Task<ServiceResult> ReportMatchSeriesResult(Guid matchSeriesId, IEnumerable<DTO.MatchSeries.MatchResultReportingRequest> results);
+    Task<ServiceResult> ReportMatchResult(DTO.MatchSeries.MatchResultReportingRequest matchResult);
   }
 }

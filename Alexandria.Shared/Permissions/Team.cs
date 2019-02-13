@@ -8,6 +8,7 @@ namespace Alexandria.Shared.Permissions
     public const string Disband = "team--disband";
     public const string ScheduleMatch = "match--schedule";
     public const string MatchParticipation = "match--participation";
+    public const string ReportMatchResult = "match--report-result";
     public const string SendInvite = "invite--send";
     public const string RevokeInvite = "invite--revoke";
     public const string RemoveMember = "member--remove";
@@ -24,6 +25,8 @@ namespace Alexandria.Shared.Permissions
     Disband,
     [EnumMember(Value = "match--schedule")]
     ScheduleMatch,
+    [EnumMember(Value = "match--report-result")]
+    ReportMatchResult,
     [EnumMember(Value = "match--participation")]
     MatchParticipation,
     [EnumMember(Value = "invite--send")]
