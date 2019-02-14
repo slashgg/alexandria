@@ -14,5 +14,14 @@ namespace Alexandria.Games.HeroesOfTheStorm.EF.Models
 
     [ForeignKey("MapId")]
     public virtual Map Map { get; set; }
+
+    public MapBan() { }
+
+    public MapBan(Guid mapId, Guid teamId, Guid matchSeriesId)
+    {
+      this.MapId = mapId;
+      this.TeamId = teamId;
+      this.MatchSeriesId = matchSeriesId;
+    }
   }
 }

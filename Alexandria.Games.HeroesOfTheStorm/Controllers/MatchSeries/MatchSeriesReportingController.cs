@@ -35,7 +35,7 @@ namespace Alexandria.Games.HeroesOfTheStorm.Controllers.MatchSeries
     [ProducesResponseType(typeof(void), 401)]
     [ProducesResponseType(typeof(void), 403)]
     [ProducesResponseType(typeof(void), 204)]
-    public async Task<OperationResult> ReportMatch([FromBody] List<DTO.MatchSeries.HeroesOfTheStormMatchResultReportingRequest> payload)
+    public async Task<OperationResult> ReportMatch([FromBody] DTO.MatchSeries.MatchSeriesResultReportingRequest payload)
     {
       var userId = this.HttpContext.GetUserId();
       if (!userId.HasValue || userId.Value == Guid.Empty)

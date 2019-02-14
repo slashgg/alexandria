@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Alexandria.EF.Context;
+using Alexandria.Games.HeroesOfTheStorm.DTO.MatchSeries;
 using Alexandria.Games.HeroesOfTheStorm.EF.Context;
 using Alexandria.Interfaces.Services;
 using Microsoft.EntityFrameworkCore;
@@ -51,11 +52,11 @@ namespace Alexandria.Games.HeroesOfTheStorm.Orchestration.Services
       return result;
     }
 
-    public async Task<ServiceResult> ReportMatchSeries(Guid matchSeriesId, IList<DTO.MatchSeries.HeroesOfTheStormMatchResultReportingRequest> matchResults)
+    public async Task<ServiceResult> ReportMatchSeries(Guid matchSeriesId, MatchSeriesResultReportingRequest matchSeriesResult)
     {
       var result = new ServiceResult();
 
-      var existingMatches = matchResults.Where(mr => mr.MatchId.HasValue);
+      var existingMatches = matchSeriesResult.Results.Where(mr => mr.MatchId.HasValue);
 
       var reportingResult = await this.matchService.ReportMatchSeriesResult(matchSeriesId, existingMatches);
       if (!reportingResult.Success)
@@ -68,6 +69,12 @@ namespace Alexandria.Games.HeroesOfTheStorm.Orchestration.Services
       {
         var matchReport = new EF.Models.MatchReport(matchResult.MatchId.Value, matchResult.MapId.Value, matchResult.ReplayURL);
         this.heroesOfTheStormContext.MatchReports.Add(matchReport);
+      }
+
+      foreach (var mapBan in matchSeriesResult.MapBans)
+      {
+        var ban = new EF.Models.MapBan(mapBan.MapId, mapBan.TeamId, matchSeriesId);
+        heroesOfTheStormContext.MapBans.Add(ban);
       }
 
       return result;
