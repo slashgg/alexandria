@@ -9,7 +9,7 @@ namespace Alexandria.Shared.Enums
   {
     [EnumMember(Value = "not-yet-played")]
     NotYetPlayed = 1,
-    [EnumMember(Value = "determiend")]
+    [EnumMember(Value = "determined")]
     Determined = 2,
     [EnumMember(Value = "draw")]
     Draw = 3,
