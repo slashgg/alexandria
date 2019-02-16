@@ -36,6 +36,7 @@ namespace Alexandria.Orchestration.Services
       var result = new ServiceResult<IList<DTO.MatchSeries.Detail>>();
       var matches = await this.alexandriaContext.MatchSeries.Include(ms => ms.Matches)
                                                             .ThenInclude(m => m.Results)
+                                                            .Include(m => m.Game)
                                                             .Include(ms => ms.MatchParticipants)
                                                             .ThenInclude(mp => mp.Team)
                                                             .Where(mssr => mssr.State == Shared.Enums.MatchState.Pending)
