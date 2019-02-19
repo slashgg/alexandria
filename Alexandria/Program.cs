@@ -20,9 +20,11 @@ namespace Alexandria
             .ConfigureAppConfiguration((hosting, config) =>
             {
               var prod = hosting.HostingEnvironment.IsProduction();
-              var secrets = new List<string>();
-              secrets.Add("SendGrid");
-              secrets.Add("Slack");
+              var secrets = new List<string>
+              {
+                "SendGrid",
+                "Slack"
+              };
               if (hosting.HostingEnvironment.IsProduction())
               {
                 secrets.Add("ConnectionStrings");

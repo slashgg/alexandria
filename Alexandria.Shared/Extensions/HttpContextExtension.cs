@@ -26,7 +26,6 @@ namespace Alexandria.Shared.Extensions
         }
       }
       return null;
-      //var user = context.User.
     }
   }
 }

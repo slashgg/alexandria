@@ -24,5 +24,6 @@ namespace Alexandria.Interfaces.Services
     Task<ServiceResult<IList<DTO.Tournament.RoundDetail>>> GetTournamentRounds(Guid tournamentId);
     Task<ServiceResult<DTO.Tournament.Schedule>> GetSchedule(Guid tournamentId, int? tournamentSteps = null);
     Task<ServiceResult<IList<DTO.Tournament.MatchSeries>>> GetMatchesForTeamInTournament(Guid teamId, Guid tournamentId);
+    Task<ServiceResult<DTO.Tournament.Standing<DTO.Tournament.RoundRobinRecord>>> GetTournamentTable(Guid tournamentId);
   }
 }

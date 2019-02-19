@@ -32,9 +32,9 @@ namespace Alexandria.Orchestration.Utils
                                                    .FirstOrDefaultAsync(t => t.Id == teamId);
 
 
-      var tournamentMatches = team.MatchParticipations.Where(mp => mp.MatchSeries.TournamentRound.TournamentId == tournamentId).Select(mp => mp.MatchSeries).Where(ms => ms.State != Shared.Enums.MatchState.Pending);
-      var wins = tournamentMatches.Where(m => m.Winner != null).Select(ms => ms.Winner).Where(mp => mp.TeamId == teamId).Count();
-      var losses = tournamentMatches.Where(m => m.Loser != null).Select(ms => ms.Loser).Where(mp => mp.TeamId == teamId).Count();
+      var tournamentMatches = team.MatchParticipations.Where(mp => mp.MatchSeries.TournamentRound.TournamentId == tournamentId).Select(mp => mp.MatchSeries).Where(ms => ms.State != Shared.Enums.MatchState.Pending).ToList();
+      var wins = tournamentMatches.Where(m => m.Winner != null).Select(ms => ms.Winner).Count(mp => mp.TeamId == teamId);
+      var losses = tournamentMatches.Where(m => m.Loser != null).Select(ms => ms.Loser).Count(mp => mp.TeamId == teamId);
       var draws = tournamentMatches.Count() - (wins + losses);
 
       return new DTO.Tournament.TournamentRecord(wins, losses, draws);

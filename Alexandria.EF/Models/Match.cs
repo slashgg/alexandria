@@ -23,5 +23,15 @@ namespace Alexandria.EF.Models
     [ForeignKey("MatchSeriesId")]
     public virtual MatchSeries MatchSeries { get; set; }
     public virtual ICollection<MatchParticipantResult> Results { get; set; }
+
+    public bool IsWinner(Guid teamId)
+    {
+      return this.Winners.Any(w => w.MatchParticipant.TeamId == teamId);
+    }
+
+    public bool IsDraw(Guid teamId)
+    {
+      return this.Results.Any(r => r.MatchOutcome == MatchOutcome.Draw && r.MatchParticipant.TeamId == teamId);
+    }
   }
 }

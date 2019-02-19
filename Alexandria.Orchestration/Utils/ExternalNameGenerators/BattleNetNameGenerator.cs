@@ -22,12 +22,8 @@ namespace Alexandria.Orchestration.Utils.ExternalNameGenerators
     public async Task<DTO.UserProfile.ExternalUserName> Create(Guid userId)
     {
       var user = await this.alexandriaContext.UserProfiles.Include(up => up.ExternalAccounts).FirstOrDefaultAsync(up => up.Id == userId);
-      if (user == null)
-      {
-        return null;
-      }
 
-      var battleNet = user.ExternalAccounts.FirstOrDefault(fa => fa.Provider == Shared.Enums.ExternalProvider.BattleNet);
+      var battleNet = user?.ExternalAccounts?.FirstOrDefault(fa => fa.Provider == Shared.Enums.ExternalProvider.BattleNet);
       if (battleNet == null)
       {
         return null;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
+using Alexandria.Shared.Enums;
 using NJsonSchema.Annotations;
 
 namespace Alexandria.DTO.Competition
@@ -36,5 +37,7 @@ namespace Alexandria.DTO.Competition
     public int PlayerCount { get; set; }
     [DataMember(Name = "competitionLevel")]
     public string CompetitionLevel { get; set; }
+    [DataMember(Name = "tournamentType")]
+    public TournamentType Type { get; set; }
   }
 }

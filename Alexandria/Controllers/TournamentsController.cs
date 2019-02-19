@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Alexandria.Interfaces.Services;
+using Alexandria.Shared.Enums;
 using Alexandria.Shared.ErrorKey;
-using Microsoft.AspNetCore.Http;
+using Alexandria.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Svalbard;
 
@@ -69,6 +70,28 @@ namespace Alexandria.Controllers
       }
 
       return new OperationResult<DTO.Tournament.Schedule>(result.Error);
+    }
+
+    /// <summary>
+    /// Gets the Round Robin Schedule for the Tournament
+    /// </summary>
+    /// <param name="type">round-robin</param>
+    /// <param name="tournamentId"></param>
+    /// <returns></returns>
+    [HttpGet("{tournamentId}/standings")]
+    [QueryStringConstraint("type", true, "round-robin")]
+    [ProducesResponseType(typeof(DTO.Tournament.Standing<DTO.Tournament.RoundRobinRecord>), 200)]
+    [ProducesResponseType(typeof(BaseError), 400)]
+    [ProducesResponseType(typeof(BaseError), 404)]
+    public async Task<OperationResult<DTO.Tournament.Standing<DTO.Tournament.RoundRobinRecord>>> GetRoundRobinResult([FromQuery] TournamentType type, [FromRoute] Guid tournamentId)
+    {
+      var result = await this.tournamentService.GetTournamentTable(tournamentId);
+      if (result.Success)
+      {
+        return new OperationResult<DTO.Tournament.Standing<DTO.Tournament.RoundRobinRecord>>(result.Data);
+      }
+
+      return new OperationResult<DTO.Tournament.Standing<DTO.Tournament.RoundRobinRecord>>(result.Error);
     }
   }
 }

@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Alexandria.ExternalServices.HOTSLogs;
 using Alexandria.Games.HeroesOfTheStorm.EF.Context;
 using Alexandria.Interfaces.Processing;
-using Alexandria.Shared.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
@@ -17,13 +13,12 @@ namespace Alexandria.Games.HeroesOfTheStorm.Orchestration.BackgroundServices
 {
   public class HeroesOfTheStormCronWorker : BackgroundService
   {
-    private string cronQueue;
-    private string hotslogsJobQueue;
-    private IBackgroundWorker backgroundWorker;
-    private HOTSLogsClient hotslogsClient;
-    private IServiceProvider provider;
+    private readonly string cronQueue;
+    private readonly string hotslogsJobQueue;
+    private readonly IBackgroundWorker backgroundWorker;
+    private readonly IServiceProvider provider;
 
-    public HeroesOfTheStormCronWorker(IOptions<Configuration.Queue> queues, IBackgroundWorker backgroundWorker, HOTSLogsClient hotslogsClient, IServiceProvider provider)
+    public HeroesOfTheStormCronWorker(IOptions<Configuration.Queue> queues, IBackgroundWorker backgroundWorker, IServiceProvider provider)
     {
       if (queues.Value == null)
       {
@@ -32,7 +27,6 @@ namespace Alexandria.Games.HeroesOfTheStorm.Orchestration.BackgroundServices
       this.cronQueue = queues.Value.HeroesOfTheStormCron;
       this.hotslogsJobQueue = queues.Value.HOTSLogsPull;
       this.backgroundWorker = backgroundWorker;
-      this.hotslogsClient = hotslogsClient;
       this.provider = provider;
     }
 

@@ -26,7 +26,7 @@ namespace Alexandria.Games.HeroesOfTheStorm.Controllers
     /// </summary>
     /// <param name="matchId"></param>
     /// <returns></returns>
-    //[Authorize]
+    [Authorize]
     [HttpGet("url")]
     [ProducesResponseType(typeof(Alexandria.DTO.Asset.PresignedURLResponse), 200)]
     [ProducesResponseType(typeof(void), 400)]

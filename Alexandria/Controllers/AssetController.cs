@@ -25,7 +25,7 @@ namespace Alexandria.Controllers
     }
 
     /// <summary>
-    /// Gets an Amazon S3 presigned URL that lasts 5 minutes.
+    /// Gets an Amazon S3 pre-signed URL that lasts 5 minutes.
     /// </summary>
     /// <returns></returns>
     [Authorize]

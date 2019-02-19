@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading.Tasks;
+using Alexandria.DTO.Tournament;
 using Alexandria.EF.Context;
 using Alexandria.Interfaces.Services;
 using Alexandria.Orchestration.Utils;
+using Alexandria.Orchestration.Utils.TournamentStandings;
+using Alexandria.Shared.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
@@ -322,6 +326,48 @@ namespace Alexandria.Orchestration.Services
       result.Succeed(tournamentMatchDTOs);
 
 
+      return result;
+    }
+
+    public async Task<ServiceResult<DTO.Tournament.Standing<DTO.Tournament.RoundRobinRecord>>> GetTournamentTable(Guid tournamentId)
+    {
+      var result = new ServiceResult<DTO.Tournament.Standing<DTO.Tournament.RoundRobinRecord>>();
+      var tournament = await this.alexandriaContext.Tournaments.Include(t => t.TournamentRounds)
+        .ThenInclude(tr => tr.MatchSeries)
+        .ThenInclude(ms => ms.MatchParticipants)
+        .ThenInclude(mp => mp.Team)
+        .Include(t => t.TournamentRounds)
+        .ThenInclude(tr => tr.MatchSeries)
+        .ThenInclude(ms => ms.Matches)
+        .ThenInclude(m => m.Results)
+        .ThenInclude(r => r.MatchParticipant)
+        .Include(t => t.TournamentParticipations)
+        .ThenInclude(tp => tp.Team)
+        .FirstOrDefaultAsync(t => t.Id == tournamentId);
+
+      if (tournament == null)
+      {
+        result.Error = Shared.ErrorKey.Tournament.NotFound;
+        return result;
+      }
+
+      if (tournament.Type != TournamentType.RoundRobin && tournament.Type != TournamentType.Swiss && tournament.Type != TournamentType.DoubleRoundRobin)
+      {
+        result.Error = Shared.ErrorKey.Tournament.InvalidStandingType;
+        return result;
+      }
+
+      var teams = tournament.TournamentRounds
+                            .SelectMany(tr => tr.MatchSeries)
+                            .SelectMany(ms => ms.MatchParticipants)
+                            .Select(mp => mp.Team)
+                            .Distinct()
+                            .ToList();
+
+      var standingsCalculator = new RoundRobin(tournament);
+      var standings = standingsCalculator.GetStandings();
+
+      result.Succeed(standings);
       return result;
     }
 
