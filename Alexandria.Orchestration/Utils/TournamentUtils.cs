@@ -33,8 +33,8 @@ namespace Alexandria.Orchestration.Utils
 
 
       var tournamentMatches = team.MatchParticipations.Where(mp => mp.MatchSeries.TournamentRound.TournamentId == tournamentId).Select(mp => mp.MatchSeries).Where(ms => ms.State != Shared.Enums.MatchState.Pending).ToList();
-      var wins = tournamentMatches.Where(m => m.Winner != null).Select(ms => ms.Winner).Count(mp => mp.TeamId == teamId);
-      var losses = tournamentMatches.Where(m => m.Loser != null).Select(ms => ms.Loser).Count(mp => mp.TeamId == teamId);
+      var wins = tournamentMatches.Where(m => m.Winner != null).Count(ms => ms.Winner.TeamId == team.Id);
+      var losses = tournamentMatches.Where(m => m.Loser != null).Count(ms => ms.Loser.TeamId == team.Id);
       var draws = tournamentMatches.Count() - (wins + losses);
 
       return new DTO.Tournament.TournamentRecord(wins, losses, draws);

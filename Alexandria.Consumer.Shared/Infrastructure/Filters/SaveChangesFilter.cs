@@ -2,7 +2,7 @@
 using Alexandria.EF.Context;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Alexandria.Infrastructure.Filters
+namespace Alexandria.Consumer.Shared.Infrastructure.Filters
 {
   public class SaveChangesFilter : IAsyncActionFilter
   {

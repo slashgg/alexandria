@@ -3,34 +3,23 @@ using Alexandria.Consumer.Shared.AutoMapper;
 using Alexandria.Consumer.Shared.Infrastructure.Authorization;
 using Alexandria.Consumer.Shared.Infrastructure.Filters;
 using Alexandria.EF.Context;
-using Alexandria.ExternalServices.BackgroundWorker;
-using Alexandria.ExternalServices.Mailer;
-using Alexandria.ExternalServices.Slack;
-using Alexandria.Games.HeroesOfTheStorm.EF.Context;
-using Alexandria.Infrastructure.Filters;
-using Alexandria.Interfaces;
-using Alexandria.Interfaces.Processing;
 using Alexandria.Interfaces.Services;
-using Alexandria.Orchestration.BackgroundServices;
 using Alexandria.Orchestration.Services;
-using Alexandria.Orchestration.Utils;
 using Amazon;
 using Amazon.S3;
 using Amazon.SQS;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using Newtonsoft.Json;
 using NSwag.SwaggerGeneration.Processors.Security;
 using Svalbard;
 
-namespace Alexandria
+namespace Alexandria.Admin
 {
   public class Startup
   {
@@ -46,31 +35,22 @@ namespace Alexandria
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-
       AutoMapperConfig.Initialize();
 
-      services.AddMvc(options =>
-      {
-        options.Filters.Add<SaveChangesFilter>();
-      })
-      .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-      .AddJsonOptions(options =>
-      {
-        options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
-        options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
-      });
-
-      JsonConvert.DefaultSettings = () =>
-      {
-        return new JsonSerializerSettings
+      services.AddMvc(options => { options.Filters.Add<SaveChangesFilter>(); })
+        .AddJsonOptions(options =>
         {
-          Converters = new List<JsonConverter> { new Newtonsoft.Json.Converters.StringEnumConverter() },
-        };
+          options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+          options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+        })
+       .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+      JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+      {
+        Converters = new List<JsonConverter> { new Newtonsoft.Json.Converters.StringEnumConverter() },
       };
 
-      services.AddMemoryCache();
       services.AddDefaultAWSOptions(new Amazon.Extensions.NETCore.Setup.AWSOptions { Region = RegionEndpoint.USEast1 });
-      services.AddHttpContextAccessor();
       services.AddSvalbard();
       services.Configure<Shared.Configuration.Queue>(Configuration.GetSection("Queues"));
       services.Configure<Shared.Configuration.SendGridConfig>(Configuration.GetSection("SendGrid"));
@@ -80,43 +60,7 @@ namespace Alexandria
       services.AddScoped<SaveChangesFilter>();
       services.AddAWSService<IAmazonSQS>();
       services.AddAWSService<IAmazonS3>();
-      services.AddSingleton<IBackgroundWorker, SQSBackgroundWorker>();
-      services.AddScoped<IUserUtils, UserUtils>();
-      services.AddScoped<TournamentUtils>();
-      services.AddScoped<MatchSeriesUtils>();
       services.AddScoped<IAuthorizationService, AuthorizationService>();
-      services.AddScoped<IUserProfileService, UserProfileService>();
-      services.AddScoped<ITeamService, TeamService>();
-      services.AddScoped<ITournamentService, TournamentService>();
-      services.AddScoped<ICompetitionService, CompetitionService>();
-      services.AddScoped<IFileService, FileService>();
-      services.AddScoped<IMatchService, MatchService>();
-      services.AddScoped<IPassportClient, PassportClient>();
-      services.AddScoped<IProfanityValidator, ProfanityValidator>();
-      services.AddScoped<SlackClient>();
-      services.AddScoped<ICacheBreaker, MemoryCacheBreaker>();
-
-      services.AddSingleton<IMimeMappingService>(provider =>
-      {
-        var staticProvider = new FileExtensionContentTypeProvider();
-        return new MimeMappingService(staticProvider.Mappings);
-      });
-
-      services.AddSingleton<IMailer, SendGridMailer>(provider =>
-      {
-        var accessor = provider.GetRequiredService<IOptions<Shared.Configuration.SendGridConfig>>();
-        return new SendGridMailer(accessor.Value.ApiKey);
-      });
-
-      services.AddSingleton<IContactBook, SendGridMailer>(provider =>
-      {
-        var accessor = provider.GetRequiredService<IOptions<Shared.Configuration.SendGridConfig>>();
-        return new SendGridMailer(accessor.Value.ApiKey);
-      });
-
-      services.AddHostedService<TransactionalService>();
-      services.AddHostedService<ContactSyncBackgroundService>();
-      services.AddHostedService<CronService>();
 
       var connectionString = Configuration.GetConnectionString("Alexandria");
       services.AddDbContext<AlexandriaContext>(options =>
@@ -127,37 +71,25 @@ namespace Alexandria
         });
       });
 
-      #region NeededForMigration
-      services.AddDbContext<HeroesOfTheStormContext>(options =>
-      {
-        options.UseSqlServer(connectionString, (builder) =>
-        {
-          builder.MigrationsAssembly(typeof(HeroesOfTheStormContext).Assembly.FullName);
-          builder.MigrationsHistoryTable("_EF_heroes_of_the_storm_migrations", "heroesofthestorm");
-        });
-      });
-      #endregion
-
       services.AddAuthorization(options =>
       {
-        options.DefaultPolicy = AuthorizationPolicies.Default;
-        options.AddPolicy("Backchannel", AuthorizationPolicies.Backchannel);
+        options.DefaultPolicy = AuthorizationPolicies.Admin;
       });
 
       var passportHost = Production ? "https://passport.slash.gg" : "http://localhost:52215";
 
       IdentityModelEventSource.ShowPII = true;
       services.AddAuthentication("Bearer")
-              .AddIdentityServerAuthentication(options =>
-              {
-                options.Authority = passportHost;
-                options.RequireHttpsMetadata = Production;
-                options.ApiName = "Alexandria";
-              });
+        .AddIdentityServerAuthentication(options =>
+        {
+          options.Authority = passportHost;
+          options.RequireHttpsMetadata = Production;
+          options.ApiName = "Alexandria";
+        });
 
       services.AddSwaggerDocument(options =>
       {
-        options.Title = "Alexandria";
+        options.Title = "Alexandria.Admin";
         options.Version = "1.0.0";
         options.PostProcess = settings =>
         {
@@ -182,7 +114,7 @@ namespace Alexandria
           In = NSwag.SwaggerSecurityApiKeyLocation.Header,
           Scopes = new Dictionary<string, string>
           {
-            { "@slashgg/alexandria.full_access", "Alexandria" }
+            { "@slashgg/alexandria.admin", "Alexandria" }
           }
         }));
       });

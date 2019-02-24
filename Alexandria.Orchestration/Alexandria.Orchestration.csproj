@@ -9,9 +9,9 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="8.0.0" />
-    <PackageReference Include="AWSSDK.Core" Version="3.3.31.7" />
-    <PackageReference Include="AWSSDK.S3" Version="3.3.31.15" />
-    <PackageReference Include="IdentityModel" Version="3.10.5" />
+    <PackageReference Include="AWSSDK.Core" Version="3.3.31.10" />
+    <PackageReference Include="AWSSDK.S3" Version="3.3.31.18" />
+    <PackageReference Include="IdentityModel" Version="3.10.6" />
     <PackageReference Include="Sentry" Version="1.1.2" />
     <PackageReference Include="Svalbard" Version="1.4.2" />
   </ItemGroup>

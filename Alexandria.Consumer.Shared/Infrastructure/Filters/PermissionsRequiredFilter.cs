@@ -9,7 +9,7 @@ using Alexandria.Shared.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Alexandria.Infrastructure.Filters
+namespace Alexandria.Consumer.Shared.Infrastructure.Filters
 {
   public class PermissionsRequiredAttribute : Attribute, IAsyncAuthorizationFilter
   {

@@ -27,6 +27,28 @@ namespace Alexandria.EF.Models
     public virtual ICollection<MatchSeriesScheduleRequest> ScheduleRequests { get; set; }
 
     [NotMapped]
+    public MatchOutcomeState Outcome
+    {
+      get
+      {
+        var participantResults = this.Matches.SelectMany(m => m.Results).GroupBy(m => m.MatchParticipantId);
+
+        var standardWinCount = participantResults.FirstOrDefault()?.Count(r => r.MatchOutcome == MatchOutcome.Win);
+        if (standardWinCount == null)
+        {
+          return MatchOutcomeState.NotYetPlayed;
+        }
+
+        if (participantResults.All(prg => prg.Count(r => r.MatchOutcome == MatchOutcome.Win) == standardWinCount.Value))
+        {
+          return MatchOutcomeState.Draw;
+        }
+
+        return MatchOutcomeState.Determined;
+      }
+    }
+
+    [NotMapped]
     public MatchParticipant Winner
     {
       get
@@ -35,6 +57,12 @@ namespace Alexandria.EF.Models
         {
           return null;
         }
+
+        if (this.Outcome == MatchOutcomeState.Draw)
+        {
+          return null;
+        }
+
         var wins = this.Matches.SelectMany(m => m.Winners);
         var participants = wins.GroupBy(w => w.MatchParticipantId).OrderByDescending(mpig => mpig.Count());
         var winnerGroup = participants.FirstOrDefault();
@@ -53,6 +81,12 @@ namespace Alexandria.EF.Models
         {
           return null;
         }
+
+        if (this.Outcome == MatchOutcomeState.Draw)
+        {
+          return null;
+        }
+
         var losses = this.Matches.SelectMany(m => m.Losers);
         var participants = losses.GroupBy(w => w.MatchParticipantId).OrderByDescending(mpig => mpig.Count());
         var loserGroups = participants.FirstOrDefault();

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using Alexandria.Consumer.Shared.Infrastructure.Filters;
 using Alexandria.Interfaces.Services;
 using Alexandria.Shared.Enums;
 using Alexandria.Shared.ErrorKey;
-using Alexandria.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Svalbard;
 

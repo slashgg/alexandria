@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Alexandria.Consumer.Shared.Infrastructure.Filters;
 using Alexandria.Shared.Infrastructure;
 using Alexandria.Infrastructure.Filters;
 using Alexandria.Interfaces.Services;

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Primitives;
 
-namespace Alexandria.Utils
+namespace Alexandria.Consumer.Shared.Infrastructure.Filters
 {
   public class QueryStringConstraintAttribute : ActionMethodSelectorAttribute
   {
