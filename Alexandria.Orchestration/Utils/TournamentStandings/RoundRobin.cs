@@ -83,10 +83,10 @@ namespace Alexandria.Orchestration.Utils.TournamentStandings
         var drawPointsMultiplier = tournament.Settings?.RoundRobinDrawPoints ?? 0;
         var lossPointsMultiplier = tournament.Settings?.RoundRobinLossPoints ?? 0;
         var matchSeriesPlayed = wins + draws + losses;
-        decimal winPercentage = 1;
-        if ((wins + losses) > 0)
+        decimal winPercentage = 0;
+        if ((matchSeriesPlayed) > 0)
         {
-          winPercentage = decimal.Round(Convert.ToDecimal(wins) / Convert.ToDecimal(wins + losses), 3);
+          winPercentage = decimal.Round(Convert.ToDecimal(wins + (draws * 0.5M)) / Convert.ToDecimal(matchSeriesPlayed), 3);
         }
 
         var roundRobinResult = new DTO.Tournament.RoundRobinRecord

@@ -64,6 +64,9 @@ namespace Alexandria.EF.Context
                                    .WithOne(tr => tr.Competition)
                                    .HasForeignKey(tr => tr.CompetitionId);
 
+      builder.Entity<Competition>().HasOne(c => c.DefaultRole);
+      builder.Entity<Competition>().HasOne(c => c.TeamOwnerRole);
+
       builder.Entity<Game>().HasOne(g => g.GameExternalUserNameGenerator).WithOne(geung => geung.Game);
 
       builder.Entity<Team>().HasIndex(b => b.Slug);

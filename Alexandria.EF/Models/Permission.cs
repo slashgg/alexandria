@@ -28,5 +28,18 @@ namespace Alexandria.EF.Models
       this.ARN = ARN;
       this.UserProfileId = userProfileId;
     }
+
+    public Guid GetResourceId()
+    {
+      var parts = this.ARN.Split("::", StringSplitOptions.RemoveEmptyEntries);
+      var resourceId = Guid.Empty;
+
+      foreach (var part in parts)
+      {
+        Guid.TryParse(part, out resourceId);
+      }
+
+      return resourceId;
+    }
   }
 }

@@ -23,6 +23,9 @@ namespace Alexandria.Orchestration.Mapper
         .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserProfile.UserName))
         .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email));
 
+      this.CreateMap<EF.Models.TeamRole, DTO.Team.Role>()
+        .ForMember(dest => dest.Owner, opt => opt.MapFrom((src) => src.Competition.OwnerRoleId == src.Id));
+
       this.CreateMap<EF.Models.Competition, DTO.Team.Detail.CompetitionData>();
     }
   }

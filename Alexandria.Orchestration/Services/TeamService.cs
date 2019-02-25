@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -465,6 +466,28 @@ namespace Alexandria.Orchestration.Services
       result.Succeed();
 
 
+      return result;
+    }
+
+    public async Task<ServiceResult<List<DTO.Team.Role>>> GetAvailableRoles(Guid teamId)
+    {
+      var result = new ServiceResult<List<DTO.Team.Role>>();
+
+      var team = await this.context.Teams.Include(t => t.Competition)
+        .ThenInclude(c => c.TeamRoles)
+        .ThenInclude(tr => tr.Competition)
+        .FirstOrDefaultAsync(t => t.Id == teamId);
+
+      if (team == null)
+      {
+        result.Error = Shared.ErrorKey.Team.TeamNotFound;
+        return result;
+      }
+
+      var roles = team.Competition.TeamRoles;
+      var rolesDTO = roles.Select(AutoMapper.Mapper.Map<DTO.Team.Role>).ToList();
+
+      result.Succeed(rolesDTO);
       return result;
     }
 
