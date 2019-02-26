@@ -91,6 +91,7 @@ namespace Alexandria
       services.AddScoped<ICompetitionService, CompetitionService>();
       services.AddScoped<IFileService, FileService>();
       services.AddScoped<IMatchService, MatchService>();
+      services.AddScoped<IGameCastingService, GameCastingService>();
       services.AddScoped<IPassportClient, PassportClient>();
       services.AddScoped<IProfanityValidator, ProfanityValidator>();
       services.AddScoped<SlackClient>();

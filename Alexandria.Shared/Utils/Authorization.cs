@@ -6,6 +6,12 @@ namespace Alexandria.Shared.Utils
 {
   public static class AuthorizationHelper
   {
+    public static string GetResourceName(Type type)
+    {
+      var resourceAttribute = (ProtectedResourceAttribute)Attribute.GetCustomAttribute(type, typeof(ProtectedResourceAttribute));
+      return resourceAttribute?.Name;
+    }
+
     public static string GenerateARN(Type type, string resourceId, string permission)
     {
       var resourceAttribute = (ProtectedResourceAttribute)Attribute.GetCustomAttribute(type, typeof(ProtectedResourceAttribute));
@@ -27,7 +33,7 @@ namespace Alexandria.Shared.Utils
 
       var permissionValue = permission.GetStringValue();
 
-      return $"{resourceAttribute}::{resourceId}::{permissionValue}";
+      return $"{resourceAttribute.Name}::{resourceId}::{permissionValue}";
     }
 
     public static string GenerateARN(object obj, string permission)

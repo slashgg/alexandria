@@ -247,7 +247,7 @@ namespace Alexandria.Orchestration.Services
                                                                                .ThenInclude(t => t.Competition)
                                                                                .Where(tp => tournamentIds.Contains(tp.TournamentId) && tp.State == Shared.Enums.TournamentParticipationState.Participating)
                                                                                .ToListAsync();
-        cache.SetAbsoluteExpiration(DateTimeOffset.UtcNow.AddHours(1));
+        cache.SetAbsoluteExpiration(DateTimeOffset.UtcNow.AddMinutes(15));
 
         var dto = tournamentParticipations.Select(AutoMapper.Mapper.Map<DTO.Tournament.TeamParticipation>).ToList();
         return dto;
@@ -265,7 +265,7 @@ namespace Alexandria.Orchestration.Services
       {
         var rounds = await alexandriaContext.TournamentRounds.Where(tr => tr.TournamentId == tournamentId).ToListAsync();
 
-        cache.SetAbsoluteExpiration(DateTimeOffset.UtcNow.AddHours(1));
+        cache.SetAbsoluteExpiration(DateTimeOffset.UtcNow.AddMinutes(15));
 
         var dtos = rounds.Select(AutoMapper.Mapper.Map<DTO.Tournament.RoundDetail>).ToList();
         return dtos;
@@ -396,7 +396,7 @@ namespace Alexandria.Orchestration.Services
           recordVault.TryAdd(teamId, record);
         }
 
-        cache.SetAbsoluteExpiration(DateTimeOffset.UtcNow.AddMinutes(30));
+        cache.SetAbsoluteExpiration(DateTimeOffset.UtcNow.AddMinutes(15));
         var rounds = tournamentRounds.Select(r => AutoMapper.Mapper.Map<DTO.Tournament.ScheduleRound>(r, ctx => ctx.Items.Add("RecordVault", recordVault))).ToList();
         return rounds;
       });

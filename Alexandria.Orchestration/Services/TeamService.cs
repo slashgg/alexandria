@@ -546,7 +546,8 @@ namespace Alexandria.Orchestration.Services
         }
       }
 
-      var creatorRole = await this.context.TeamRoles.FirstOrDefaultAsync(r => r.CompetitionId == competitionId && r.Permissions.Count == 1 && r.Permissions.Contains("*"));
+      var competition = await this.context.Competitions.Include(c => c.TeamOwnerRole).FirstOrDefaultAsync(c => c.Id == competitionId);
+      var creatorRole = competition?.TeamOwnerRole;
       if (creatorRole == null)
       {
         throw new NoNullAllowedException("Role cannot be null");

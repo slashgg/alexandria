@@ -66,11 +66,29 @@ namespace Alexandria.Orchestration.Services
 
     public async Task RemovePermission(Guid userId, IList<string> permissions)
     {
-      var permissonModels = await alexandriaContext.Permissions.Where(p => p.Id == userId && permissions.Contains(p.ARN)).ToListAsync();
-      if (permissonModels.Any())
+      var permissionModel = await alexandriaContext.Permissions.Where(p => p.Id == userId && permissions.Contains(p.ARN)).ToListAsync();
+      if (permissionModel.Any())
       {
-        this.alexandriaContext.RemoveRange(permissonModels);
+        this.alexandriaContext.RemoveRange(permissionModel);
       }
+    }
+
+    public async Task<List<Guid>> GetAvailableResources<T>(Guid userId, string permission)
+    {
+      var resourceName = AuthorizationHelper.GetResourceName(typeof(T));
+      if (resourceName == null)
+      {
+        return new List<Guid>();
+      }
+
+      var permissions =  await this.alexandriaContext.Permissions
+        .Where(p => p.UserProfileId == userId)
+        .Where(p => Microsoft.EntityFrameworkCore.EF.Functions.Like(p.ARN, $"{resourceName}::%::{permission}") || Microsoft.EntityFrameworkCore.EF.Functions.Like(p.ARN, $"{resourceName}::%::*"))
+        .Where(p => !Microsoft.EntityFrameworkCore.EF.Functions.Like(p.ARN, $"{resourceName}::*::{permission}") && !Microsoft.EntityFrameworkCore.EF.Functions.Like(p.ARN, $"{resourceName}::*::*"))
+        .ToListAsync();
+
+      var resources = permissions.Select(p => p.GetResourceId()).ToList();
+      return resources;
     }
   }
 }

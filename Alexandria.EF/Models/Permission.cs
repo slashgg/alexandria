@@ -36,7 +36,10 @@ namespace Alexandria.EF.Models
 
       foreach (var part in parts)
       {
-        Guid.TryParse(part, out resourceId);
+        if (Guid.TryParse(part, out resourceId))
+        {
+          break;
+        }
       }
 
       return resourceId;

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Alexandria.Shared.Utils;
 
 namespace Alexandria.EF.Models
 {
+  [ProtectedResource("competition")]
   public class Competition : BaseEntity
   {
     [MaxLength(100)]

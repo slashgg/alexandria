@@ -64,8 +64,4 @@
     <ProjectReference Include="..\Alexandria.Shared\Alexandria.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\Casting\" />
-  </ItemGroup>
-
 </Project>

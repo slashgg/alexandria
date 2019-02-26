@@ -41,6 +41,9 @@ namespace Alexandria.EF.Context
     public DbSet<ExternalUserName> ExternalUserName { get; set; }
     public DbSet<GameExternalUserNameGenerator> GameUserNameGenerators { get; set; }
     public DbSet<ExternalUserNameGenerator> ExternalUserNameGenerators { get; set; }
+    public DbSet<MatchSeriesCasting> MatchSeriesCastings { get; set; }
+    public DbSet<MatchSeriesCastingParticipation> MatchSeriesCastingParticipants { get; set; }
+    public DbSet<MatchSeriesCastingClaim> MatchSeriesCastingClaims { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

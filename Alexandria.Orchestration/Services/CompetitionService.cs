@@ -78,7 +78,7 @@ namespace Alexandria.Orchestration.Services
         }
 
         var dto = AutoMapper.Mapper.Map<DTO.Competition.Detail>(competition);
-        cache.SetAbsoluteExpiration(DateTimeOffset.UtcNow.AddHours(1));
+        cache.SetAbsoluteExpiration(DateTimeOffset.UtcNow.AddMinutes(15));
         return dto;
       });
 
@@ -105,7 +105,7 @@ namespace Alexandria.Orchestration.Services
                                                             .Where(c => c.Active).ToListAsync();
 
         var dtos = competitions.Select(AutoMapper.Mapper.Map<DTO.Competition.Detail>).ToList();
-        cache.SetAbsoluteExpiration(DateTimeOffset.UtcNow.AddHours(1));
+        cache.SetAbsoluteExpiration(DateTimeOffset.UtcNow.AddMinutes(15));
         return dtos;
       });
 

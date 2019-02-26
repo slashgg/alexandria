@@ -7,6 +7,8 @@ namespace Alexandria.Orchestration.Mapper.Competition
   {
     public CompetitionProfile()
     {
+      CreateMap<EF.Models.Competition, DTO.Competition.Info>();
+
       CreateMap<EF.Models.Competition, DTO.Competition.Detail>()
         .ForMember(dest => dest.RulesSlug, opt => opt.MapFrom(src => src.RulesSlug))
         .ForMember(dest => dest.TeamCount, opt => opt.MapFrom(src => src.Teams.Count(t => t.TeamState == Shared.Enums.TeamState.Active)))
