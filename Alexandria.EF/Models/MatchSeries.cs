@@ -108,5 +108,15 @@ namespace Alexandria.EF.Models
     {
       return this.MatchParticipants.FirstOrDefault(mp => mp.TeamId.Equals(teamId));
     }
+
+    public void StakeCastingClaim(Guid userId)
+    {
+      this.MatchSeriesCastingClaims.Add(new MatchSeriesCastingClaim(userId));
+    }
+
+    public void StakeCastingClaim(MatchSeriesCastingClaim claim)
+    {
+      this.MatchSeriesCastingClaims.Add(claim);
+    }
   }
 }

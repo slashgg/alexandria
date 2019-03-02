@@ -18,5 +18,20 @@ namespace Alexandria.EF.Models
     public virtual UserProfile UserProfile { get; set; }
     [ForeignKey("MatchSeriesId")]
     public virtual MatchSeries MatchSeries { get; set; }
+
+    public MatchSeriesCastingClaim()
+    {
+    }
+
+    public MatchSeriesCastingClaim(Guid userId)
+    {
+      this.UserProfileId = userId;
+    }
+
+    public MatchSeriesCastingClaim(Guid userId, Guid matchSeriesId)
+    {
+      this.UserProfileId = userId;
+      this.MatchSeriesId = matchSeriesId;
+    }
   }
 }

@@ -84,6 +84,7 @@ namespace Alexandria
       services.AddScoped<IUserUtils, UserUtils>();
       services.AddScoped<TournamentUtils>();
       services.AddScoped<MatchSeriesUtils>();
+      services.AddScoped<CastingUtils>();
       services.AddScoped<IAuthorizationService, AuthorizationService>();
       services.AddScoped<IUserProfileService, UserProfileService>();
       services.AddScoped<ITeamService, TeamService>();

@@ -1,4 +1,5 @@
-﻿using Alexandria.Orchestration.Mapper.Competition;
+﻿using Alexandria.Orchestration.Mapper.Casting;
+using Alexandria.Orchestration.Mapper.Competition;
 using Alexandria.Orchestration.Mapper.Game;
 using Alexandria.Orchestration.Mapper.Marketing;
 using Alexandria.Orchestration.Mapper.MatchSeries;
@@ -21,6 +22,7 @@ namespace Alexandria.Orchestration.Mapper
       cfg.AddProfile<GameProfile>();
       cfg.AddProfile<UtilityProfile>();
       cfg.AddProfile<MatchSeriesProfile>();
+      cfg.AddProfile<CastingProfile>();
     }
   }
 }

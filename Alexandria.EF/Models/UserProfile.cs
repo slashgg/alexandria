@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Alexandria.Shared.Enums;
 
 namespace Alexandria.EF.Models
 {
@@ -66,6 +67,17 @@ namespace Alexandria.EF.Models
     public ExternalUserName GetUserNameForGame(Guid gameId)
     {
       return this.ExternalUserNames.FirstOrDefault(eun => eun.GameId == gameId);
+    }
+
+    public ExternalAccount GetExternalAccount(ExternalProvider provider)
+    {
+      return this.ExternalAccounts.FirstOrDefault(ea => ea.Provider == provider);
+    }
+
+    public bool TryGetExternalAccount(ExternalProvider provider, out ExternalAccount account)
+    {
+      account = this.ExternalAccounts.FirstOrDefault(ea => ea.Provider == provider);
+      return account != null;
     }
   }
 }
