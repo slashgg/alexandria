@@ -1,11 +1,12 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using Alexandria.Interfaces;
 using Alexandria.Shared.Utils;
 
 namespace Alexandria.EF.Models
 {
-  public class BaseEntity
+  public class BaseEntity : IBaseEntity
   {
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();

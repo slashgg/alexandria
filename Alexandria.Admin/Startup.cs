@@ -3,8 +3,13 @@ using Alexandria.Consumer.Shared.AutoMapper;
 using Alexandria.Consumer.Shared.Infrastructure.Authorization;
 using Alexandria.Consumer.Shared.Infrastructure.Filters;
 using Alexandria.EF.Context;
+using Alexandria.ExternalServices.BackgroundWorker;
+using Alexandria.ExternalServices.Slack;
+using Alexandria.Interfaces.Processing;
 using Alexandria.Interfaces.Services;
 using Alexandria.Orchestration.Services;
+using Alexandria.Orchestration.Services.Admin;
+using Alexandria.Orchestration.Utils;
 using Amazon;
 using Amazon.S3;
 using Amazon.SQS;
@@ -60,7 +65,13 @@ namespace Alexandria.Admin
       services.AddScoped<SaveChangesFilter>();
       services.AddAWSService<IAmazonSQS>();
       services.AddAWSService<IAmazonS3>();
+      services.AddSingleton<IBackgroundWorker, SQSBackgroundWorker>();
+      services.AddScoped<IPassportClient, PassportClient>();
+      services.AddScoped<IProfanityValidator, ProfanityValidator>();
+      services.AddScoped<SlackClient>();
       services.AddScoped<IAuthorizationService, AuthorizationService>();
+      services.AddScoped<IUserProfileService, UserProfileService>();
+      services.AddScoped<AdminCompetitionService>();
 
       var connectionString = Configuration.GetConnectionString("Alexandria");
       services.AddDbContext<AlexandriaContext>(options =>
@@ -84,7 +95,7 @@ namespace Alexandria.Admin
         {
           options.Authority = passportHost;
           options.RequireHttpsMetadata = Production;
-          options.ApiName = "Alexandria";
+          options.ApiName = "Alexandria.Admin";
         });
 
       services.AddSwaggerDocument(options =>

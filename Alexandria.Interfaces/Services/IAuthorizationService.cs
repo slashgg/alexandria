@@ -12,6 +12,13 @@ namespace Alexandria.Interfaces.Services
     Task RemovePermission(Guid userId, string permission);
     Task AddPermission(Guid userId, IList<string> permissions);
     Task RemovePermission(Guid userId, IList<string> permissions);
-    Task<List<Guid>> GetAvailableResources<T>(Guid userId, string permission);
+    Task RemovePermissionForResource(IBaseEntity resource);
+    Task RemovePermissionForResource(IBaseEntity resource, Guid userId);
+
+    Task<List<Guid>> GetAvailableResources<T>(Guid userId, string permission, bool includeWildcard = false)
+      where T : class, IBaseEntity;
+
+    Task<List<Guid>> GetAvailableResources<T>(Guid userId, string permission, string permissionNamespace,
+      bool includeWildcard = false) where T : class, IBaseEntity;
   }
 }

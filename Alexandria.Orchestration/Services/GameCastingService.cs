@@ -135,7 +135,7 @@ namespace Alexandria.Orchestration.Services
         .Include(msc => msc.MatchSeriesCastingParticipants)
         .ThenInclude(mscp => mscp.UserProfile)
         .Where(msc => msc.MatchSeriesCastingParticipants.Any(mscp => mscp.UserProfileId == userId))
-        .Where(msc => msc.MatchSeries.State == MatchState.Pending)
+        .OrderByDescending(msc => msc.StartsAt)
         .ToListAsync();
 
       var castingDTOs = castings.Select(AutoMapper.Mapper.Map<DTO.Casting.Cast>).ToList();
@@ -258,6 +258,23 @@ namespace Alexandria.Orchestration.Services
       return result;
     }
 
+    public async Task<ServiceResult> DeleteGameCast(Guid gameCastId)
+    {
+      var result = new ServiceResult();
+      var cast = await this.alexandriaContext.MatchSeriesCastings.Include(msc => msc.MatchSeriesCastingParticipants)
+        .FirstOrDefaultAsync(msc => msc.Id == gameCastId);
+      if (cast == null)
+      {
+        result.Error = Shared.ErrorKey.Casting.CastNotFound;
+        return result;
+      }
+
+      await DangerouslyDeleteGameCast(cast);
+      result.Succeed();
+
+      return result;
+    }
+
 
     private async Task DangerouslyAddCastingClaim(MatchSeries series, Guid userId)
     {
@@ -301,6 +318,13 @@ namespace Alexandria.Orchestration.Services
       this.alexandriaContext.MatchSeriesCastings.Update(cast);
 
       return cast;
+    }
+
+    private async Task DangerouslyDeleteGameCast(MatchSeriesCasting cast)
+    {
+      await this.authorizationService.RemovePermissionForResource(cast);
+      alexandriaContext.MatchSeriesCastingParticipants.RemoveRange(cast.MatchSeriesCastingParticipants);
+      alexandriaContext.MatchSeriesCastings.Remove(cast);
     }
   }
 }

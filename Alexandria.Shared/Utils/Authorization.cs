@@ -12,7 +12,7 @@ namespace Alexandria.Shared.Utils
       return resourceAttribute?.Name;
     }
 
-    public static string GenerateARN(Type type, string resourceId, string permission)
+    public static string GenerateARN(Type type, string resourceId, string permission, string permissionNamespace = null)
     {
       var resourceAttribute = (ProtectedResourceAttribute)Attribute.GetCustomAttribute(type, typeof(ProtectedResourceAttribute));
       if (resourceAttribute == null)
@@ -20,7 +20,13 @@ namespace Alexandria.Shared.Utils
         throw new NoNullAllowedException("This Class is not a protected resource");
       }
 
-      return $"{resourceAttribute.Name}::{resourceId}::{permission}";
+      var ARN = $"{resourceAttribute.Name}::{resourceId}::{permission}";
+      if (permissionNamespace != null)
+      {
+        ARN = $"{permissionNamespace}::{ARN}";
+      }
+
+      return ARN;
     }
 
     public static string GenerateARN(Type type, string resourceId, Enum permission)

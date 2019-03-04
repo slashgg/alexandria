@@ -12,7 +12,7 @@ namespace Alexandria.Interfaces.Services
     Task<ServiceResult<DTO.UserProfile.Detail>> GetUserProfileDetail(Guid userId);
     Task<ServiceResult> CreateAccount(DTO.UserProfile.Create account);
     Task<ServiceResult<IList<DTO.UserProfile.TeamInvite>>> GetTeamInvites(Guid userId);
-    Task<ServiceResult<IList<string>>> GetPermissions(Guid userId);
+    Task<ServiceResult<IList<string>>> GetPermissions(Guid userId, string permissionNamespace = null);
     Task<ServiceResult<List<ConnectionDetail>>> GetConnections(Guid userId);
     Task<ServiceResult> CreateConnection(CreateConnection createDto);
     Task<ServiceResult> DeleteConnection(string connectionId);

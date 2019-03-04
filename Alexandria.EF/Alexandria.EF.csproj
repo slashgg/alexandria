@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Alexandria.Interfaces\Alexandria.Interfaces.csproj" />
     <ProjectReference Include="..\Alexandria.Shared\Alexandria.Shared.csproj" />
   </ItemGroup>
 

@@ -104,5 +104,28 @@ namespace Alexandria.Controllers.Casting
 
       return new OperationResult(result.Error);
     }
+
+
+    /// <summary>
+    /// Deletes a given game cast
+    /// </summary>
+    /// <param name="castId"></param>
+    /// <returns></returns>
+    [ProducesResponseType(204)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(typeof(BaseError), 404)]
+    [HttpDelete("{castId}")]
+    [PermissionsRequired("match-series-casting::{castId}::delete")]
+    [Authorize]
+    public async Task<OperationResult> DeleteGameCast([FromRoute] Guid castId)
+    {
+      var result = await this.gameCastingService.DeleteGameCast(castId);
+      if (result.Success)
+      {
+        return new OperationResult(204);
+      }
+
+      return new OperationResult(result.Error);
+    }
   }
 }

@@ -17,5 +17,6 @@ namespace Alexandria.Interfaces.Services
     Task<ServiceResult> CreateGameCast(Guid userId, DTO.Casting.CreateCastData castData);
     Task<ServiceResult> UpdateGameCast(Guid gameCastId, DTO.Casting.UpdateGameCast castData);
     Task<ServiceResult> RemoveClaim(Guid claimId);
+    Task<ServiceResult> DeleteGameCast(Guid gameCastId);
   }
 }

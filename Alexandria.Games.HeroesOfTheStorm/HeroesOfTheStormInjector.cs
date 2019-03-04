@@ -34,6 +34,7 @@ namespace Alexandria.Games.HeroesOfTheStorm
         var envConfigPath = Directory.GetParent(builderCtx.HostingEnvironment.ContentRootPath).FullName;
         var envConfigFile = Path.Combine(envConfigPath, "Alexandria.Games.HeroesOfTheStorm", $"appsettings.{builderCtx.HostingEnvironment.EnvironmentName}.json");
 
+
         config.AddJsonFile(envConfigFile, optional: true);
         if (secrets.Any())
         {
@@ -60,9 +61,14 @@ namespace Alexandria.Games.HeroesOfTheStorm
         services.Configure<Configuration.Queue>(builderCtx.Configuration.GetSection("HeroesOfTheStormQueues"));
         services.AddSingleton<HOTSLogsClient>();
         services.AddScoped<HeroesOfTheStormMatchService>();
-        services.AddHostedService<HeroesOfTheStormCronWorker>();
-        services.AddHostedService<HOTSLogsMMRPullBackgroundService>();
         services.AddScoped<HeroesOfTheStormSaveChangesFilter>();
+
+        var backgroundServiceEnabled = builderCtx.Configuration.GetSection("BackgroundServices").GetValue<bool>("Enabled");
+        if (backgroundServiceEnabled)
+        {
+          services.AddHostedService<HeroesOfTheStormCronWorker>();
+          services.AddHostedService<HOTSLogsMMRPullBackgroundService>();
+        }
       });
     }
   }

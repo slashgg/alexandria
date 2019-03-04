@@ -81,10 +81,15 @@ namespace Alexandria.Orchestration.Services
       return result;
     }
 
-    public async Task<ServiceResult<IList<string>>> GetPermissions(Guid userId)
+    public async Task<ServiceResult<IList<string>>> GetPermissions(Guid userId, string permissionNamespace = null)
     {
       var result = new ServiceResult<IList<string>>();
-      var permissions = await context.Permissions.Where(p => p.UserProfileId == userId).Select(p => p.ARN).ToListAsync();
+      var permissionsQuery = context.Permissions.Where(p => p.UserProfileId == userId);
+      if (permissionNamespace != null)
+      {
+        permissionsQuery = permissionsQuery.Where(p => p.ARN.StartsWith($"{permissionNamespace}::"));
+      }
+      var permissions = await permissionsQuery.Select(p => p.ARN).ToListAsync();
 
       result.Succeed(permissions);
       return result;
