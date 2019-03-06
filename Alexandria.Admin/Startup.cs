@@ -52,8 +52,10 @@ namespace Alexandria.Admin
 
       JsonConvert.DefaultSettings = () => new JsonSerializerSettings
       {
-        Converters = new List<JsonConverter> { new Newtonsoft.Json.Converters.StringEnumConverter() },
+        Converters = new List<JsonConverter> {new Newtonsoft.Json.Converters.StringEnumConverter()},
       };
+
+      services.AddMemoryCache();
 
       services.AddDefaultAWSOptions(new Amazon.Extensions.NETCore.Setup.AWSOptions { Region = RegionEndpoint.USEast1 });
       services.AddSvalbard();
@@ -68,6 +70,7 @@ namespace Alexandria.Admin
       services.AddSingleton<IBackgroundWorker, SQSBackgroundWorker>();
       services.AddScoped<IPassportClient, PassportClient>();
       services.AddScoped<IProfanityValidator, ProfanityValidator>();
+      services.AddScoped<ICompetitionService, CompetitionService>();
       services.AddScoped<SlackClient>();
       services.AddScoped<IAuthorizationService, AuthorizationService>();
       services.AddScoped<IUserProfileService, UserProfileService>();

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Alexandria.DTO.Competition;
+using Alexandria.Interfaces.Services;
 using Alexandria.Orchestration.Services.Admin;
 using Alexandria.Shared.Extensions;
 using Microsoft.AspNetCore.Http;
@@ -15,10 +17,12 @@ namespace Alexandria.Admin.Controllers.Competitions
   public class CompetitionsController : AdminController
   {
     private readonly AdminCompetitionService adminCompetitionService;
+    private readonly ICompetitionService competitionService;
 
-    public CompetitionsController(AdminCompetitionService adminCompetitionService)
+    public CompetitionsController(AdminCompetitionService adminCompetitionService, ICompetitionService competitionService)
     {
       this.adminCompetitionService = adminCompetitionService;
+      this.competitionService = competitionService;
     }
 
     [ProducesResponseType(typeof(IList<DTO.Competition.Info>), 200)]
@@ -28,6 +32,15 @@ namespace Alexandria.Admin.Controllers.Competitions
     {
       var result = await this.adminCompetitionService.GetCompetitionsAvailableToUser(HttpContext.GetUserId().Value);
       return new OperationResult<IList<DTO.Competition.Info>>(result.Data);
+    }
+
+    [ProducesResponseType(typeof(IList<DTO.Competition.CompetitionLevel>), 200)]
+    [ProducesResponseType(401)]
+    [HttpGet("levels")]
+    public async Task<OperationResult<IList<DTO.Competition.CompetitionLevel>>> GetCompetitionLevels()
+    {
+      var result = await this.competitionService.GetCompetitionLevels();
+      return new OperationResult<IList<CompetitionLevel>>(result.Data);
     }
   }
 }
