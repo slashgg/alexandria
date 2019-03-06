@@ -12,5 +12,7 @@ namespace Alexandria.DTO.Competition
     public Guid Id { get; set; }
     [DataMember(Name = "name")]
     public string Name { get; set; }
+    [DataMember(Name = "slug")]
+    public string Slug { get; set; }
   }
 }
