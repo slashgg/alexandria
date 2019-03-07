@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Alexandria.EF.Context;
 using Alexandria.EF.Models;
+using Alexandria.Interfaces.Processing;
 using Alexandria.Interfaces.Services;
 using Alexandria.Shared.Enums;
 using Alexandria.Shared.Permissions;
@@ -21,11 +22,13 @@ namespace Alexandria.Orchestration.Services
   {
     private readonly AlexandriaContext alexandriaContext;
     private readonly IAuthorizationService authorizationService;
+    private readonly ICacheBreaker cacheBreaker;
 
-    public GameCastingService(AlexandriaContext alexandriaContext, IAuthorizationService authorizationService)
+    public GameCastingService(AlexandriaContext alexandriaContext, IAuthorizationService authorizationService, ICacheBreaker cacheBreaker)
     {
       this.alexandriaContext = alexandriaContext;
       this.authorizationService = authorizationService;
+      this.cacheBreaker = cacheBreaker;
     }
 
     public async Task<ServiceResult<DTO.Casting.CasterMetaData>> GetCasterMetaData(Guid userId)
@@ -214,6 +217,7 @@ namespace Alexandria.Orchestration.Services
       }
 
       var matchSeries = await this.alexandriaContext.MatchSeries
+        .Include(ms => ms.TournamentRound)
         .Include(ms => ms.MatchSeriesCastings)
         .Include(ms => ms.MatchSeriesCastingClaims)
         .FirstOrDefaultAsync(ms => ms.Id == castData.MatchSeriesId);
@@ -236,6 +240,7 @@ namespace Alexandria.Orchestration.Services
       }
 
       var cast = await this.DangerouslyCreateGameCast(userId, castData);
+      this.cacheBreaker.Break(Shared.Cache.Tournament.Schedule(matchSeries.TournamentRound.TournamentId));
       result.Succeed();
 
       return result;

@@ -15,5 +15,7 @@ namespace Alexandria.DTO.Tournament
 
     [DataMember(Name = "participants")]
     public new List<MatchSeriesParticipant> Participants { get; set; } = new List<MatchSeriesParticipant>();
+    [DataMember(Name = "cast")]
+    public DTO.Casting.Cast GameCast { get; set; }
   }
 }

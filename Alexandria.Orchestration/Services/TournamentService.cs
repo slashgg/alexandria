@@ -310,6 +310,9 @@ namespace Alexandria.Orchestration.Services
                                                             .ThenInclude(mp => mp.Team)
                                                             .Include(ms => ms.Matches)
                                                             .ThenInclude(m => m.Results)
+                                                            .Include(ms => ms.MatchSeriesCastings)
+                                                            .ThenInclude(msc => msc.MatchSeriesCastingParticipants)
+                                                            .ThenInclude(mscp => mscp.UserProfile)
                                                             .Where(ms => ms.MatchParticipants.Any(mp => mp.TeamId == teamId))
                                                             .Where(ms => tournaments.Any(t => ms.TournamentRound.TournamentId == t))
                                                             .ToListAsync();
@@ -382,6 +385,10 @@ namespace Alexandria.Orchestration.Services
                                                                             .Include(tr => tr.MatchSeries)
                                                                             .ThenInclude(ms => ms.Matches)
                                                                             .ThenInclude(m => m.Results)
+                                                                            .Include(tr => tr.MatchSeries)
+                                                                            .ThenInclude(ms => ms.MatchSeriesCastings)
+                                                                            .ThenInclude(msc => msc.MatchSeriesCastingParticipants)
+                                                                            .ThenInclude(mscp => mscp.UserProfile)
                                                                             .Where(tr => tr.TournamentId == tournamentId)
                                                                             .ToListAsync();
 
