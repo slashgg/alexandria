@@ -235,7 +235,7 @@ namespace Alexandria.Orchestration.Services
         castData.StartsAt = matchSeries.ScheduledAt;
       }
 
-      var cast = this.DangerouslyCreateGameCast(userId, castData);
+      var cast = await this.DangerouslyCreateGameCast(userId, castData);
       result.Succeed();
 
       return result;
