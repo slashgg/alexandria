@@ -12,13 +12,13 @@ namespace Alexandria.DTO.Admin.Competition
   [JsonSchema("AdminCompetitionCreate")]
   public class CreateData
   {
-    [Required, EFUnique("Competitions", "Name", typeof(string))]
+    [Required, EFUnique("Competitions", "Name")]
     [DataMember(Name = "name")]
     public string Name { get; set; }
-    [Required, EFUnique("Competitions", "Slug", typeof(string))]
+    [Required, EFUnique("Competitions", "Slug")]
     [DataMember(Name = "slug")]
     public string Slug { get; set; }
-    [Required, EFUnique("Competitions", "Title", typeof(string))]
+    [Required, EFUnique("Competitions", "Title")]
     [DataMember(Name = "title")]
     public string Title { get; set; }
     [DataMember(Name = "description")]
