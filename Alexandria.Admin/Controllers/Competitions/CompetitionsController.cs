@@ -31,7 +31,7 @@ namespace Alexandria.Admin.Controllers.Competitions
     public async Task<OperationResult<IList<DTO.Competition.Info>>> GetCompetitionsForUser()
     {
       var result = await this.adminCompetitionService.GetCompetitionsAvailableToUser(HttpContext.GetUserId().Value);
-      return new OperationResult<IList<DTO.Competition.Info>>(result.Data);
+      return new OperationResult<IList<DTO.Competition.Info>>(result);
     }
 
     [ProducesResponseType(typeof(IList<DTO.Competition.CompetitionLevel>), 200)]
@@ -40,7 +40,16 @@ namespace Alexandria.Admin.Controllers.Competitions
     public async Task<OperationResult<IList<DTO.Competition.CompetitionLevel>>> GetCompetitionLevels()
     {
       var result = await this.competitionService.GetCompetitionLevels();
-      return new OperationResult<IList<CompetitionLevel>>(result.Data);
+      return new OperationResult<IList<CompetitionLevel>>(result);
+    }
+
+    [ProducesResponseType(201)]
+    [ProducesResponseType(401)]
+    [HttpPost]
+    public async Task<OperationResult> CreateCompetition([FromBody] DTO.Admin.Competition.CreateData payload)
+    {
+      var result = await this.adminCompetitionService.CreateCompetition(payload);
+      return new OperationResult(result);
     }
   }
 }

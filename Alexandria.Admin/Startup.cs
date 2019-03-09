@@ -68,6 +68,7 @@ namespace Alexandria.Admin
       services.AddAWSService<IAmazonSQS>();
       services.AddAWSService<IAmazonS3>();
       services.AddSingleton<IBackgroundWorker, SQSBackgroundWorker>();
+      services.AddScoped<IInputValidationService, InputValidationService>();
       services.AddScoped<IPassportClient, PassportClient>();
       services.AddScoped<IProfanityValidator, ProfanityValidator>();
       services.AddScoped<ICompetitionService, CompetitionService>();

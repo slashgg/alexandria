@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using Alexandria.EF.Context;
 using Alexandria.EF.Models;
 using Alexandria.Interfaces.Services;
 using Microsoft.EntityFrameworkCore;
+using Svalbard;
 using Svalbard.Services;
 
 namespace Alexandria.Orchestration.Services.Admin
@@ -15,11 +17,13 @@ namespace Alexandria.Orchestration.Services.Admin
   {
     private readonly IAuthorizationService authorizationService;
     private readonly AlexandriaContext alexandriaContext;
+    private readonly IInputValidationService inputValidationService;
 
-    public AdminCompetitionService(AlexandriaContext alexandriaContext, IAuthorizationService authorizationService)
+    public AdminCompetitionService(AlexandriaContext alexandriaContext, IAuthorizationService authorizationService, IInputValidationService inputValidationService)
     {
       this.alexandriaContext = alexandriaContext;
       this.authorizationService = authorizationService;
+      this.inputValidationService = inputValidationService;
     }
 
 
@@ -36,6 +40,21 @@ namespace Alexandria.Orchestration.Services.Admin
 
       return result;
     }
+
+    public async Task<ServiceResult> CreateCompetition(DTO.Admin.Competition.CreateData competitionData)
+    {
+      var result = new ServiceResult();
+      await this.inputValidationService.Validate(competitionData, result);
+      if (result.FieldErrors.Any())
+      {
+        return result;
+      }
+
+
+
+      return result;
+    }
+
 
   }
 }

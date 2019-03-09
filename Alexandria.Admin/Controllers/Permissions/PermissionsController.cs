@@ -37,7 +37,7 @@ namespace Alexandria.Admin.Controllers
       }
 
       var permissions = await this.userService.GetPermissions(userId.Value, Shared.Permissions.Namespace.Admin);
-      return new OperationResult<IList<string>>(permissions.Data);
+      return new OperationResult<IList<string>>(permissions);
     }
   }
 }
