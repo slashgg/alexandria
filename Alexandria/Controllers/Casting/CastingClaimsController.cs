@@ -57,8 +57,8 @@ namespace Alexandria.Controllers.Casting
     [ProducesResponseType(201)]
     [ProducesResponseType(401)]
     [ProducesResponseType(403)]
-    [ProducesResponseType(typeof(BaseError), 404)]
-    [ProducesResponseType(typeof(BaseError), 409)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 409)]
     [HttpPost]
     [Authorize]
     public async Task<OperationResult> ClaimMatchSeries([FromBody] DTO.Casting.ClaimMatchSeriesRequest payload)
@@ -90,7 +90,7 @@ namespace Alexandria.Controllers.Casting
     /// <returns></returns>
     [ProducesResponseType(204)]
     [ProducesResponseType(401)]
-    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
     [HttpDelete("{claimId}")]
     [PermissionsRequired("match-series-casting-claim::{claimId}::delete")]
     public async Task<OperationResult> RetractClaim([FromRoute] Guid claimId)

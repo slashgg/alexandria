@@ -30,7 +30,7 @@ namespace Alexandria.Controllers.UserProfile
     [Authorize]
     [ProducesResponseType(typeof(List<DTO.UserProfile.ConnectionDetail>), 200)]
     [ProducesResponseType(typeof(void), 401)]
-    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
     public async Task<OperationResult<List<DTO.UserProfile.ConnectionDetail>>> GetConnections()
     {
       var userId = HttpContext.GetUserId();
@@ -128,7 +128,7 @@ namespace Alexandria.Controllers.UserProfile
     [Authorize("Backchannel")]
     [ProducesResponseType(typeof(void), 201)]
     [ProducesResponseType(typeof(void), 401)]
-    [ProducesResponseType(typeof(BaseError), 400)]
+    [ProducesResponseType(typeof(Svalbard.Error), 400)]
     public async Task<Svalbard.OperationResult> CreateConnection(DTO.UserProfile.CreateConnection createDto)
     {
       var result = await profileService.CreateConnection(createDto);

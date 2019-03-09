@@ -47,10 +47,10 @@ namespace Alexandria.Controllers.Team
     [HttpPost]
     [PermissionsRequired("team::{teamId}::invite--send")]
     [ProducesResponseType(typeof(void), 201)]
-    [ProducesResponseType(typeof(BaseError), 400)]
+    [ProducesResponseType(typeof(Svalbard.Error), 400)]
     [ProducesResponseType(typeof(void), 401)]
-    [ProducesResponseType(typeof(BaseError), 409)]
-    [ProducesResponseType(typeof(BaseError), 422)]
+    [ProducesResponseType(typeof(Svalbard.Error), 409)]
+    [ProducesResponseType(typeof(Svalbard.Error), 422)]
     public async Task<Svalbard.OperationResult> SendInvite([FromBody] DTO.Team.InviteRequest payload)
     {
       var result = await this.teamService.InviteMember(this.resourceId, payload.Invitee);
@@ -72,9 +72,9 @@ namespace Alexandria.Controllers.Team
     [HttpPost("{inviteId}")]
     [PermissionsRequired("team::{teamId}::invite--send")]
     [ProducesResponseType(typeof(void), 201)]
-    [ProducesResponseType(typeof(BaseError), 400)]
+    [ProducesResponseType(typeof(Svalbard.Error), 400)]
     [ProducesResponseType(typeof(void), 401)]
-    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
     public async Task<Svalbard.OperationResult> ResendInvite([FromRoute] Guid inviteId)
     {
       var result = await this.teamService.ResendInvite(inviteId);
@@ -95,7 +95,7 @@ namespace Alexandria.Controllers.Team
     [HttpDelete("{inviteId}")]
     [PermissionsRequired("team::{teamId}::invite--revoke")]
     [ProducesResponseType(typeof(void), 204)]
-    [ProducesResponseType(typeof(BaseError), 400)]
+    [ProducesResponseType(typeof(Svalbard.Error), 400)]
     [ProducesResponseType(typeof(void), 401)]
     [ProducesResponseType(typeof(void), 404)]
     public async Task<Svalbard.OperationResult> RevokeInvite([FromRoute] Guid inviteId)

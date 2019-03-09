@@ -30,11 +30,11 @@ namespace Alexandria.Controllers.Team
     [HttpDelete("{membershipId}")]
     [PermissionsRequired("team::{teamId}::member--remove")]
     [ProducesResponseType(typeof(void), 204)]
-    [ProducesResponseType(typeof(BaseError), 400)]
+    [ProducesResponseType(typeof(Svalbard.Error), 400)]
     [ProducesResponseType(typeof(void), 401)]
-    [ProducesResponseType(typeof(BaseError), 404)]
-    [ProducesResponseType(typeof(BaseError), 422)]
-    [ProducesResponseType(typeof(BaseError), 423)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 422)]
+    [ProducesResponseType(typeof(Svalbard.Error), 423)]
     public async Task<Svalbard.OperationResult> RemoveMember([FromRoute]Guid membershipId)
     {
       var result = await this.teamService.RemoveMember(membershipId, "Remove");

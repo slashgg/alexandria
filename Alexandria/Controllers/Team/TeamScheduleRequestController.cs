@@ -30,7 +30,7 @@ namespace Alexandria.Controllers.Team
     [HttpGet]
     [PermissionsRequired("team::{teamId}::match--schedule")]
     [ProducesResponseType(typeof(DTO.MatchSeries.PendingScheduleRequests), 200)]
-    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
     public async Task<OperationResult<DTO.MatchSeries.PendingScheduleRequests>> GetPendingScheduleRequests()
     {
       if (this.resourceId == Guid.Empty)
@@ -57,8 +57,8 @@ namespace Alexandria.Controllers.Team
     [PermissionsRequired("team::{teamId}::match--schedule")]
     [ProducesResponseType(typeof(void), 201)]
     [ProducesResponseType(typeof(void), 401)]
-    [ProducesResponseType(typeof(BaseError), 404)]
-    [ProducesResponseType(typeof(BaseError), 409)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 409)]
     public async Task<OperationResult> CreateScheduleRequest(DTO.MatchSeries.CreateScheduleRequest payload)
     {
       if (this.resourceId == Guid.Empty)
@@ -84,7 +84,7 @@ namespace Alexandria.Controllers.Team
     [PermissionsRequired("team::{teamId}::match--schedule")]
     [ProducesResponseType(typeof(void), 204)] 
     [ProducesResponseType(typeof(void), 401)]
-    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
     public async Task<OperationResult> AcceptScheduleRequest(Guid scheduleRequestId)
     {
       var result = await this.matchService.AcceptScheduleRequest(scheduleRequestId);
@@ -105,7 +105,7 @@ namespace Alexandria.Controllers.Team
     [PermissionsRequired("team::{teamId}::match--schedule")]
     [ProducesResponseType(typeof(void), 204)]
     [ProducesResponseType(typeof(void), 401)]
-    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
     public async Task<OperationResult> DeclineScheduleRequest(Guid scheduleRequestId)
     {
       var result = await this.matchService.DeclineScheduleRequest(scheduleRequestId);
@@ -126,7 +126,7 @@ namespace Alexandria.Controllers.Team
     [PermissionsRequired("team::{teamId}::match--schedule")]
     [ProducesResponseType(typeof(void), 204)]
     [ProducesResponseType(typeof(void), 401)]
-    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
     public async Task<OperationResult> RescindSCheduleRequest(Guid scheduleRequestId)
     {
       var result = await this.matchService.RescindSCheduleRequest(scheduleRequestId);

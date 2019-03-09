@@ -26,8 +26,8 @@ namespace Alexandria.Controllers
     /// <returns></returns>
     [HttpGet("{teamId}")]
     [ProducesResponseType(typeof(DTO.Team.Detail), 200)]
-    [ProducesResponseType(typeof(BaseError), 400)]
-    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 400)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
     public async Task<Svalbard.OperationResult> GetTeamDetail(Guid teamId)
     {
       var result = await this.teamService.GetTeamDetail(teamId);
@@ -47,8 +47,8 @@ namespace Alexandria.Controllers
     [HttpDelete("{teamId}")]
     [PermissionsRequired("team::{teamId}::disband")]
     [ProducesResponseType(typeof(void), 204)]
-    [ProducesResponseType(typeof(BaseError), 400)]
-    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 400)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
     public async Task<Svalbard.OperationResult> DisbandTeam([FromRoute]Guid teamId)
     {
       var result = await this.teamService.DisbandTeam(teamId);

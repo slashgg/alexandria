@@ -44,6 +44,8 @@ namespace Alexandria.Orchestration.Services.Admin
     public async Task<ServiceResult> CreateCompetition(DTO.Admin.Competition.CreateData competitionData)
     {
       var result = new ServiceResult();
+      result.Error = Shared.ErrorKey.Competition.NotFound;
+      return result;
       await this.inputValidationService.Validate(competitionData, result);
       if (result.FieldErrors.Any())
       {

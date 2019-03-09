@@ -31,7 +31,7 @@ namespace Alexandria.Controllers.MatchSeries
     [ProducesResponseType(typeof(DTO.MatchSeries.MatchReportMetaData), 200)]
     [ProducesResponseType(typeof(void), 301)]
     [ProducesResponseType(typeof(void), 404)]
-    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
     public async Task<IActionResult> GetMatchReportingMeta()
     {
       if (this.resourceId == Guid.Empty)

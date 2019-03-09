@@ -30,7 +30,7 @@ namespace Alexandria.Controllers.Team
     /// <returns></returns>
     [HttpGet("{tournamentId}/matches")]
     [ProducesResponseType(typeof(IList<DTO.Tournament.MatchSeries>), 200)]
-    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
     public async Task<OperationResult<IList<DTO.Tournament.MatchSeries>>> GetMatches(Guid tournamentId)
     {
       if (this.resourceId == Guid.Empty)

@@ -27,7 +27,7 @@ namespace Alexandria.Controllers
     /// <returns></returns>
     [HttpGet("{tournamentId}")]
     [ProducesResponseType(typeof(DTO.Tournament.Detail), 200)]
-    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
     public async Task<OperationResult<DTO.Tournament.Detail>> GetTournamentDetail(Guid tournamentId)
     {
       var result = await this.tournamentService.GetTournamentDetail(tournamentId);
@@ -59,7 +59,7 @@ namespace Alexandria.Controllers
     /// <returns></returns>
     [HttpGet("{tournamentId}/schedule")]
     [ProducesResponseType(typeof(DTO.Tournament.Schedule), 200)]
-    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
     public async Task<OperationResult<DTO.Tournament.Schedule>> GetTournamentSchedule(Guid tournamentId)
     {
       var result = await tournamentService.GetSchedule(tournamentId);
@@ -80,8 +80,8 @@ namespace Alexandria.Controllers
     [HttpGet("{tournamentId}/standings")]
     [QueryStringConstraint("type", true, "round-robin")]
     [ProducesResponseType(typeof(DTO.Tournament.Standing<DTO.Tournament.RoundRobinRecord>), 200)]
-    [ProducesResponseType(typeof(BaseError), 400)]
-    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 400)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
     public async Task<OperationResult<DTO.Tournament.Standing<DTO.Tournament.RoundRobinRecord>>> GetRoundRobinResult([FromQuery] TournamentType type, [FromRoute] Guid tournamentId)
     {
       var result = await this.tournamentService.GetTournamentTable(tournamentId);

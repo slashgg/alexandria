@@ -56,10 +56,10 @@ namespace Alexandria.Controllers.UserProfile
     [HttpDelete("{inviteId}")]
     [PermissionsRequired("team-invite::{inviteId}::handle")]
     [ProducesResponseType(typeof(void), 204)]
-    [ProducesResponseType(typeof(BaseError), 400)]
+    [ProducesResponseType(typeof(Svalbard.Error), 400)]
     [ProducesResponseType(typeof(void), 401)]
-    [ProducesResponseType(typeof(BaseError), 404)]
-    [ProducesResponseType(typeof(BaseError), 422)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 422)]
     public async Task<Svalbard.OperationResult> DeclineInvite([FromRoute] Guid inviteId)
     {
       var result = await this.teamService.DeclineInvite(inviteId);
@@ -79,12 +79,12 @@ namespace Alexandria.Controllers.UserProfile
     [HttpPut("{inviteId}")]
     [PermissionsRequired("team-invite::{inviteId}::handle")]
     [ProducesResponseType(typeof(void), 204)]
-    [ProducesResponseType(typeof(BaseError), 400)]
+    [ProducesResponseType(typeof(Svalbard.Error), 400)]
     [ProducesResponseType(typeof(void), 401)]
-    [ProducesResponseType(typeof(BaseError), 404)]
-    [ProducesResponseType(typeof(BaseError), 409)]
-    [ProducesResponseType(typeof(BaseError), 410)]
-    [ProducesResponseType(typeof(BaseError), 422)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 409)]
+    [ProducesResponseType(typeof(Svalbard.Error), 410)]
+    [ProducesResponseType(typeof(Svalbard.Error), 422)]
     public async Task<Svalbard.OperationResult> AcceptInvite([FromRoute] Guid inviteId)
     {
       var result = await this.teamService.AcceptInvite(inviteId);

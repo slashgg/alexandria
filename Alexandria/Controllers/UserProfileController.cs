@@ -28,8 +28,8 @@ namespace Alexandria.Controllers
     [HttpPost]
     [Authorize("Backchannel")]
     [ProducesResponseType(typeof(void), 201)]
-    [ProducesResponseType(typeof(BaseError), 400)]
-    [ProducesResponseType(typeof(BaseError), 409)]
+    [ProducesResponseType(typeof(Svalbard.Error), 400)]
+    [ProducesResponseType(typeof(Svalbard.Error), 409)]
     public async Task<Svalbard.OperationResult> CreateProfile([FromBody] Alexandria.DTO.UserProfile.Create payload)
     {
       var result = await userProfileService.CreateAccount(payload);
@@ -47,9 +47,9 @@ namespace Alexandria.Controllers
     [HttpGet]
     [Authorize]
     [ProducesResponseType(typeof(DTO.UserProfile.Detail), 200)]
-    [ProducesResponseType(typeof(BaseError), 400)]
+    [ProducesResponseType(typeof(Svalbard.Error), 400)]
     [ProducesResponseType(typeof(void), 401)]
-    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
     public async Task<OperationResult<DTO.UserProfile.Detail>> GetUserProfile()
     {
       var userId = HttpContext.GetUserId();
@@ -75,9 +75,9 @@ namespace Alexandria.Controllers
     [HttpPut]
     [Authorize]
     [ProducesResponseType(typeof(void), 204)]
-    [ProducesResponseType(typeof(BaseError), 400)]
-    [ProducesResponseType(typeof(BaseError), 401)]
-    [ProducesResponseType(typeof(BaseError), 409)]
+    [ProducesResponseType(typeof(Svalbard.Error), 400)]
+    [ProducesResponseType(typeof(Svalbard.Error), 401)]
+    [ProducesResponseType(typeof(Svalbard.Error), 409)]
     public async Task<Svalbard.OperationResult> UpdateUserProfile([FromBody] DTO.UserProfile.UpdateSettings payload)
     {
       var userId = HttpContext.GetUserId();
@@ -102,7 +102,7 @@ namespace Alexandria.Controllers
     [HttpGet("verification")]
     [Authorize]
     [ProducesResponseType(typeof(void), 204)]
-    [ProducesResponseType(typeof(BaseError), 401)]
+    [ProducesResponseType(typeof(Svalbard.Error), 401)]
     public async Task<Svalbard.OperationResult> ResendEmailVerification()
     {
       var userId = HttpContext.GetUserId();
@@ -128,7 +128,7 @@ namespace Alexandria.Controllers
     [Authorize]
     [ProducesResponseType(typeof(IList<string>), 200)]
     [ProducesResponseType(typeof(void), 401)]
-    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
     public async Task<OperationResult<IList<string>>> GetPermissions()
     {
       var userId = HttpContext.GetUserId();

@@ -28,7 +28,7 @@ namespace Alexandria.Controllers.Team
     /// <returns></returns>
     [HttpGet]
     [ProducesResponseType(typeof(IList<DTO.Team.Role>), 200)]
-    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
     public async Task<OperationResult<IList<DTO.Team.Role>>> GetAvailableRoles()
     {
       if (this.resourceId == Guid.Empty)

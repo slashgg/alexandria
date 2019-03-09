@@ -27,7 +27,7 @@ namespace Alexandria.Controllers.Tournament
     /// <returns></returns>
     [HttpGet]
     [ProducesResponseType(typeof(DTO.Competition.TournamentApplication), 200)]
-    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
     public async Task<OperationResult<DTO.Competition.TournamentApplication>> GetApplication()
     {
       if (this.resourceId != Guid.Empty)

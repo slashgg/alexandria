@@ -34,7 +34,7 @@ namespace Alexandria.Controllers.UserProfile
     [Authorize]
     [ProducesResponseType(typeof(void), 204)]
     [ProducesResponseType(typeof(void), 401)]
-    [ProducesResponseType(typeof(BaseError), 400)]
+    [ProducesResponseType(typeof(Svalbard.Error), 400)]
     public async Task<Svalbard.OperationResult> UpdateAvatar([FromBody] UpdateAvatar data)
     {
       if (data == null)

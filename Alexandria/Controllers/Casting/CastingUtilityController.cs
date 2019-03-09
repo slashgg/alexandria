@@ -31,7 +31,7 @@ namespace Alexandria.Controllers.Casting
     /// <returns></returns>
     [ProducesResponseType(typeof(DTO.Casting.CasterMetaData), 200)]
     [ProducesResponseType(typeof(void), 401)]
-    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
     [HttpGet("caster-meta-data")]
     [Authorize]
     public async Task<OperationResult<DTO.Casting.CasterMetaData>> GetCasterMetaData()

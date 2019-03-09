@@ -56,7 +56,7 @@ namespace Alexandria.Controllers.Casting
     [ProducesResponseType(201)]
     [ProducesResponseType(401)]
     [ProducesResponseType(403)]
-    [ProducesResponseType(typeof(BaseError), 409)]
+    [ProducesResponseType(typeof(Svalbard.Error), 409)]
     [HttpPost]
     [Authorize]
     public async Task<OperationResult> CreateGameCast([FromBody] DTO.Casting.CreateCastData payload)
@@ -89,7 +89,7 @@ namespace Alexandria.Controllers.Casting
     /// <returns></returns>
     [ProducesResponseType(204)]
     [ProducesResponseType(401)]
-    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
     [HttpPut("{castId}")]
     [PermissionsRequired("match-series-casting::{castId}::update")]
     [Authorize]
@@ -113,7 +113,7 @@ namespace Alexandria.Controllers.Casting
     /// <returns></returns>
     [ProducesResponseType(204)]
     [ProducesResponseType(401)]
-    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
     [HttpDelete("{castId}")]
     [PermissionsRequired("match-series-casting::{castId}::delete")]
     [Authorize]

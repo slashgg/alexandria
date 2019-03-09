@@ -32,7 +32,7 @@ namespace Alexandria.Controllers
     [HttpGet]
     [ProducesResponseType(typeof(PresignedURLResponse), 200)]
     [ProducesResponseType(typeof(void), 400)]
-    [ProducesResponseType(typeof(BaseError), 400)]
+    [ProducesResponseType(typeof(Svalbard.Error), 400)]
     [ProducesResponseType(typeof(void), 401)]
     public async Task<OperationResult<PresignedURLResponse>> GetPresignedUrl([FromQuery] string type)
     {

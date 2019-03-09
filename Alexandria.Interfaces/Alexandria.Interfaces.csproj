@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Svalbard" Version="1.5.4" />
+    <PackageReference Include="Svalbard" Version="2.0.2" />
   </ItemGroup>
 
   <ItemGroup>

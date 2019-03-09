@@ -33,7 +33,7 @@ namespace Alexandria.Controllers.Team
     [PermissionsRequired("team::{teamId}::tournament--join")]
     [ProducesResponseType(typeof(DTO.Tournament.TournamentApplication), 200)]
     [ProducesResponseType(typeof(void), 401)]
-    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
     public async Task<OperationResult<DTO.Tournament.TournamentApplication>> GetTournamentApplication([FromRoute] Guid tournamentId)
     {
       var result = await this.tournamentService.GetTeamApplication(tournamentId, this.resourceId);
@@ -55,7 +55,7 @@ namespace Alexandria.Controllers.Team
     [PermissionsRequired("team::{teamId}::tournament--join")]
     [ProducesResponseType(typeof(DTO.Tournament.TournamentApplication), 200)]
     [ProducesResponseType(typeof(void), 401)]
-    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
     public async Task<OperationResult<DTO.Tournament.TournamentApplication>> GetTournamentApplication([FromRoute] string tournamentSlug)
     {
       var result = await this.tournamentService.GetTeamApplication(tournamentSlug, this.resourceId);
@@ -76,10 +76,10 @@ namespace Alexandria.Controllers.Team
     [HttpPost]
     [PermissionsRequired("team::{teamId}::tournament--join")]
     [ProducesResponseType(typeof(void), 201)]
-    [ProducesResponseType(typeof(BaseError), 400)]
+    [ProducesResponseType(typeof(Svalbard.Error), 400)]
     [ProducesResponseType(typeof(void), 401)]
-    [ProducesResponseType(typeof(BaseError), 404)]
-    [ProducesResponseType(typeof(BaseError), 423)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 423)]
     public async Task<Svalbard.OperationResult> ApplyToTournament([FromBody] DTO.Tournament.TeamTournamentApplicationRequest payload)
     {
       var result = await tournamentService.TeamApplyToTournament(this.resourceId, payload);
@@ -100,9 +100,9 @@ namespace Alexandria.Controllers.Team
     [HttpDelete("{tournamentId}")]
     [PermissionsRequired("team::{teamId}::tournament--join")]
     [ProducesResponseType(typeof(void), 204)]
-    [ProducesResponseType(typeof(BaseError), 400)]
+    [ProducesResponseType(typeof(Svalbard.Error), 400)]
     [ProducesResponseType(typeof(void), 401)]
-    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
     public async Task<Svalbard.OperationResult> WithdrawApplication([FromRoute] Guid tournamentId)
     {
       var result = await this.tournamentService.WithdrawTeamApplication(tournamentId, this.resourceId);
@@ -123,9 +123,9 @@ namespace Alexandria.Controllers.Team
     [HttpDelete("by-slug/{tournamentSlug}")]
     [PermissionsRequired("team::{teamId}::tournament--join")]
     [ProducesResponseType(typeof(void), 204)]
-    [ProducesResponseType(typeof(BaseError), 400)]
+    [ProducesResponseType(typeof(Svalbard.Error), 400)]
     [ProducesResponseType(typeof(void), 401)]
-    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
     public async Task<Svalbard.OperationResult> WithdrawApplication([FromRoute] string tournamentSlug)
     {
       var result = await this.tournamentService.WithdrawTeamApplication(tournamentSlug, this.resourceId);

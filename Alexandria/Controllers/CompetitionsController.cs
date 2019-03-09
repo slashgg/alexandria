@@ -58,7 +58,7 @@ namespace Alexandria.Controllers
     /// <returns></returns>
     [HttpGet("{competitionId}")]
     [ProducesResponseType(typeof(DTO.Competition.Detail), 204)]
-    [ProducesResponseType(typeof(BaseError), 400)]
+    [ProducesResponseType(typeof(Svalbard.Error), 400)]
     public async Task<OperationResult<DTO.Competition.Detail>> GetCompetitionDetail([FromRoute] Guid competitionId)
     {
       var result = await this.competitionService.GetCompetitionDetail(competitionId);
@@ -77,7 +77,7 @@ namespace Alexandria.Controllers
     /// <returns></returns>
     [HttpGet("by-slug/{competitionSlug}")]
     [ProducesResponseType(typeof(DTO.Competition.Detail), 204)]
-    [ProducesResponseType(typeof(BaseError), 400)]
+    [ProducesResponseType(typeof(Svalbard.Error), 400)]
     public async Task<OperationResult<DTO.Competition.Detail>> GetCompetitionDetailBySlug([FromRoute] string competitionSlug)
     {
       var result = await this.competitionService.GetCompetitionDetail(competitionSlug);

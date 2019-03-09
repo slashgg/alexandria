@@ -51,8 +51,8 @@ namespace Alexandria.Controllers.UserProfile
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(401)]
-    [ProducesResponseType(typeof(BaseError), 404)]
-    [ProducesResponseType(typeof(BaseError), 409)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 409)]
     public async Task<OperationResult> AddFavorite([FromBody] DTO.UserProfile.AddFavoriteCompetition payload)
     {
       var userId = HttpContext.GetUserId();
@@ -79,7 +79,7 @@ namespace Alexandria.Controllers.UserProfile
     [PermissionsRequired("favorite-competition::{id}::delete")]
     [ProducesResponseType(204)]
     [ProducesResponseType(401)]
-    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
     public async Task<OperationResult> DeleteFavorite([FromRoute] Guid id)
     {
       var userId = HttpContext.GetUserId();

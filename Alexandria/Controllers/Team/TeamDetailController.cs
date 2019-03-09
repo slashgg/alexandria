@@ -33,7 +33,7 @@ namespace Alexandria.Controllers.Team
     [HttpPost("logo")]
     [PermissionsRequired("team::{teamId}::logo")]
     [ProducesResponseType(204)]
-    [ProducesResponseType(typeof(BaseError), 404)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
     public async Task<OperationResult> UpdateTeamAvatar([FromBody] DTO.Team.UpdateLogo payload)
     {
       if (this.resourceId != Guid.Empty)

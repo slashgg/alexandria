@@ -11,7 +11,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="2.2.2" />
     <PackageReference Include="Sendgrid" Version="9.10.0" />
-    <PackageReference Include="Svalbard" Version="1.5.4" />
+    <PackageReference Include="Svalbard" Version="2.0.2" />
   </ItemGroup>
 
 </Project>
