@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Alexandria.DTO.Competition;
 using Alexandria.Interfaces.Services;
 using Alexandria.Orchestration.Services.Admin;
 using Alexandria.Shared.Extensions;
@@ -34,13 +33,22 @@ namespace Alexandria.Admin.Controllers.Competitions
       return new OperationResult<IList<DTO.Competition.Info>>(result);
     }
 
+    [ProducesResponseType(typeof(IList<DTO.Competition.Detail>), 200)]
+    [ProducesResponseType(typeof(Svalbard.Error), 404)]
+    [HttpGet("{competitionId}")]
+    public async Task<OperationResult<DTO.Admin.Competition.Detail>> GetCompetitionDetail(Guid competitionId)
+    {
+      var result = await this.adminCompetitionService.GetCompetitionDetail(competitionId);
+      return new OperationResult<DTO.Admin.Competition.Detail>(result);
+    }
+
     [ProducesResponseType(typeof(IList<DTO.Competition.CompetitionLevel>), 200)]
     [ProducesResponseType(401)]
     [HttpGet("levels")]
     public async Task<OperationResult<IList<DTO.Competition.CompetitionLevel>>> GetCompetitionLevels()
     {
       var result = await this.competitionService.GetCompetitionLevels();
-      return new OperationResult<IList<CompetitionLevel>>(result);
+      return new OperationResult<IList<DTO.Competition.CompetitionLevel>>(result);
     }
 
     [ProducesResponseType(201)]

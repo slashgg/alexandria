@@ -41,22 +41,75 @@ namespace Alexandria.Orchestration.Services.Admin
       return result;
     }
 
+    public async Task<ServiceResult<DTO.Admin.Competition.Detail>> GetCompetitionDetail(Guid competitionId)
+    {
+      var result = new ServiceResult<DTO.Admin.Competition.Detail>();
+
+      var competition = await this.alexandriaContext.Competitions.Include(c => c.Game).Include(c => c.CompetitionLevel)
+        .FirstOrDefaultAsync(c => c.Id == competitionId);
+
+      if (competition == null)
+      {
+        result.Error = Shared.ErrorKey.Competition.NotFound;
+        return result;
+      }
+
+      var competitionDTO = AutoMapper.Mapper.Map<DTO.Admin.Competition.Detail>(competition);
+      result.Succeed(competitionDTO);
+
+      return result;
+    }
+
     public async Task<ServiceResult> CreateCompetition(DTO.Admin.Competition.CreateData competitionData)
     {
       var result = new ServiceResult();
-      result.Error = Shared.ErrorKey.Competition.NotFound;
-      return result;
       await this.inputValidationService.Validate(competitionData, result);
+
       if (result.FieldErrors.Any())
       {
         return result;
       }
 
+      this.DangerouslyCreateCompetition(competitionData);
 
+      return result;
+    }
+
+    public async Task<ServiceResult<IList<DTO.Competition.Tournament>>> GetTournaments(Guid competitionId, int? page = null, int? limit = null)
+    {
+      var result = new ServiceResult<IList<DTO.Competition.Tournament>>();
+      IQueryable<Tournament> tournamentQuery = this.alexandriaContext.Tournaments.Include(t => t.ParentTournament)
+        .Where(t => t.CompetitionId == competitionId).OrderByDescending(t => t.CreatedAt);
+      if (page.HasValue)
+      {
+        var paginationLimit = limit ?? 25;
+        tournamentQuery = tournamentQuery.Skip(page.Value * paginationLimit).Take(paginationLimit);
+      }
+
+      var tournaments = await tournamentQuery.ToListAsync();
+      var tournamentDTOs = tournaments.Select(AutoMapper.Mapper.Map<DTO.Competition.Tournament>).ToList();
+
+      result.Succeed(tournamentDTOs);
 
       return result;
     }
 
 
+    private void DangerouslyCreateCompetition(DTO.Admin.Competition.CreateData competitionData)
+    {
+      var competition = new Competition
+      {
+        Name = competitionData.Name,
+        Slug = competitionData.Slug,
+        Title = competitionData.Title,
+        Description = competitionData.Description,
+        MaxTeamSize = competitionData.MaxTeamSize,
+        MinTeamSize = competitionData.MinTeamSize,
+        RulesSlug = competitionData.RuleSlug,
+        CompetitionLevelId = competitionData.CompetitionLevelId
+      };
+
+      this.alexandriaContext.Competitions.Add(competition);
+    }
   }
 }

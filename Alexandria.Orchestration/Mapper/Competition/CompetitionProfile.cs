@@ -16,7 +16,14 @@ namespace Alexandria.Orchestration.Mapper.Competition
         .ForMember(dest => dest.CompetitionLevel, opt => opt.MapFrom(src => src.CompetitionLevel.Name))
         .ForMember(dest => dest.Game, opt => opt.MapFrom(src => src.Game));
 
-      CreateMap<EF.Models.Tournament, DTO.Competition.Tournament>();
+      CreateMap<EF.Models.Competition, DTO.Admin.Competition.Detail>()
+        .ForMember(dest => dest.RulesSlug, opt => opt.MapFrom(src => src.RulesSlug))
+        .ForMember(dest => dest.CompetitionLevel, opt => opt.MapFrom(src => src.CompetitionLevel.Name))
+        .ForMember(dest => dest.Game, opt => opt.MapFrom(src => src.Game));
+
+
+      CreateMap<EF.Models.Tournament, DTO.Competition.Tournament>()
+        .ForMember(dest => dest.ParentTournamentName, opt => opt.MapFrom(src => src.ParentTournament.Name));
       CreateMap<EF.Models.CompetitionLevel, DTO.Competition.CompetitionLevel>();
 
       CreateMap<EF.Models.Tournament, DTO.Competition.TournamentApplication>()

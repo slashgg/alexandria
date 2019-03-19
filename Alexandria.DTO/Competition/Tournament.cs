@@ -33,5 +33,7 @@ namespace Alexandria.DTO.Competition
     public TournamentType Type { get; set; }
     [DataMember(Name = "parentTournamentId")]
     public Guid? ParentTournamentId { get; set; }
+    [DataMember(Name = "parentTournamentName")]
+    public string ParentTournamentName { get; set; }
   }
 }
