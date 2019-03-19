@@ -69,7 +69,11 @@ namespace Alexandria.EF.Models
         var wins = this.Matches.SelectMany(m => m.Winners);
         var participants = wins.GroupBy(w => w.MatchParticipantId).OrderByDescending(mpig => mpig.Count());
         var winnerGroup = participants.FirstOrDefault();
-        var winnerId = winnerGroup.Key;
+        var winnerId = winnerGroup?.Key;
+        if (winnerId == null)
+        {
+          return null;
+        }
         var winner = this.MatchParticipants.FirstOrDefault(m => m.Id == winnerId);
         return winner;
       }
@@ -93,7 +97,11 @@ namespace Alexandria.EF.Models
         var losses = this.Matches.SelectMany(m => m.Losers);
         var participants = losses.GroupBy(w => w.MatchParticipantId).OrderByDescending(mpig => mpig.Count());
         var loserGroups = participants.FirstOrDefault();
-        var loserId = loserGroups.Key;
+        var loserId = loserGroups?.Key;
+        if (loserId == null)
+        {
+          return null;
+        }
         var loser = this.MatchParticipants.FirstOrDefault(m => m.Id == loserId);
         return loser;
       }
