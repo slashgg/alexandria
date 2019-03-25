@@ -24,6 +24,8 @@ namespace Alexandria.Orchestration.Mapper.MatchSeries
         .ForMember(dest => dest.MatchSeries, opt => opt.MapFrom(src => src.MatchSeries));
 
       CreateMap<EF.Models.MatchSeries, DTO.MatchSeries.MatchReportMetaData>()
+        .ForMember(dest => dest.MinMatches, opt => opt.MapFrom(src => src.TournamentRound.SeriesMinGameCount))
+        .ForMember(dest => dest.MaxMatches, opt => opt.MapFrom(src => src.TournamentRound.SeriesMaxGameCount))
         .ForMember(dest => dest.Game, opt => opt.MapFrom(src => src.Game.InternalIdentifier))
         .ForMember(dest => dest.Participants, opt => opt.MapFrom(src => src.MatchParticipants.Select(mp => mp.Team)));
 

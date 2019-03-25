@@ -22,7 +22,16 @@ namespace Alexandria.EF.Models
     /* Relationships */
     [ForeignKey("MatchSeriesId")]
     public virtual MatchSeries MatchSeries { get; set; }
-    public virtual ICollection<MatchParticipantResult> Results { get; set; }
+    public virtual ICollection<MatchParticipantResult> Results { get; set; } = new List<MatchParticipantResult>();
+
+    public Match()
+    {
+    }
+
+    public Match(Guid matchSeriesId)
+    {
+      this.MatchSeriesId = matchSeriesId;
+    }
 
     public bool IsWinner(Guid teamId)
     {

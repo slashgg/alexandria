@@ -173,6 +173,7 @@ namespace Alexandria.Orchestration.Services
                                                                 .ThenInclude(mp => mp.Team)
                                                                 .Include(ms => ms.Matches)
                                                                 .Include(ms => ms.Game)
+                                                                .Include(ms => ms.TournamentRound)
                                                                 .FirstOrDefaultAsync(ms => ms.Id == matchSeriesId);
       if (matchSeries == null)
       {
@@ -202,7 +203,7 @@ namespace Alexandria.Orchestration.Services
       return result;
     }
 
-    public async Task<ServiceResult> ReportMatchSeriesResult(Guid matchSeriesId, IEnumerable<DTO.MatchSeries.MatchResultReportingRequest> results)
+    public async Task<ServiceResult> ReportMatchSeriesResult(Guid matchSeriesId, IEnumerable<DTO.MatchSeries.MatchResultReport> results)
     {
       var result = new ServiceResult();
 
@@ -220,60 +221,99 @@ namespace Alexandria.Orchestration.Services
         return result;
       }
 
-      var matchReportingResultTasks = results.Select(async r => await this.ReportMatchResult(r)).ToList();
-      var matchUpdates = await Task.WhenAll(matchReportingResultTasks);
-      if (matchUpdates.Any(mu => mu.Error != null))
+
+      var matchOrder = 1;
+      foreach (var matchResult in results)
       {
-        result.Error = matchUpdates.Select(mu => mu.Error).FirstOrDefault();
-        return result;
+        ServiceResult reportingServiceResult = null;
+        if (matchResult.MatchId.HasValue)
+        {
+          reportingServiceResult = await this.ReportMatchResult(matchResult);
+        }
+        else
+        {
+          reportingServiceResult = await this.CreateAndReportMatchResult(matchResult, matchSeriesId, matchOrder);
+        }
+
+
+        if (reportingServiceResult.Error != null)
+        {
+          result.Error = reportingServiceResult.Error;
+          return result;
+        }
+
+        matchOrder++;
       }
 
       this.DangerouslyReportMatchSeries(matchSeries, MatchState.Complete);
       result.Succeed();
 
-
       return result;
     }
 
-    public async Task<ServiceResult> ReportMatchResult(DTO.MatchSeries.MatchResultReportingRequest matchResult)
+    public async Task<ServiceResult> ReportMatchResult(DTO.MatchSeries.MatchResultReport matchResult)
     {
       var result = new ServiceResult();
-
-      if (matchResult.MatchId.HasValue)
+      if (!matchResult.MatchId.HasValue)
       {
-        var match = await this.alexandriaContext.Matches
-                                                .Include(m => m.Results)
-                                                .Include(m => m.MatchSeries)
-                                                .ThenInclude(ms => ms.MatchParticipants)
-                                                .ThenInclude(mp => mp.Team)
-                                                .FirstOrDefaultAsync(m => m.Id.Equals(matchResult.MatchId.Value));
-
-        if (match == null)
-        {
-          result.Error = Shared.ErrorKey.Match.NotFound;
-          return result;
-        }
-
-        if (!match.State.Equals(Shared.Enums.MatchState.Pending))
-        {
-          result.Error = Shared.ErrorKey.Match.AlreadyReported;
-          return result;
-        }
-
-        var allTeamsParticipating = match.MatchSeries.MatchParticipants.Select(mp => mp.TeamId).All(tId => match.MatchSeries.IsParticipant(tId) == true);
-        if (!allTeamsParticipating)
-        {
-          result.Error = Shared.ErrorKey.Match.InvalidParticipant;
-          return result;
-        }
-
-        this.DangerouslyReportMatch(match, matchResult);
-        result.Succeed();
+        result.Error = Shared.ErrorKey.Match.NotFound;
         return result;
-      } else
-      {
-        throw new NotImplementedException("Match Creation not yet implemented");
       }
+
+      var match = await this.alexandriaContext.Matches
+                                              .Include(m => m.Results)
+                                              .Include(m => m.MatchSeries)
+                                              .ThenInclude(ms => ms.MatchParticipants)
+                                              .ThenInclude(mp => mp.Team)
+                                              .FirstOrDefaultAsync(m => m.Id.Equals(matchResult.MatchId.Value));
+
+      if (match == null)
+      {
+        result.Error = Shared.ErrorKey.Match.NotFound;
+        return result;
+      }
+
+      if (!match.State.Equals(Shared.Enums.MatchState.Pending))
+      {
+        result.Error = Shared.ErrorKey.Match.AlreadyReported;
+        return result;
+      }
+
+      var allTeamsParticipating = match.MatchSeries.MatchParticipants.Select(mp => mp.TeamId).All(tId => match.MatchSeries.IsParticipant(tId) == true);
+      if (!allTeamsParticipating)
+      {
+        result.Error = Shared.ErrorKey.Match.InvalidParticipant;
+        return result;
+      }
+
+      this.DangerouslyReportMatch(match, matchResult);
+      result.Succeed();
+      return result;
+
+    }
+
+    public async Task<ServiceResult> CreateAndReportMatchResult(DTO.MatchSeries.MatchResultReport report,
+      Guid matchSeriesId, int order)
+    {
+      var result = new ServiceResult();
+      var matchSeries = await this.alexandriaContext.MatchSeries
+        .Include(ms => ms.MatchParticipants)
+        .ThenInclude(mp => mp.Team)
+        .FirstOrDefaultAsync(ms => ms.Id == matchSeriesId);
+
+      if (matchSeries == null)
+      {
+        result.Error = Shared.ErrorKey.MatchSeries.NotFound;
+        return result;
+      }
+
+      var match = new Match(matchSeriesId);
+      match.MatchSeries = matchSeries;
+      match.MatchOrder = order;
+      this.alexandriaContext.Matches.Add(match);
+      this.DangerouslyReportMatch(match, report);
+      result.Succeed();
+      return result;
     }
 
 
@@ -334,7 +374,7 @@ namespace Alexandria.Orchestration.Services
       this.alexandriaContext.MatchSeries.Update(matchSeries);
     }
 
-    private void DangerouslyReportMatch(EF.Models.Match match, DTO.MatchSeries.MatchResultReportingRequest matchResult)
+    private void DangerouslyReportMatch(EF.Models.Match match, DTO.MatchSeries.MatchResultReport matchResult)
     {
       match.State = Shared.Enums.MatchState.Complete;
       match.OutcomeState = matchResult.Outcome;
@@ -350,7 +390,7 @@ namespace Alexandria.Orchestration.Services
         match.Results.Add(matchParticipantResult);
       }
 
-      this.alexandriaContext.Matches.Update(match);
+      //this.alexandriaContext.Matches.Update(match);
     }
   }
 }

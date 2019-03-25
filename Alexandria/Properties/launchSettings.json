@@ -22,7 +22,6 @@
       "environmentVariables": {
         "AWS_ENABLE_ENDPOINT_DISCOVERY": "true",
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Alexandria.Games.HeroesOfTheStorm",
         "ENABLE_BACKGROUND_SERVICES": "true"
       },
       "applicationUrl": "https://localhost:5001;http://localhost:5000"

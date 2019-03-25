@@ -13,6 +13,6 @@ namespace Alexandria.Games.HeroesOfTheStorm.DTO.MatchSeries
     [DataMember(Name = "mapBans")]
     public List<MapBan> MapBans { get; set; }
     [DataMember(Name = "results")]
-    public List<HeroesOfTheStormMatchResultReportingRequest> Results { get; set; }
+    public List<HeroesOfTheStormMatchResultReport> Results { get; set; }
   }
 }

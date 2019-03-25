@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Alexandria.EF.Context;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Svalbard;
 
 namespace Alexandria.Consumer.Shared.Infrastructure.Filters
 {
@@ -16,6 +17,12 @@ namespace Alexandria.Consumer.Shared.Infrastructure.Filters
     {
       var result = await next();
       if (result.Exception != null)
+      {
+        return;
+      }
+
+      var res = result.Result;
+      if (res is OperationResult os && os.IsError())
       {
         return;
       }

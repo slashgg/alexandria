@@ -7,6 +7,7 @@ using Alexandria.ExternalServices.BackgroundWorker;
 using Alexandria.ExternalServices.Mailer;
 using Alexandria.ExternalServices.Slack;
 using Alexandria.Games.HeroesOfTheStorm.EF.Context;
+using Alexandria.Games.SuperSmashBros.EF.Context;
 using Alexandria.Infrastructure.Filters;
 using Alexandria.Interfaces;
 using Alexandria.Interfaces.Processing;
@@ -136,6 +137,15 @@ namespace Alexandria
         {
           builder.MigrationsAssembly(typeof(HeroesOfTheStormContext).Assembly.FullName);
           builder.MigrationsHistoryTable("_EF_heroes_of_the_storm_migrations", "heroesofthestorm");
+        });
+      });
+
+      services.AddDbContext<SuperSmashBrosContext>(options =>
+      {
+        options.UseSqlServer(connectionString, (efBuilder) =>
+        {
+          efBuilder.MigrationsAssembly(typeof(SuperSmashBrosContext).Assembly.FullName);
+          efBuilder.MigrationsHistoryTable("_EF_super_smash_bros_migrations", Alexandria.Games.SuperSmashBros.Configuration.Constants.Schema);
         });
       });
       #endregion

@@ -7,9 +7,9 @@ using NJsonSchema.Annotations;
 
 namespace Alexandria.Games.HeroesOfTheStorm.DTO.MatchSeries
 {
-  [JsonSchema("HeroesOfTheStormMatchResultReportingRequest")]
+  [JsonSchema("HeroesOfTheStormMatchResultReport")]
   [DataContract]
-  public class HeroesOfTheStormMatchResultReportingRequest : MatchResultReportingRequest
+  public class HeroesOfTheStormMatchResultReport : MatchResultReport
   {
     [DataMember(Name = "replayURL")]
     public string ReplayURL { get; set; }

@@ -37,6 +37,9 @@ namespace Alexandria.Orchestration.Utils
       if (gameIdentifier.Equals(Shared.GlobalAssosications.Game.HeroesOfTheStorm))
       {
         return $"/{gameIdentifier}/match-series/{matchSeriesId}/reporting/meta";
+      } else if (gameIdentifier.Equals(Shared.GlobalAssosications.Game.SuperSmashBrosUltimate))
+      {
+        return $"/super-smash-bros/match-series/{matchSeriesId}/reporting/meta";
       } else
       {
         return null;

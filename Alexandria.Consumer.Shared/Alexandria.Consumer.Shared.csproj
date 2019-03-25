@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Alexandria.Games.HeroesOfTheStorm\Alexandria.Games.HeroesOfTheStorm.csproj" />
+    <ProjectReference Include="..\Alexandria.Games.SuperSmashBros\Alexandria.Games.SuperSmashBros.csproj" />
     <ProjectReference Include="..\Alexandria.Orchestration\Alexandria.Orchestration.csproj" />
   </ItemGroup>
 

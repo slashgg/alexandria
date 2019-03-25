@@ -9,7 +9,7 @@ namespace Alexandria.DTO.MatchSeries
 {
   [DataContract]
   [JsonSchema("MatchSeriesResultReportingRequest")]
-  public class MatchResultReportingRequest
+  public class MatchResultReport
   {
     [DataMember(Name = "outcome")]
     public MatchOutcomeState Outcome { get; set; }
@@ -17,6 +17,8 @@ namespace Alexandria.DTO.MatchSeries
     public Guid? MatchId { get; set; }
     [DataMember(Name = "results")]
     public List<MatchParticipantResult> Results { get; set; }
+    [DataMember(Name = "gameSpecific")]
+    public virtual object GameSpecific { get; set; }
 
     public class MatchParticipantResult
     {

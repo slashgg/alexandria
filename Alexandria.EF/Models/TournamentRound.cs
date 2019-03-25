@@ -10,7 +10,12 @@ namespace Alexandria.EF.Models
     public string Name { get; set; }
     public string Slug { get; set; }
     public int SeriesPerRound { get; set; }
+    /// <summary>
+    /// DEPRECATED
+    /// </summary>
     public int SeriesGameCount { get; set; }
+    public int SeriesMinGameCount { get; set; }
+    public int SeriesMaxGameCount { get; set; }
     public DateTimeOffset? StartDate { get; set; }
     public DateTimeOffset? EndDate { get; set; }
 
