@@ -13,6 +13,7 @@ namespace Alexandria.Games.SuperSmashBros.Orchestration.Mapping.MatchSeries
     {
       CreateMap<Alexandria.DTO.MatchSeries.MatchReportMetaData, DTO.MatchSeries.SuperSmashBrosMatchReportMetaData>()
         .ForMember(dest => dest.GameSpecific, opt => opt.UseDestinationValue())
+        .AfterMap((src, dest) => dest.ReportingType = "versus")
         .AfterMap((src, dest) => dest.SubmitURL = dest.CreateSubmitURL());
     }
   }

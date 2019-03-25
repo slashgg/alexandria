@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Alexandria.Consumer.Shared.Infrastructure.Filters;
 using Alexandria.Infrastructure.Filters;
 using Alexandria.Interfaces.Services;
 using Alexandria.Orchestration.Utils;
@@ -55,6 +56,7 @@ namespace Alexandria.Controllers.MatchSeries
       return NotFound(result.Error);
     }
 
+    [QueryStringConstraint("type", true, "versus")]
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(401)]

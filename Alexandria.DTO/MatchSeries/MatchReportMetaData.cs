@@ -28,10 +28,12 @@ namespace Alexandria.DTO.MatchSeries
     public int MinMatches { get; set; }
     [DataMember(Name = "maxMatches")]
     public int MaxMatches { get; set; }
+    [DataMember(Name = "reportingType")]
+    public string ReportingType { get; set; }
 
     public virtual string CreateSubmitURL()
     {
-      return $"/match-series/{this.Id}/reporting";
+      return $"/match-series/{this.Id}/reporting?type={this.ReportingType}";
     }
   }
 
