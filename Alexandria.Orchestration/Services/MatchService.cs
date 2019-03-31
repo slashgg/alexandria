@@ -208,6 +208,8 @@ namespace Alexandria.Orchestration.Services
       var result = new ServiceResult();
 
       var matchSeries = await this.alexandriaContext.MatchSeries.Include(ms => ms.Matches)
+                                                                .Include(ms => ms.MatchParticipants)
+                                                                .ThenInclude(mp => mp.Team)
                                                                 .FirstOrDefaultAsync(ms => ms.Id.Equals(matchSeriesId));
       if (matchSeries == null)
       {

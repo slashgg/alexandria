@@ -249,7 +249,9 @@ namespace Alexandria.Orchestration.Services
                                                                                .ToListAsync();
         cache.SetAbsoluteExpiration(DateTimeOffset.UtcNow.AddMinutes(15));
 
-        var dto = tournamentParticipations.Select(AutoMapper.Mapper.Map<DTO.Tournament.TeamParticipation>).ToList();
+        var uniqueParts = tournamentParticipations.GroupBy(tp => tp.TeamId).Select(gtp => gtp.FirstOrDefault());
+
+        var dto = uniqueParts.Select(AutoMapper.Mapper.Map<DTO.Tournament.TeamParticipation>).ToList();
         return dto;
       });
 

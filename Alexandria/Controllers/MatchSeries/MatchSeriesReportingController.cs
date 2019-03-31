@@ -9,6 +9,7 @@ using Alexandria.Orchestration.Utils;
 using Alexandria.Shared.ErrorKey;
 using Alexandria.Shared.Extensions;
 using Alexandria.Shared.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Svalbard;
@@ -29,6 +30,10 @@ namespace Alexandria.Controllers.MatchSeries
       this.matchSeriesUtils = matchSeriesUtils;
     }
 
+    /// <summary>
+    /// Get Meta Information for Match Reporting
+    /// </summary>
+    /// <returns></returns>
     [HttpGet("meta")]
     [ProducesResponseType(typeof(DTO.MatchSeries.MatchReportMetaData), 200)]
     [ProducesResponseType(typeof(void), 301)]
@@ -56,6 +61,12 @@ namespace Alexandria.Controllers.MatchSeries
       return NotFound(result.Error);
     }
 
+    /// <summary>
+    /// Generic Match Reporting Endpoint
+    /// </summary>
+    /// <param name="payload"></param>
+    /// <returns></returns>
+    [Authorize]
     [QueryStringConstraint("type", true, "versus")]
     [HttpPost]
     [ProducesResponseType(201)]
@@ -74,10 +85,10 @@ namespace Alexandria.Controllers.MatchSeries
         return new OperationResult(401);
       }
 
-      //if (!await this.matchSeriesUtils.CanReport(this.resourceId, userId.Value))
-      //{
-      //  return new OperationResult(403);
-      //}
+      if (!await this.matchSeriesUtils.CanReport(this.resourceId, userId.Value))
+      {
+        return new OperationResult(403);
+      }
 
       var result = await this.matchService.ReportMatchSeriesResult(this.resourceId, payload.MatchResults);
 
