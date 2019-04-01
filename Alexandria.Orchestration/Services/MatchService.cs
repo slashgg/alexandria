@@ -101,7 +101,7 @@ namespace Alexandria.Orchestration.Services
         return result;
       }
 
-      var timeSlotTaken = originTeam.OriginatingScheduleRequests.Any(osr => osr.State == Shared.Enums.ScheduleRequestState.Pending && osr.TargetTeamId == payload.TargetTeamId);
+      var timeSlotTaken = originTeam.OriginatingScheduleRequests.Any(osr => osr.State == Shared.Enums.ScheduleRequestState.Pending && osr.MatchSeriesId == payload.MatchSeriesId);
       if (timeSlotTaken)
       {
         result.Error = Shared.ErrorKey.ScheduleRequest.ScheduleRequestWithTimeslotAlreadyExists;
