@@ -8,11 +8,10 @@
 
   <ItemGroup>
     <PackageReference Include="GraphQL" Version="2.4.0" />
-    <PackageReference Include="NJsonSchema" Version="9.13.28" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Alexandria.Shared\Alexandria.Shared.csproj" />
+    <ProjectReference Include="..\Alexandria.EF\Alexandria.EF.csproj" />
   </ItemGroup>
 
 </Project>
