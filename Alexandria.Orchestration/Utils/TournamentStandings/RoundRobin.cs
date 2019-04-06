@@ -39,6 +39,8 @@ namespace Alexandria.Orchestration.Utils.TournamentStandings
         var totalMatchWins = 0;
         var totalMatchLosses = 0;
         var totalMatchDraws = 0;
+        var consolidationPoints = 0;
+
         foreach (var matchSeries in matchesPlayed)
         {
           var matchWins = 0;
@@ -61,6 +63,7 @@ namespace Alexandria.Orchestration.Utils.TournamentStandings
             }
           }
 
+
           totalMatchWins += matchWins;
           totalMatchLosses += matchLosses;
           totalMatchDraws += matchDraws;
@@ -76,6 +79,13 @@ namespace Alexandria.Orchestration.Utils.TournamentStandings
           else
           {
             losses++;
+            if (tournament.Settings?.RoundRobinConsolidationPoint != null)
+            {
+              if (matchWins >= tournament.Settings.RoundRobinConsolidationPointMinimumWins)
+              {
+                consolidationPoints += tournament.Settings.RoundRobinConsolidationPoint.Value;
+              }
+            }
           }
         }
 
@@ -83,6 +93,13 @@ namespace Alexandria.Orchestration.Utils.TournamentStandings
         var drawPointsMultiplier = tournament.Settings?.RoundRobinDrawPoints ?? 0;
         var lossPointsMultiplier = tournament.Settings?.RoundRobinLossPoints ?? 0;
         var matchSeriesPlayed = wins + draws + losses;
+
+        var winPoints = wins * winPointsMultiplier;
+        var lossPoints = wins * lossPointsMultiplier;
+        var drawPoints = draws * drawPointsMultiplier;
+
+        var points = winPoints + lossPoints + drawPoints + consolidationPoints;
+
         decimal winPercentage = 0;
         if ((matchSeriesPlayed) > 0)
         {
@@ -97,7 +114,7 @@ namespace Alexandria.Orchestration.Utils.TournamentStandings
           MatchWins = totalMatchWins,
           MatchLosses = totalMatchLosses,
           MatchDraws = totalMatchDraws,
-          TotalPoints = (wins * winPointsMultiplier) + (draws * drawPointsMultiplier) + (losses * lossPointsMultiplier),
+          TotalPoints = points,
           WinPercentage = Decimal.Round(winPercentage, 2),
           Team = AutoMapper.Mapper.Map<DTO.Team.Info>(team),
           MatchSeriesPlayed = matchSeriesPlayed
