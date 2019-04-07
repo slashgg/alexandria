@@ -4,14 +4,16 @@ using Alexandria.Games.SuperSmashBros.EF.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Alexandria.Games.SuperSmashBros.Migrations
 {
     [DbContext(typeof(SuperSmashBrosContext))]
-    partial class SuperSmashBrosContextModelSnapshot : ModelSnapshot
+    [Migration("20190407061109_UpdateSmashBrosMatchReport")]
+    partial class UpdateSmashBrosMatchReport
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

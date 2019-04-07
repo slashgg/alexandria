@@ -9,6 +9,11 @@ namespace Alexandria.Games.SuperSmashBros.EF.Models
   {
     public Guid MatchSeriesId { get; set; }
 
-    public virtual ICollection<FighterPick> FighterPicks { get; set; }
+    public virtual ICollection<FighterPick> FighterPicks { get; set; } = new List<FighterPick>();
+    public MatchReport() { }
+    public MatchReport(Guid matchSeriesId)
+    {
+      this.MatchSeriesId = matchSeriesId;
+    }
   }
 }

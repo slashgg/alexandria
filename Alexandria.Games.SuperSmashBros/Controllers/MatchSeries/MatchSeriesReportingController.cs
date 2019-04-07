@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Alexandria.Games.SuperSmashBros.DTO.MatchSeries;
 using Alexandria.Games.SuperSmashBros.Orchestration.Services;
 using Alexandria.Infrastructure.Filters;
-using Alexandria.Orchestration.Utils;
 using Alexandria.Shared.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Svalbard;
@@ -16,12 +15,10 @@ namespace Alexandria.Games.SuperSmashBros.Controllers.MatchSeries
   [ApiController]
   public class SuperSmashBrosMatchSeriesReportingController : ResourceBaseController
   {
-    private readonly MatchSeriesUtils matchSeriesUtils;
     private readonly SuperSmashBrosMatchService superSmashBrosMatchService;
 
-    public SuperSmashBrosMatchSeriesReportingController(MatchSeriesUtils matchSeriesUtils, SuperSmashBrosMatchService superSmashBrosMatchService)
+    public SuperSmashBrosMatchSeriesReportingController(SuperSmashBrosMatchService superSmashBrosMatchService)
     {
-      this.matchSeriesUtils = matchSeriesUtils;
       this.superSmashBrosMatchService = superSmashBrosMatchService;
     }
 

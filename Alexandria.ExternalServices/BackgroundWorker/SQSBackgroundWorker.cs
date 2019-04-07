@@ -7,6 +7,7 @@ using Alexandria.Interfaces.Processing;
 using Amazon.SQS;
 using Amazon.SQS.Model;
 using Newtonsoft.Json;
+using Sentry;
 
 namespace Alexandria.ExternalServices.BackgroundWorker
 {
@@ -43,14 +44,22 @@ namespace Alexandria.ExternalServices.BackgroundWorker
       var result = await this.sqsClient.ReceiveMessageAsync(request);
       if (!result.Messages.Any())
       {
-        return null;
+        return new List<BackgroundMessage<T>>();
       }
 
       var messages = result.Messages.Select(sqsMessage =>
       {
-
-        var data = JsonConvert.DeserializeObject<T>(sqsMessage.Body);
-        var message = new BackgroundMessage<T>(sqsMessage.ReceiptHandle, data);
+        BackgroundMessage<T> message;
+        try
+        {
+          var data = JsonConvert.DeserializeObject<T>(sqsMessage.Body);
+          message = new BackgroundMessage<T>(sqsMessage.ReceiptHandle, data);
+        }
+        catch (Exception e)
+        {
+          message = new BackgroundMessage<T>(sqsMessage.ReceiptHandle, sqsMessage.Body);
+          SentrySdk.CaptureException(e);
+        }
         return message;
       }).ToList();
 

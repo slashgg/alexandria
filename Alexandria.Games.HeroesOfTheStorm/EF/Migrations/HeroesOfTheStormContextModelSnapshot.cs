@@ -87,7 +87,7 @@ namespace Alexandria.Games.HeroesOfTheStorm.EF.Migrations
 
                     b.Property<Guid>("MapId");
 
-                    b.Property<Guid>("MatchId");
+                    b.Property<Guid>("MatchSeriesId");
 
                     b.Property<bool>("ReplayParsed");
 

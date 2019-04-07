@@ -18,6 +18,7 @@ COPY Alexandria.Orchestration/Alexandria.Orchestration.csproj Alexandria.Orchest
 COPY Alexandria.ExternalServices/Alexandria.ExternalServices.csproj Alexandria.ExternalServices/
 COPY Alexandria.Games.HeroesOfTheStorm/Alexandria.Games.HeroesOfTheStorm.csproj Alexandria.Games.HeroesOfTheStorm/
 COPY Alexandria.Games.HeroesOfTheStorm/appsettings.json Alexandria.Games.HeroesOfTheStorm/
+COPY Alexandria.Games.SuperSmashBros/Alexandria.Games.SuperSmashBros.csproj Alexandria.Games.SuperSmashBros/
 COPY Alexandria.Consumer.Shared/Alexandria.Consumer.Shared.csproj Alexandria.Consumer.Shared/
 
 RUN dotnet restore Alexandria/Alexandria.csproj

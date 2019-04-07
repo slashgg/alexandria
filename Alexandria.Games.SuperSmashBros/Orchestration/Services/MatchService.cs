@@ -37,10 +37,17 @@ namespace Alexandria.Games.SuperSmashBros.Orchestration.Services
       }
 
       var smashBrosMetaData = AutoMapper.Mapper.Map<DTO.MatchSeries.SuperSmashBrosMatchReportMetaData>(originalMetaData.Data);
-      var fighters = (await this.superSmashBrosContext.Fighters.ToListAsync()).Select(AutoMapper.Mapper.Map<DTO.Fighters.Info>).ToList();
+      var fighters = (await this.superSmashBrosContext.Fighters.ToListAsync()).Select(AutoMapper.Mapper.Map<DTO.Fighters.Info>).OrderBy(f => f.Name).ToList();
       smashBrosMetaData.GameSpecific.Fighters = fighters;
 
       result.Succeed(smashBrosMetaData);
+      return result;
+    }
+
+    public async Task<ServiceResult> ReportFighterPicks()
+    {
+      var result = new ServiceResult();
+
       return result;
     }
 

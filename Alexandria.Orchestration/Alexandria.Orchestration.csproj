@@ -14,7 +14,7 @@
     <PackageReference Include="GraphQL" Version="2.4.0" />
     <PackageReference Include="IdentityModel" Version="3.10.6" />
     <PackageReference Include="Sentry" Version="1.1.2" />
-    <PackageReference Include="Svalbard" Version="2.0.5" />
+    <PackageReference Include="Svalbard" Version="2.0.6" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,6 +22,7 @@
     <ProjectReference Include="..\Alexandria.EF\Alexandria.EF.csproj" />
     <ProjectReference Include="..\Alexandria.ExternalServices\Alexandria.ExternalServices.csproj" />
     <ProjectReference Include="..\Alexandria.GQL\Alexandria.GQL.csproj" />
+    <ProjectReference Include="..\Alexandria.Games.SuperSmashBros\Alexandria.Games.SuperSmashBros.csproj" />
     <ProjectReference Include="..\Alexandria.Interfaces\Alexandria.Interfaces.csproj" />
   </ItemGroup>
 

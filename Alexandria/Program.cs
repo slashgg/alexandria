@@ -20,7 +20,6 @@ namespace Alexandria
       var assemblies = new List<string>
       {
         "Alexandria.Games.HeroesOfTheStorm",
-        "Alexandria.Games.SuperSmashBros",
       };
 
       return WebHost.CreateDefaultBuilder(args)
@@ -36,6 +35,10 @@ namespace Alexandria
           {
             secrets.Add("ConnectionStrings");
             secrets.Add("Queues");
+
+            #region GameSpecific
+            secrets.Add("SuperSmashBrosQueues");
+            #endregion
           }
           var basePath = hosting.HostingEnvironment.ContentRootPath;
           config.SetBasePath(basePath);
