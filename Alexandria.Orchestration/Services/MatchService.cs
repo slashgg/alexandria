@@ -17,6 +17,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using NJsonSchema.Infrastructure;
+using Sentry;
 using Svalbard.Services;
 
 namespace Alexandria.Orchestration.Services
@@ -262,34 +263,42 @@ namespace Alexandria.Orchestration.Services
         matchOrder++;
       }
 
-      switch (matchSeries.Game.InternalIdentifier)
+      try
       {
-        case Shared.GlobalAssosications.Game.SuperSmashBrosUltimate:
-          var superSmashBrosReport = new Alexandria.Games.SuperSmashBros.DTO.MatchSeries.AdditionalMatchSeriesData
-          {
-            MatchSeriesId = matchSeriesId,
-            FighterPicks = results.SelectMany(r =>
+        switch (matchSeries.Game.InternalIdentifier)
+        {
+          case Shared.GlobalAssosications.Game.SuperSmashBrosUltimate:
+            var superSmashBrosReport = new Alexandria.Games.SuperSmashBros.DTO.MatchSeries.AdditionalMatchSeriesData
             {
-              var data = r.GameSpecific as JObject;
-              var fighterPicks = data["fighterPicks"];
-              var matchFighterPicks = fighterPicks.Select(fp => new FighterPick
+              MatchSeriesId = matchSeriesId,
+              FighterPicks = results.SelectMany(r =>
               {
-                MatchId = r.MatchId ?? Guid.Empty,
-                FighterId = Guid.Parse(fp["fighterId"].ToString()),
-                TeamId = Guid.Parse(fp["teamId"].ToString())
-              });
+                var data = r.GameSpecific as JObject;
+                var fighterPicks = data["fighterPicks"];
+                var matchFighterPicks = fighterPicks.Select(fp => new FighterPick
+                {
+                  MatchId = r.MatchId ?? Guid.Empty,
+                  FighterId = Guid.Parse(fp["fighterId"].ToString()),
+                  TeamId = Guid.Parse(fp["teamId"].ToString())
+                });
 
-              return matchFighterPicks;
-            }).ToList(),
+                return matchFighterPicks;
+              }).ToList(),
 
-          };
+            };
 
-          await this.backgroundWorker.SendMessage(this.superSmashBrosQueues.MatchResults, superSmashBrosReport);
+            await this.backgroundWorker.SendMessage(this.superSmashBrosQueues.MatchResults, superSmashBrosReport);
 
-          break;
-        default:
-          break;
+            break;
+          default:
+            break;
+        }
       }
+      catch (Exception ex)
+      {
+        SentrySdk.CaptureException(ex);
+      }
+
 
 
       this.DangerouslyReportMatchSeries(matchSeries, MatchState.Complete);
