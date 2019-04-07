@@ -6,9 +6,10 @@ namespace Alexandria.Games.SuperSmashBros.EF.Models
 {
   public class FighterPick : BaseEntity
   {
-    public Guid UserProfileId { get; set; }
+    public Guid TeamId { get; set; }
     /* Foreign Keys */
     public Guid FighterId { get; set; }
+    public Guid MatchId { get; set; }
     public Guid MatchReportId { get; set; }
 
     /* Relationships */
@@ -16,5 +17,16 @@ namespace Alexandria.Games.SuperSmashBros.EF.Models
     public virtual Fighter Fighter { get; set; }
     [ForeignKey("MatchReportId")]
     public virtual MatchReport MatchReport { get; set; }
+
+    public FighterPick()
+    {
+    }
+
+    public FighterPick(Guid teamId, Guid fighterId, Guid matchId)
+    {
+      this.TeamId = teamId;
+      this.FighterId = fighterId;
+      this.MatchId = matchId;
+    }
   }
 }

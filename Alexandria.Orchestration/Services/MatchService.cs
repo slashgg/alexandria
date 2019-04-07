@@ -6,29 +6,36 @@ using System.Text;
 using System.Threading.Tasks;
 using Alexandria.EF.Context;
 using Alexandria.EF.Models;
+using Alexandria.Games.SuperSmashBros.DTO.MatchSeries;
+using Alexandria.Games.SuperSmashBros.Orchestration.Services;
 using Alexandria.Interfaces.Processing;
 using Alexandria.Interfaces.Services;
 using Alexandria.Orchestration.Utils;
 using Alexandria.Shared.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
+using NJsonSchema.Infrastructure;
 using Svalbard.Services;
 
 namespace Alexandria.Orchestration.Services
 {
   public class MatchService : IMatchService
   {
-    private IMemoryCache cache;
     private AlexandriaContext alexandriaContext;
     private ICacheBreaker cacheBreaker;
+    private IBackgroundWorker backgroundWorker;
     private TournamentUtils tournamentUtils;
+    private Alexandria.Games.SuperSmashBros.Configuration.Queue superSmashBrosQueues;
 
-    public MatchService(AlexandriaContext alexandriaContext, IMemoryCache cache, ICacheBreaker cacheBreaker, TournamentUtils tournamentUtils)
+    public MatchService(AlexandriaContext alexandriaContext, IBackgroundWorker backgroundWorker, ICacheBreaker cacheBreaker, TournamentUtils tournamentUtils, IOptions<Alexandria.Games.SuperSmashBros.Configuration.Queue> superSmashBrosQueues)
     {
       this.alexandriaContext = alexandriaContext;
-      this.cache = cache;
       this.cacheBreaker = cacheBreaker;
       this.tournamentUtils = tournamentUtils;
+      this.backgroundWorker = backgroundWorker;
+      this.superSmashBrosQueues = superSmashBrosQueues.Value;
     }
 
     public async Task<ServiceResult<IList<DTO.MatchSeries.Detail>>> GetPendingMatchesForTeam(Guid teamId)
@@ -187,6 +194,7 @@ namespace Alexandria.Orchestration.Services
       return result;
     }
 
+
     public async Task<ServiceResult> RescindSCheduleRequest(Guid scheduleRequestId)
     {
       var result = new ServiceResult();
@@ -210,6 +218,7 @@ namespace Alexandria.Orchestration.Services
       var matchSeries = await this.alexandriaContext.MatchSeries.Include(ms => ms.Matches)
                                                                 .Include(ms => ms.MatchParticipants)
                                                                 .ThenInclude(mp => mp.Team)
+                                                                .Include(ms => ms.Game)
                                                                 .FirstOrDefaultAsync(ms => ms.Id.Equals(matchSeriesId));
       if (matchSeries == null)
       {
@@ -234,7 +243,13 @@ namespace Alexandria.Orchestration.Services
         }
         else
         {
-          reportingServiceResult = await this.CreateAndReportMatchResult(matchResult, matchSeriesId, matchOrder);
+          var matchCreateResult = await this.CreateAndReportMatchResult(matchResult, matchSeriesId, matchOrder);
+          reportingServiceResult = matchCreateResult;
+          // We need to catch the match ID to report data depending on match state
+          if (matchCreateResult.Success)
+          {
+            matchResult.MatchId = matchCreateResult.Data;
+          }
         }
 
 
@@ -246,6 +261,36 @@ namespace Alexandria.Orchestration.Services
 
         matchOrder++;
       }
+
+      switch (matchSeries.Game.InternalIdentifier)
+      {
+        case Shared.GlobalAssosications.Game.SuperSmashBrosUltimate:
+          var superSmashBrosReport = new Alexandria.Games.SuperSmashBros.DTO.MatchSeries.AdditionalMatchSeriesData
+          {
+            MatchSeriesId = matchSeriesId,
+            FighterPicks = results.SelectMany(r =>
+            {
+              var data = r.GameSpecific as JObject;
+              var fighterPicks = data["fighterPicks"];
+              var matchFighterPicks = fighterPicks.Select(fp => new FighterPick
+              {
+                MatchId = r.MatchId ?? Guid.Empty,
+                FighterId = Guid.Parse(fp["fighterId"].ToString()),
+                TeamId = Guid.Parse(fp["teamId"].ToString())
+              });
+
+              return matchFighterPicks;
+            }).ToList(),
+
+          };
+
+          await this.backgroundWorker.SendMessage(this.superSmashBrosQueues.MatchResults, superSmashBrosReport);
+
+          break;
+        default:
+          break;
+      }
+
 
       this.DangerouslyReportMatchSeries(matchSeries, MatchState.Complete);
       result.Succeed();
@@ -294,10 +339,10 @@ namespace Alexandria.Orchestration.Services
 
     }
 
-    public async Task<ServiceResult> CreateAndReportMatchResult(DTO.MatchSeries.MatchResultReport report,
+    public async Task<ServiceResult<Guid>> CreateAndReportMatchResult(DTO.MatchSeries.MatchResultReport report,
       Guid matchSeriesId, int order)
     {
-      var result = new ServiceResult();
+      var result = new ServiceResult<Guid>();
       var matchSeries = await this.alexandriaContext.MatchSeries
         .Include(ms => ms.MatchParticipants)
         .ThenInclude(mp => mp.Team)
@@ -309,12 +354,13 @@ namespace Alexandria.Orchestration.Services
         return result;
       }
 
+
       var match = new Match(matchSeriesId);
       match.MatchSeries = matchSeries;
       match.MatchOrder = order;
       this.alexandriaContext.Matches.Add(match);
       this.DangerouslyReportMatch(match, report);
-      result.Succeed();
+      result.Succeed(match.Id);
       return result;
     }
 

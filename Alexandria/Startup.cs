@@ -7,8 +7,7 @@ using Alexandria.ExternalServices.BackgroundWorker;
 using Alexandria.ExternalServices.Mailer;
 using Alexandria.ExternalServices.Slack;
 using Alexandria.Games.HeroesOfTheStorm.EF.Context;
-using Alexandria.Games.SuperSmashBros.EF.Context;
-using Alexandria.Infrastructure.Filters;
+using Alexandria.Games.SuperSmashBros;
 using Alexandria.Interfaces;
 using Alexandria.Interfaces.Processing;
 using Alexandria.Interfaces.Services;
@@ -49,6 +48,8 @@ namespace Alexandria
     {
 
       AutoMapperConfig.Initialize();
+      var connectionString = Configuration.GetConnectionString("Alexandria");
+      var backgroundServicesEnabled = Configuration.GetSection("BackgroundServices").GetValue<bool>("Enabled");
 
       services.AddMvc(options =>
       {
@@ -61,12 +62,9 @@ namespace Alexandria
         options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
       });
 
-      JsonConvert.DefaultSettings = () =>
+      JsonConvert.DefaultSettings = () => new JsonSerializerSettings
       {
-        return new JsonSerializerSettings
-        {
-          Converters = new List<JsonConverter> { new Newtonsoft.Json.Converters.StringEnumConverter() },
-        };
+        Converters = new List<JsonConverter> { new Newtonsoft.Json.Converters.StringEnumConverter() },
       };
 
       services.AddMemoryCache();
@@ -117,11 +115,14 @@ namespace Alexandria
         return new SendGridMailer(accessor.Value.ApiKey);
       });
 
-      services.AddHostedService<TransactionalService>();
-      services.AddHostedService<ContactSyncBackgroundService>();
-      services.AddHostedService<CronService>();
+      if (backgroundServicesEnabled)
+      {
+        services.AddHostedService<TransactionalService>();
+        services.AddHostedService<ContactSyncBackgroundService>();
+        services.AddHostedService<CronService>();
+      }
 
-      var connectionString = Configuration.GetConnectionString("Alexandria");
+
       services.AddDbContext<AlexandriaContext>(options =>
       {
         options.UseSqlServer(connectionString, (builder) =>
@@ -137,15 +138,6 @@ namespace Alexandria
         {
           builder.MigrationsAssembly(typeof(HeroesOfTheStormContext).Assembly.FullName);
           builder.MigrationsHistoryTable("_EF_heroes_of_the_storm_migrations", "heroesofthestorm");
-        });
-      });
-
-      services.AddDbContext<SuperSmashBrosContext>(options =>
-      {
-        options.UseSqlServer(connectionString, (efBuilder) =>
-        {
-          efBuilder.MigrationsAssembly(typeof(SuperSmashBrosContext).Assembly.FullName);
-          efBuilder.MigrationsHistoryTable("_EF_super_smash_bros_migrations", Alexandria.Games.SuperSmashBros.Configuration.Constants.Schema);
         });
       });
       #endregion
@@ -166,6 +158,9 @@ namespace Alexandria
                 options.RequireHttpsMetadata = Production;
                 options.ApiName = "Alexandria";
               });
+      #region Games
+      services.AddSuperSmashBros(Configuration);
+      #endregion
 
       services.AddSwaggerDocument(options =>
       {
@@ -179,6 +174,8 @@ namespace Alexandria
             settings.Schemes.Add(NSwag.SwaggerSchema.Https);
           }
         };
+
+
 
         options.OperationProcessors.Add(new OperationSecurityScopeProcessor("oauth2"));
 

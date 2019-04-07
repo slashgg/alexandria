@@ -85,10 +85,10 @@ namespace Alexandria.Controllers.MatchSeries
         return new OperationResult(401);
       }
 
-      if (!await this.matchSeriesUtils.CanReport(this.resourceId, userId.Value))
-      {
-        return new OperationResult(403);
-      }
+      //if (!await this.matchSeriesUtils.CanReport(this.resourceId, userId.Value))
+      //{
+      //  return new OperationResult(403);
+      //}
 
       var result = await this.matchService.ReportMatchSeriesResult(this.resourceId, payload.MatchResults);
 

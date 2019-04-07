@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Svalbard.Services;
 
@@ -18,6 +19,6 @@ namespace Alexandria.Interfaces.Services
     Task<ServiceResult> ReportMatchSeriesResult(Guid matchSeriesId, IEnumerable<DTO.MatchSeries.MatchResultReport> results);
     Task<ServiceResult> ReportMatchResult(DTO.MatchSeries.MatchResultReport matchResult);
 
-    Task<ServiceResult> CreateAndReportMatchResult(DTO.MatchSeries.MatchResultReport report, Guid matchSeriesId, int order);
+    Task<ServiceResult<Guid>> CreateAndReportMatchResult(DTO.MatchSeries.MatchResultReport report, Guid matchSeriesId, int order);
   }
 }

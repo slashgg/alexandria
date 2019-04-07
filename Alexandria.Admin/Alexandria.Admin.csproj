@@ -31,7 +31,7 @@
     <PackageReference Include="NSwag.AspNetCore" Version="12.1.0" />
     <PackageReference Include="Sentry" Version="1.1.2" />
     <PackageReference Include="Sentry.AspNetCore" Version="1.1.2" />
-    <PackageReference Include="Svalbard" Version="2.0.5" />
+    <PackageReference Include="Svalbard" Version="2.0.6" />
   </ItemGroup>
 
   <ItemGroup>
