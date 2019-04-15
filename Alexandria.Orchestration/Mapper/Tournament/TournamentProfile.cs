@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Alexandria.Shared.Enums;
 using AutoMapper;
 
 namespace Alexandria.Orchestration.Mapper.Tournament
@@ -38,7 +39,10 @@ namespace Alexandria.Orchestration.Mapper.Tournament
       CreateMap<EF.Models.TournamentRound, DTO.Tournament.RoundDetail>()
         .ForMember(dest => dest.SeriesCount, opt => opt.MapFrom(src => src.SeriesPerRound));
 
-      CreateMap<EF.Models.TournamentRound, DTO.Tournament.ScheduleRound>();
+      CreateMap<EF.Models.TournamentRound, DTO.Tournament.ScheduleRound>()
+        .ForMember(src => src.MatchSeries,
+          opt => opt.MapFrom(src => src.MatchSeries.Where(ms => ms.State != MatchState.Cancelled)));
+
       CreateMap<EF.Models.Tournament, DTO.Tournament.Schedule>()
         .ForMember(src => src.Rounds, opt => opt.MapFrom(src => src.TournamentRounds));
 
